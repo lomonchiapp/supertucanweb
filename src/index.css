@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colores personalizados */
+  --color-primary: #6366f1;
+  --color-secondary: #ec4899;
+  
+  /* Fuentes personalizadas */
+  --font-family-sans: "Bebas Neue", system-ui, sans-serif;
+  --font-family-accent: "Knewave", cursive;
+  
+  /* Breakpoints personalizados para diferentes dispositivos */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;      /* MacBook Air y laptops pequeños */
+  --breakpoint-laptop: 1280px;  /* MacBook Pro y laptops medianos */
+  --breakpoint-desktop: 1440px; /* Monitores de escritorio */
+  --breakpoint-xl: 1680px;      /* Monitores Full HD (1920x1080+) */
+  --breakpoint-2xl: 1920px;     /* Monitores grandes */
+  --breakpoint-3xl: 2560px;     /* Monitores 2K/4K */
+  
+  /* Espaciado adicional */
+  --spacing-18: 4.5rem;  /* 72px */
+  --spacing-22: 5.5rem;  /* 88px */
+  --spacing-26: 6.5rem;  /* 104px */
+}
+
+/* Estilos personalizados para el showroom */
+.bg-gradient-radial {
+  background: radial-gradient(circle, var(--tw-gradient-stops));
+}
+
+/* Clases de utilidad personalizadas para espaciado */
+@utilities {
+  .top-18 { top: var(--spacing-18); }
+  .top-22 { top: var(--spacing-22); }
+  .top-26 { top: var(--spacing-26); }
+  .-left-22 { left: calc(-1 * var(--spacing-22)); }
+  .-left-26 { left: calc(-1 * var(--spacing-26)); }
+  .bottom-18 { bottom: var(--spacing-18); }
+  .bottom-22 { bottom: var(--spacing-22); }
+  .bottom-26 { bottom: var(--spacing-26); }
+}
+
+/* Media queries personalizadas para LAPTOPS (1024px - 1279px) */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  /* Hero ajustes específicos para laptops */
+  .laptop-hero-height { min-height: 140vh !important; }
+  .laptop-hero-content { min-height: 140vh !important; }
+  .laptop-hero-grid { height: 100vh !important; }
+  
+  /* Menús flotantes para laptops */
+  .laptop-colors-menu { 
+    top: 2rem !important; 
+    left: -3rem !important; 
+  }
+  .laptop-angles-menu { 
+    bottom: 8rem !important; 
+    left: -3rem !important; 
+  }
+  
+  /* Texto y botones para laptops */
+  .laptop-title { font-size: 3.75rem !important; line-height: 1 !important; }
+  .laptop-buttons { gap: 1.25rem !important; }
+  .laptop-button { 
+    padding-left: 2.25rem !important; 
+    padding-right: 2.25rem !important; 
+    padding-top: 0.875rem !important; 
+    padding-bottom: 0.875rem !important; 
+    font-size: 1.25rem !important; 
+  }
+}
+
+/* Media queries personalizadas para laptops medianos (1280px+) */
+@media (min-width: 1280px) {
+  .laptop\:min-h-120vh { min-height: 120vh; }
+  .laptop\:pt-14 { padding-top: 3.5rem; }
+  .laptop\:h-90vh { height: 90vh; }
+  .laptop\:gap-12 { gap: 3rem; }
+  .laptop\:w-550 { width: 550px; }
+  .laptop\:text-6xl { font-size: 3.75rem; line-height: 1; }
+  .laptop\:px-10 { padding-left: 2.5rem; padding-right: 2.5rem; }
+  .laptop\:py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+  .laptop\:text-2xl { font-size: 1.5rem; line-height: 2rem; }
+  .laptop\:gap-6 { gap: 1.5rem; }
+  .laptop\:-mt-12 { margin-top: -3rem; }
+  .laptop\:top-12 { top: 3rem; }
+  .laptop\:-left-18 { left: calc(-1 * var(--spacing-18)); }
+  .laptop\:bottom-24 { bottom: 6rem; }
+}
+
+@media (min-width: 1440px) {
+  .desktop\:min-h-110vh { min-height: 110vh; }
+  .desktop\:pt-16 { padding-top: 4rem; }
+  .desktop\:h-85vh { height: 85vh; }
+  .desktop\:gap-14 { gap: 3.5rem; }
+  .desktop\:w-580 { width: 580px; }
+  .desktop\:text-7xl { font-size: 4.5rem; line-height: 1; }
+  .desktop\:px-11 { padding-left: 2.75rem; padding-right: 2.75rem; }
+  .desktop\:gap-7 { gap: 1.75rem; }
+  .desktop\:-mt-16 { margin-top: -4rem; }
+  .desktop\:top-16 { top: 4rem; }
+  .desktop\:-left-20 { left: -5rem; }
+  .desktop\:bottom-32 { bottom: 8rem; }
+}
