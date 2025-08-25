@@ -7,6 +7,7 @@ interface LazyImageProps {
   className?: string;
   fallbackSrc?: string;
   placeholder?: React.ReactNode;
+  style?: React.CSSProperties;
 }
 
 export function LazyImage({ 
@@ -14,7 +15,8 @@ export function LazyImage({
   alt, 
   className,
   fallbackSrc = '/placeholder-bike.png',
-  placeholder
+  placeholder,
+  style
 }: LazyImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isInView, setIsInView] = useState(false);
@@ -91,6 +93,7 @@ export function LazyImage({
           onLoad={handleLoad}
           onError={handleError}
           loading="lazy"
+          style={style}
         />
       )}
     </div>

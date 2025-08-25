@@ -3,6 +3,7 @@ import { bikesData } from '@/data/bikes';
 import { LazyImage } from './ui/lazy-image';
 import { SkyBackground } from './ui/sky-background';
 import { useNavigationStore } from '@/store/navigationStore';
+import type { BikeModel, BikeColor } from '@/types/bikes';
 
 // Definición de categorías
 const categories = [
@@ -37,7 +38,7 @@ const categories = [
 ];
 
 export function ModelosSection() {
-  const { selectedCategory, setSelectedCategory } = useNavigationStore();
+  const { selectedCategory } = useNavigationStore();
   const [activeCategory, setActiveCategory] = useState(selectedCategory);
   
   // Sincronizar con el store cuando cambie la categoría seleccionada
@@ -161,11 +162,11 @@ export function ModelosSection() {
 }
 
 // Card de catálogo funcional para cada modelo
-function BikeImageCard({ bike }: { bike: any }) {
-  const [selectedColor, setSelectedColor] = useState(bike.colors[0]?.value || 'azul');
+function BikeImageCard({ bike }: { bike: BikeModel }) {
+  const [selectedColor, setSelectedColor] = useState<string>(bike.colors[0]?.value || 'azul');
   const [isExpanded, setIsExpanded] = useState(false);
   
-  const currentColor = bike.colors.find((c: any) => c.value === selectedColor) || bike.colors[0];
+  const currentColor: BikeColor = bike.colors.find((c: BikeColor) => c.value === selectedColor) || bike.colors[0]!;
   const mainImage = currentColor?.images?.main || currentColor?.images?.front;
 
   return (
@@ -218,7 +219,7 @@ function BikeImageCard({ bike }: { bike: any }) {
             <span className="text-sm text-gray-600 capitalize">{currentColor.name}</span>
           </div>
           <div className="flex gap-2 flex-wrap">
-            {bike.colors.map((color: any) => (
+            {bike.colors.map((color: BikeColor) => (
               <button
                 key={color.value}
                 onClick={() => setSelectedColor(color.value)}

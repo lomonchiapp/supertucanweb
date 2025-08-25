@@ -1,4 +1,3 @@
-import React from 'react';
 import { BikeCard } from './BikeCard';
 import type { BikeModel } from '@/types/bikes';
 import { cn } from '@/lib/utils';

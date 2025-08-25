@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
-import path from 'path'
+// Configuración Vite sin dependencias de Node para resolver alias
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -12,7 +12,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      // Vite interpreta rutas que empiezan con '/' relativas a la raíz del proyecto
+      "@": "/src",
     },
   },
 })

@@ -36,13 +36,7 @@ const COLOR_MAP: { [key: string]: { name: string; code: string } } = {
   'roja': { name: 'Roja', code: '#EF4444' }
 };
 
-// Mapeo de categorías basado en los modelos actuales
-const CATEGORY_MAPPING: { [key: string]: string } = {
-  'ADRI SPORT': 'motocicletas',
-  'CG200': 'motocicletas',
-  'BWS': 'scooters',
-  'ST 125': 'sport'
-};
+// (Eliminado CATEGORY_MAPPING no utilizado)
 
 // Configuración de categorías
 export const CATEGORIES: BikeCategory[] = [

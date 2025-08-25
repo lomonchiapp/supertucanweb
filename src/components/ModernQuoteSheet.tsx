@@ -10,7 +10,7 @@ interface ModernQuoteSheetProps {
 export function ModernQuoteSheet({ isOpen, onClose }: ModernQuoteSheetProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [categories] = useState<BikeCategory[]>(getModelsByCategory());
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<QuoteFormData>({
     category: '',
     model: '',
     color: '',
@@ -181,7 +181,6 @@ export function ModernQuoteSheet({ isOpen, onClose }: ModernQuoteSheetProps) {
           {currentStep === 2 && selectedCategory && (
             <ModelStep 
               category={selectedCategory}
-              selectedModel={formData.model}
               onSelect={(modelId) => {
                 setFormData({...formData, model: modelId, color: ''});
                 handleNext();
@@ -193,7 +192,6 @@ export function ModernQuoteSheet({ isOpen, onClose }: ModernQuoteSheetProps) {
           {currentStep === 3 && selectedModel && (
             <ColorStep 
               model={selectedModel}
-              selectedColor={formData.color}
               onSelect={(colorValue) => {
                 setFormData({...formData, color: colorValue});
                 handleNext();
@@ -307,9 +305,8 @@ function CategoryStep({ categories, onSelect }: {
 }
 
 // Componente para selección de modelos
-function ModelStep({ category, selectedModel, onSelect }: {
+function ModelStep({ category, onSelect }: {
   category: BikeCategory;
-  selectedModel: string;
   onSelect: (modelId: string) => void;
 }) {
   return (
@@ -381,9 +378,8 @@ function ModelStep({ category, selectedModel, onSelect }: {
 }
 
 // Componente para selección de colores
-function ColorStep({ model, selectedColor, onSelect }: {
+function ColorStep({ model, onSelect }: {
   model: BikeModel;
-  selectedColor: string;
   onSelect: (colorValue: string) => void;
 }) {
   const [previewColor, setPreviewColor] = useState(model.colors[0]?.value || '');
@@ -452,8 +448,8 @@ function ColorStep({ model, selectedColor, onSelect }: {
 
 // Componente para información de contacto
 function ContactStep({ formData, onChange, selectedModel, selectedColor }: {
-  formData: any;
-  onChange: (data: any) => void;
+  formData: QuoteFormData;
+  onChange: (data: QuoteFormData) => void;
   selectedModel?: BikeModel;
   selectedColor?: BikeColor;
 }) {
@@ -554,7 +550,19 @@ function getCategoryIcon(categoryId: string): string {
   return icons[categoryId] || '🚗';
 }
 
-function getStepValue(formData: any, step: number): string {
-  const fields = ['category', 'model', 'color', 'name'];
-  return formData[fields[step - 1]] || '';
+function getStepValue(formData: QuoteFormData, step: number): string {
+  const fields: Array<keyof QuoteFormData> = ['category', 'model', 'color', 'name'];
+  const key = fields[step - 1];
+  return formData[key] || '';
 }
+
+// Tipos auxiliares
+type QuoteFormData = {
+  category: string;
+  model: string;
+  color: string;
+  name: string;
+  phone: string;
+  email: string;
+  city: string;
+};
