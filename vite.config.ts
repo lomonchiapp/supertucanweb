@@ -6,14 +6,19 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  server:{
+  server: {
     host: '0.0.0.0',
     port: 5173,
   },
+  preview: {
+    host: '0.0.0.0',
+    port: 4173,
+  },
   resolve: {
     alias: {
-      // Vite interpreta rutas que empiezan con '/' relativas a la raíz del proyecto
       "@": "/src",
     },
   },
+  // SPA fallback: all routes serve index.html (needed for /admin, /modelos/:slug, etc.)
+  appType: 'spa',
 })
