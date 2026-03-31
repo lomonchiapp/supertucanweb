@@ -21,6 +21,15 @@ export async function uploadImage(
   return getDownloadURL(storageRef);
 }
 
+export async function uploadFileToPath(
+  storagePath: string,
+  file: File
+): Promise<string> {
+  const storageRef = ref(storage, storagePath);
+  await uploadBytes(storageRef, file);
+  return getDownloadURL(storageRef);
+}
+
 export async function deleteImage(path: string): Promise<void> {
   const storageRef = ref(storage, path);
   await deleteObject(storageRef);
