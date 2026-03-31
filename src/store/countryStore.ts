@@ -29,13 +29,13 @@ export const COUNTRIES: Country[] = [
   { code: 'ecuador', name: 'Ecuador', flag: '🇪🇨', phone: '+593', currency: 'USD', language: 'es' },
   { code: 'peru', name: 'Perú', flag: '🇵🇪', phone: '+51', currency: 'PEN', language: 'es' },
   { code: 'bolivia', name: 'Bolivia', flag: '🇧🇴', phone: '+591', currency: 'BOB', language: 'es' },
-  { code: 'other', name: 'Otro País', flag: '🌎', phone: '+1', currency: 'USD', language: 'es' }
+  { code: 'other', name: 'Otro País', flag: '🌎', phone: '+1', currency: 'USD', language: 'es' },
 ];
 
 export const LANGUAGES: Language[] = [
   { code: 'es', name: 'Español', flag: '🇪🇸' },
   { code: 'en', name: 'English', flag: '🇺🇸' },
-  { code: 'pt', name: 'Português', flag: '🇧🇷' }
+  { code: 'pt', name: 'Português', flag: '🇧🇷' },
 ];
 
 interface CountryState {
@@ -52,80 +52,75 @@ interface CountryState {
   shouldShowLanding: () => boolean;
 }
 
+const COUNTRY_CODE_MAP: Record<string, string> = {
+  DO: 'dominican_republic',
+  PA: 'panama',
+  CO: 'colombia',
+  MX: 'mexico',
+  GT: 'guatemala',
+  CR: 'costa_rica',
+  HN: 'honduras',
+  NI: 'nicaragua',
+  SV: 'el_salvador',
+  EC: 'ecuador',
+  PE: 'peru',
+  BO: 'bolivia',
+};
+
 export const useCountryStore = create<CountryState>()(
   persist(
     (set, get) => ({
       selectedCountry: null,
-      selectedLanguage: LANGUAGES[0], // Español por defecto
+      selectedLanguage: LANGUAGES[0],
       hasSelectedCountry: false,
       lastSelectionDate: null,
       isDetecting: false,
 
       setCountry: (country) => set({ selectedCountry: country }),
-      
       setLanguage: (language) => set({ selectedLanguage: language }),
-      
+
       setHasSelectedCountry: (selected) => {
-        const today = new Date().toDateString();
-        set({ hasSelectedCountry: selected, lastSelectionDate: selected ? today : null });
+        set({
+          hasSelectedCountry: selected,
+          lastSelectionDate: selected ? new Date().toISOString() : null,
+        });
       },
-      
+
       setIsDetecting: (detecting) => set({ isDetecting: detecting }),
 
       shouldShowLanding: () => {
         const { hasSelectedCountry, lastSelectionDate } = get();
         if (!hasSelectedCountry) return true;
-        
-        const today = new Date().toDateString();
-        return lastSelectionDate !== today;
+        if (!lastSelectionDate) return true;
+
+        // Solo mostrar de nuevo después de 30 días
+        const lastDate = new Date(lastSelectionDate);
+        const daysSince = (Date.now() - lastDate.getTime()) / (1000 * 60 * 60 * 24);
+        return daysSince > 30;
       },
 
       detectCountry: async () => {
-        const { setIsDetecting, setCountry } = get();
-        setIsDetecting(true);
+        const state = get();
+        if (state.isDetecting) return;
+
+        set({ isDetecting: true });
 
         try {
-          // Intentar detectar país por IP
           const response = await fetch('https://ipapi.co/json/');
           const data = await response.json();
-          
-          if (data && data.country) {
-            // Mapear códigos de país ISO a nuestros códigos
-            const countryMapping: { [key: string]: string } = {
-              'DO': 'dominican_republic',
-              'PA': 'panama',
-              'CO': 'colombia',
-              'MX': 'mexico',
-              'GT': 'guatemala',
-              'CR': 'costa_rica',
-              'HN': 'honduras',
-              'NI': 'nicaragua',
-              'SV': 'el_salvador',
-              'EC': 'ecuador',
-              'PE': 'peru',
-              'BO': 'bolivia'
-            };
 
-            const detectedCountryCode = countryMapping[data.country];
-            const detectedCountry = COUNTRIES.find(c => c.code === detectedCountryCode);
-            
-            if (detectedCountry) {
-              setCountry(detectedCountry);
-            } else {
-              // Si no está en nuestra lista, usar "Otro País"
-              const otherCountry = COUNTRIES.find(c => c.code === 'other');
-              if (otherCountry) setCountry(otherCountry);
-            }
+          if (data?.country) {
+            const detectedCode = COUNTRY_CODE_MAP[data.country];
+            const detectedCountry = COUNTRIES.find((c) => c.code === detectedCode);
+            set({ selectedCountry: detectedCountry || COUNTRIES.find((c) => c.code === 'other')! });
           }
-        } catch (error) {
-          console.log('No se pudo detectar el país, usando República Dominicana por defecto');
-          // Fallback a República Dominicana (sede principal)
-          const defaultCountry = COUNTRIES.find(c => c.code === 'dominican_republic');
-          if (defaultCountry) setCountry(defaultCountry);
+        } catch {
+          const defaultCountry = COUNTRIES.find((c) => c.code === 'dominican_republic');
+          if (defaultCountry) set({ selectedCountry: defaultCountry });
         } finally {
-          setIsDetecting(false);
+          set({ isDetecting: false });
         }
-      }
+      },
     }),
     {
       name: 'country-storage',
@@ -133,8 +128,8 @@ export const useCountryStore = create<CountryState>()(
         selectedCountry: state.selectedCountry,
         selectedLanguage: state.selectedLanguage,
         hasSelectedCountry: state.hasSelectedCountry,
-        lastSelectionDate: state.lastSelectionDate
-      })
+        lastSelectionDate: state.lastSelectionDate,
+      }),
     }
   )
 );

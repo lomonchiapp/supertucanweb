@@ -1,0 +1,2 @@
+- [User Profile](user_profile.md) — Spanish-speaking dev, amateur web builder, wants to perfect SuperTucan catalog
+- [Web Audit March 2026](project_audit.md) — 37 issues found: 6 critical, 10 high, 14 medium, 7 low

@@ -1,115 +1,139 @@
 import { useState } from 'react';
 import { useCountryStore, COUNTRIES } from '@/store/countryStore';
+import { useNavigationStore } from '@/store/navigationStore';
 
 export function Footer() {
+  const { setActiveSection, setSelectedCategory } = useNavigationStore();
+
+  const handleProductClick = (category: string) => {
+    setSelectedCategory(category);
+    setActiveSection('modelos');
+  };
+
+  const handleServiceClick = (section: 'dealers' | 'partes') => {
+    setActiveSection(section);
+  };
+
   return (
     <footer className="relative bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white overflow-hidden">
       {/* Fondo decorativo */}
       <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-blue-500/5"></div>
       <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-red-500/10 to-transparent rounded-full blur-3xl transform translate-x-48 -translate-y-48"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-blue-500/10 to-transparent rounded-full blur-3xl transform -translate-x-48 translate-y-48"></div>
-      
+
       <div className="relative z-10">
         {/* Sección principal del footer */}
         <div className="max-w-7xl mx-auto px-6 py-16">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
-            
+
             {/* Columna 1: Logo y descripción */}
             <div className="lg:col-span-1">
               <div className="mb-6">
-                <img 
-                  src="/logo-full-white.png" 
-                  alt="Super Tucán" 
+                <img
+                  src="/logo-full-white.png"
+                  alt="Super Tucán"
                   className="h-16 w-auto mb-4 filter drop-shadow-lg"
                 />
-                <p className="text-gray-300 text-sm leading-relaxed">
-                  Líderes en vehículos de calidad para toda Latinoamérica. 
+                <p className="font-body text-gray-300 text-sm leading-relaxed">
+                  Líderes en vehículos de calidad para toda Latinoamérica.
                   Innovación, confiabilidad y servicio excepcional desde hace más de una década.
                 </p>
               </div>
-              
+
               {/* Redes sociales */}
               <div className="space-y-4">
-                <h4 
-                  className="text-lg font-black tracking-wider text-red-400"
-                  style={{ fontFamily: 'Bebas Neue' }}
-                >
+                <h4 className="font-sans text-lg font-black tracking-wider text-red-400">
                   SÍGUENOS
                 </h4>
                 <div className="flex space-x-4">
-                  <SocialLink icon="facebook" href="#" />
-                  <SocialLink icon="instagram" href="#" />
-                  <SocialLink icon="youtube" href="#" />
-                  <SocialLink icon="tiktok" href="#" />
-                  <SocialLink icon="whatsapp" href="#" />
+                  <SocialLink icon="facebook" href="https://facebook.com/supertucan" />
+                  <SocialLink icon="instagram" href="https://instagram.com/supertucan" />
+                  <SocialLink icon="youtube" href="https://youtube.com/@supertucan" />
+                  <SocialLink icon="tiktok" href="https://tiktok.com/@supertucan" />
+                  <SocialLink icon="whatsapp" href="https://wa.me/18091234567" />
                 </div>
               </div>
             </div>
-            
+
             {/* Columna 2: Productos */}
             <div>
-              <h4 
-                className="text-xl font-black mb-6 tracking-wider text-red-400"
-                style={{ fontFamily: 'Bebas Neue' }}
-              >
+              <h4 className="font-sans text-xl font-black mb-6 tracking-wider text-red-400">
                 PRODUCTOS
               </h4>
               <ul className="space-y-3">
-                <FooterLink href="#" text="Motocicletas" />
-                <FooterLink href="#" text="Passolas" />
-                <FooterLink href="#" text="Vehículos Sport" />
-                <FooterLink href="#" text="ATVs" />
-                <FooterLink href="#" text="Repuestos Originales" />
-                <FooterLink href="#" text="Accesorios" />
+                <li>
+                  <FooterLink text="Motocicletas" onClick={() => handleProductClick('motocicleta')} />
+                </li>
+                <li>
+                  <FooterLink text="Passolas" onClick={() => handleProductClick('passola')} />
+                </li>
+                <li>
+                  <FooterLink text="Vehículos Sport" onClick={() => handleProductClick('sport')} />
+                </li>
+                <li>
+                  <FooterLink text="ATVs" onClick={() => handleProductClick('atv')} />
+                </li>
+                <li>
+                  <FooterLink text="Repuestos Originales" onClick={() => handleServiceClick('partes')} />
+                </li>
+                <li>
+                  <FooterLink text="Accesorios" onClick={() => handleServiceClick('partes')} />
+                </li>
               </ul>
             </div>
-            
+
             {/* Columna 3: Servicios */}
             <div>
-              <h4 
-                className="text-xl font-black mb-6 tracking-wider text-red-400"
-                style={{ fontFamily: 'Bebas Neue' }}
-              >
+              <h4 className="font-sans text-xl font-black mb-6 tracking-wider text-red-400">
                 SERVICIOS
               </h4>
               <ul className="space-y-3">
-                <FooterLink href="#" text="Servicio Técnico" />
-                <FooterLink href="#" text="Garantía" />
-                <FooterLink href="#" text="Financiamiento" />
-                <FooterLink href="#" text="Dealers Autorizados" />
-                <FooterLink href="#" text="Capacitación" />
-                <FooterLink href="#" text="Soporte 24/7" />
+                <li>
+                  <FooterLink text="Servicio Técnico" onClick={() => handleServiceClick('dealers')} />
+                </li>
+                <li>
+                  <FooterLink text="Garantía" onClick={() => handleServiceClick('dealers')} />
+                </li>
+                <li>
+                  <FooterLink text="Financiamiento" onClick={() => handleServiceClick('dealers')} />
+                </li>
+                <li>
+                  <FooterLink text="Dealers Autorizados" onClick={() => handleServiceClick('dealers')} />
+                </li>
+                <li>
+                  <FooterLink text="Capacitación" onClick={() => handleServiceClick('dealers')} />
+                </li>
+                <li>
+                  <FooterLink text="Soporte 24/7" onClick={() => handleServiceClick('dealers')} />
+                </li>
               </ul>
             </div>
-            
+
             {/* Columna 4: Contacto y país */}
             <div>
-              <h4 
-                className="text-xl font-black mb-6 tracking-wider text-red-400"
-                style={{ fontFamily: 'Bebas Neue' }}
-              >
+              <h4 className="font-sans text-xl font-black mb-6 tracking-wider text-red-400">
                 CONTACTO
               </h4>
-              
+
               {/* Selector de país */}
               <div className="mb-6">
                 <CountrySelector />
               </div>
-              
+
               {/* Información de contacto */}
               <div className="space-y-4">
-                <ContactInfo 
-                  icon="phone" 
+                <ContactInfo
+                  icon="phone"
                   title="TELÉFONO"
                   content="+1 (800) 123-4567"
                 />
-                <ContactInfo 
-                  icon="email" 
+                <ContactInfo
+                  icon="email"
                   title="EMAIL"
                   content="info@supertucan.com"
                 />
-                <ContactInfo 
-                  icon="location" 
+                <ContactInfo
+                  icon="location"
                   title="SEDE PRINCIPAL"
                   content="Ciudad de Panamá, Panamá"
                 />
@@ -117,21 +141,18 @@ export function Footer() {
             </div>
           </div>
         </div>
-        
+
         {/* Newsletter Section */}
         <div className="border-t border-white/10">
           <div className="max-w-7xl mx-auto px-6 py-8">
             <div className="flex flex-col lg:flex-row items-center justify-between space-y-6 lg:space-y-0">
               <div className="text-center lg:text-left">
-                <h4 
-                  className="text-2xl font-black mb-2 tracking-wider"
-                  style={{ fontFamily: 'Bebas Neue' }}
-                >
+                <h4 className="font-sans text-2xl font-black mb-2 tracking-wider">
                   MANTENTE INFORMADO
                 </h4>
-                <p className="text-gray-300">Recibe las últimas noticias, promociones y lanzamientos</p>
+                <p className="font-body text-gray-300">Recibe las últimas noticias, promociones y lanzamientos</p>
               </div>
-              
+
               <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
                 <input
                   type="email"
@@ -139,22 +160,22 @@ export function Footer() {
                   className="px-6 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent backdrop-blur-sm min-w-[300px]"
                 />
                 <button className="bg-gradient-to-r from-red-600 to-red-700 text-white px-8 py-3 rounded-xl font-black hover:from-red-700 hover:to-red-800 transition-all duration-300 transform hover:scale-105 shadow-lg">
-                  <span style={{ fontFamily: 'Bebas Neue' }}>SUSCRIBIRSE</span>
+                  <span className="font-sans">SUSCRIBIRSE</span>
                 </button>
               </div>
             </div>
           </div>
         </div>
-        
+
         {/* Footer bottom */}
         <div className="border-t border-white/10">
           <div className="max-w-7xl mx-auto px-6 py-6">
             <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
               <div className="text-sm text-gray-400 text-center md:text-left">
-                <p>&copy; 2024 Super Tucán. Todos los derechos reservados.</p>
-                <p className="mt-1">Diseñado con ❤️ para Latinoamérica</p>
+                <p className="font-body">&copy; 2026 Super Tucán. Todos los derechos reservados.</p>
+                <p className="font-body mt-1">Diseñado con ❤️ para Latinoamérica</p>
               </div>
-              
+
               <div className="flex flex-wrap justify-center md:justify-end gap-6 text-sm">
                 <FooterLink href="#" text="Términos y Condiciones" small />
                 <FooterLink href="#" text="Política de Privacidad" small />
@@ -173,14 +194,14 @@ export function Footer() {
 function CountrySelector() {
   const [isOpen, setIsOpen] = useState(false);
   const { selectedCountry, setCountry } = useCountryStore();
-  
+
   // Usar el país seleccionado del store global, con fallback a República Dominicana
   const currentCountry = selectedCountry || COUNTRIES.find(c => c.code === 'dominican_republic');
-  
+
   return (
     <div className="relative">
       <label className="block text-sm font-medium text-gray-300 mb-2">Tu país:</label>
-      
+
       {/* Botón principal */}
       <button
         onClick={() => setIsOpen(!isOpen)}
@@ -190,16 +211,16 @@ function CountrySelector() {
           <span className="text-lg">{currentCountry?.flag}</span>
           <span className="font-medium">{currentCountry?.name}</span>
         </div>
-        <svg 
-          className={`w-4 h-4 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} 
-          fill="none" 
-          stroke="currentColor" 
+        <svg
+          className={`w-4 h-4 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
+          fill="none"
+          stroke="currentColor"
           viewBox="0 0 24 24"
         >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </button>
-      
+
       {/* Dropdown */}
       {isOpen && (
         <div className="absolute top-full left-0 right-0 mt-2 bg-gray-900/95 backdrop-blur-md rounded-xl shadow-2xl border border-white/20 overflow-hidden z-50 max-h-60 overflow-y-auto">
@@ -235,24 +256,31 @@ function CountrySelector() {
 }
 
 // Componente para links del footer
-function FooterLink({ href, text, small = false }: { 
-  href: string; 
-  text: string; 
-  small?: boolean; 
+function FooterLink({ href, text, small = false, onClick }: {
+  href?: string;
+  text: string;
+  small?: boolean;
+  onClick?: () => void;
 }) {
+  const handleClick = (e: React.MouseEvent) => {
+    if (onClick) {
+      e.preventDefault();
+      onClick();
+    }
+  };
+
   return (
-    <li className={small ? '' : 'list-none'}>
-      <a
-        href={href}
-        className={`${
-          small 
-            ? 'text-gray-400 hover:text-white' 
-            : 'text-gray-300 hover:text-red-400'
-        } transition-colors duration-300 hover:underline ${small ? 'text-sm' : ''}`}
-      >
-        {text}
-      </a>
-    </li>
+    <a
+      href={href || '#'}
+      onClick={handleClick}
+      className={`${
+        small
+          ? 'text-gray-400 hover:text-white'
+          : 'text-gray-300 hover:text-red-400'
+      } transition-colors duration-300 hover:underline cursor-pointer ${small ? 'text-sm' : ''}`}
+    >
+      {text}
+    </a>
   );
 }
 
@@ -298,6 +326,8 @@ function SocialLink({ icon, href }: { icon: string; href: string }) {
   return (
     <a
       href={href}
+      target="_blank"
+      rel="noopener noreferrer"
       className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-gray-300 hover:bg-red-600 hover:text-white hover:border-red-500 transition-all duration-300 transform hover:scale-110"
     >
       {getIcon()}
@@ -306,10 +336,10 @@ function SocialLink({ icon, href }: { icon: string; href: string }) {
 }
 
 // Componente para información de contacto
-function ContactInfo({ icon, title, content }: { 
-  icon: string; 
-  title: string; 
-  content: string; 
+function ContactInfo({ icon, title, content }: {
+  icon: string;
+  title: string;
+  content: string;
 }) {
   const getIcon = () => {
     switch (icon) {
@@ -337,19 +367,34 @@ function ContactInfo({ icon, title, content }: {
     }
   };
 
+  const renderContent = () => {
+    if (icon === 'phone') {
+      return (
+        <a href="tel:+18001234567" className="font-body text-white font-medium hover:text-red-400 transition-colors duration-300">
+          {content}
+        </a>
+      );
+    }
+    if (icon === 'email') {
+      return (
+        <a href="mailto:info@supertucan.com" className="font-body text-white font-medium hover:text-red-400 transition-colors duration-300">
+          {content}
+        </a>
+      );
+    }
+    return <p className="font-body text-white font-medium">{content}</p>;
+  };
+
   return (
     <div className="flex items-start space-x-3">
       <div className="flex-shrink-0 w-10 h-10 rounded-full bg-red-600/20 flex items-center justify-center text-red-400">
         {getIcon()}
       </div>
       <div>
-        <h5 
-          className="text-sm font-black tracking-wider text-gray-400"
-          style={{ fontFamily: 'Bebas Neue' }}
-        >
+        <h5 className="font-sans text-sm font-black tracking-wider text-gray-400">
           {title}
         </h5>
-        <p className="text-white font-medium">{content}</p>
+        {renderContent()}
       </div>
     </div>
   );

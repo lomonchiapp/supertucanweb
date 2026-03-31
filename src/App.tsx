@@ -13,33 +13,35 @@ import { useCountryStore } from '@/store/countryStore';
 
 function App() {
   const { activeSection, isTransitioning } = useNavigationStore();
-  const { shouldShowLanding } = useCountryStore();
+  const { hasSelectedCountry, lastSelectionDate } = useCountryStore();
   const containerRef = useRef<HTMLDivElement>(null);
   const previousSection = useRef(activeSection);
 
+  // Derive showLanding from reactive store values
+  const showLanding = (() => {
+    if (!hasSelectedCountry) return true;
+    if (!lastSelectionDate) return true;
+    const daysSince = (Date.now() - new Date(lastSelectionDate).getTime()) / (1000 * 60 * 60 * 24);
+    return daysSince > 30;
+  })();
+
+  // Scroll to top and animate on section change
   useEffect(() => {
-    if (containerRef.current && previousSection.current !== activeSection) {
-      // Transición profesional más rápida
-      gsap.timeline()
-        .to(containerRef.current, {
-          opacity: 0,
-          scale: 0.98,
-          y: -20,
-          duration: 0.2,
-          ease: "power3.out"
-        })
-        .set(containerRef.current, {
-          scale: 1.02,
-          y: 20
-        })
-        .to(containerRef.current, {
-          opacity: 1,
-          scale: 1,
-          y: 0,
-          duration: 0.25,
-          ease: "power3.out"
-        });
-      
+    if (previousSection.current !== activeSection) {
+      window.scrollTo({ top: 0 });
+
+      if (containerRef.current) {
+        gsap.timeline()
+          .set(containerRef.current, { opacity: 0, scale: 0.98, y: -20 })
+          .to(containerRef.current, {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            duration: 0.3,
+            ease: 'power3.out',
+          });
+      }
+
       previousSection.current = activeSection;
     }
   }, [activeSection]);
@@ -61,29 +63,25 @@ function App() {
 
   return (
     <div className="min-h-screen bg-black relative">
-      {/* Country Landing - Se muestra si no se ha seleccionado país */}
-      <CountryLanding />
-      
-      {/* App principal - Solo se muestra si no se debe mostrar landing */}
-      {!shouldShowLanding() && (
+      {showLanding && <CountryLanding />}
+
+      {!showLanding && (
         <>
           <Header />
-          
-          {/* Loader de transición */}
+
           {isTransitioning && (
             <div className="absolute inset-0 bg-black/20 backdrop-blur-sm z-40 flex items-center justify-center">
-              <div className="w-12 h-12 border-4 border-red-500/30 border-t-red-500 rounded-full animate-spin"></div>
+              <div className="w-12 h-12 border-4 border-red-500/30 border-t-red-500 rounded-full animate-spin" />
             </div>
           )}
-          
-          <div 
+
+          <main
             ref={containerRef}
-            className={`transition-all duration-300 ${isTransitioning ? 'pointer-events-none' : ''}`}
+            className={isTransitioning ? 'pointer-events-none' : ''}
           >
             {renderActiveSection()}
-          </div>
-          
-          {/* Footer siempre visible */}
+          </main>
+
           <Footer />
         </>
       )}

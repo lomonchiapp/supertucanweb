@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { useCountryStore } from '@/store/countryStore';
+import { useNavigationStore } from '@/store/navigationStore';
 
 // Datos de ejemplo para repuestos
 const PARTS_CATEGORIES = [
@@ -48,6 +49,46 @@ const PARTS_CATEGORIES = [
   }
 ];
 
+// SVG placeholder icon per category
+function ProductIcon({ category }: { category: string }) {
+  switch (category) {
+    case 'motor':
+      return (
+        <svg className="w-16 h-16 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      );
+    case 'frenos':
+      return (
+        <svg className="w-16 h-16 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="9" strokeWidth={1.5} />
+          <circle cx="12" cy="12" r="4" strokeWidth={1.5} />
+          <line x1="12" y1="3" x2="12" y2="8" strokeWidth={1.5} strokeLinecap="round" />
+          <line x1="12" y1="16" x2="12" y2="21" strokeWidth={1.5} strokeLinecap="round" />
+        </svg>
+      );
+    case 'carroceria':
+      return (
+        <svg className="w-16 h-16 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        </svg>
+      );
+    case 'electrico':
+      return (
+        <svg className="w-16 h-16 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+      );
+    default:
+      return (
+        <svg className="w-16 h-16 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+        </svg>
+      );
+  }
+}
+
 const SAMPLE_PARTS = [
   {
     id: 1,
@@ -56,7 +97,6 @@ const SAMPLE_PARTS = [
     model: 'ADRI SPORT / BWS / CG200',
     price: 25.99,
     originalPrice: 32.99,
-    image: '/api/placeholder/300/200',
     inStock: true,
     discount: 20,
     featured: true
@@ -68,7 +108,6 @@ const SAMPLE_PARTS = [
     model: 'ADRI SPORT',
     price: 45.99,
     originalPrice: null,
-    image: '/api/placeholder/300/200',
     inStock: true,
     discount: 0,
     featured: true
@@ -80,7 +119,6 @@ const SAMPLE_PARTS = [
     model: 'BWS',
     price: 89.99,
     originalPrice: 109.99,
-    image: '/api/placeholder/300/200',
     inStock: false,
     discount: 18,
     featured: false
@@ -92,7 +130,6 @@ const SAMPLE_PARTS = [
     model: 'Universal',
     price: 15.99,
     originalPrice: null,
-    image: '/api/placeholder/300/200',
     inStock: true,
     discount: 0,
     featured: true
@@ -103,7 +140,8 @@ export function PartesSection() {
   const [selectedCategory, setSelectedCategory] = useState('todos');
   const [cartItems, setCartItems] = useState<number[]>([]);
   const { selectedCountry } = useCountryStore();
-  
+  const { setActiveSection } = useNavigationStore();
+
   const heroRef = useRef<HTMLDivElement>(null);
   const categoriesRef = useRef<HTMLDivElement>(null);
   const productsRef = useRef<HTMLDivElement>(null);
@@ -136,31 +174,35 @@ export function PartesSection() {
     setCartItems(prev => [...prev, partId]);
   };
 
-  const filteredParts = selectedCategory === 'todos' 
-    ? SAMPLE_PARTS 
+  const scrollToCategories = () => {
+    const el = document.getElementById('parts-categories');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const filteredParts = selectedCategory === 'todos'
+    ? SAMPLE_PARTS
     : SAMPLE_PARTS.filter(part => part.category === selectedCategory);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white pt-40">
-      
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white pt-8">
+
       {/* Hero Section */}
       <div ref={heroRef} className="relative overflow-hidden py-16">
         <div className="absolute inset-0 bg-[url('/bg.avif')] bg-cover bg-center opacity-10"></div>
         <div className="relative max-w-7xl mx-auto px-6">
-          
+
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Texto Principal */}
             <div>
-              <h1 
-                className="text-5xl lg:text-7xl font-black mb-6 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-red-600"
-                style={{ fontFamily: 'Bebas Neue' }}
-              >
+              <h1 className="font-sans text-5xl lg:text-7xl font-black mb-6 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-red-600">
                 REPUESTOS ORIGINALES
               </h1>
-              
-              <p className="text-xl lg:text-2xl text-gray-300 mb-8 leading-relaxed">
-                Encuentra repuestos originales y accesorios para tu Super Tucán. 
-                <span className="text-red-400 font-bold"> Calidad garantizada</span> y 
+
+              <p className="font-body text-xl lg:text-2xl text-gray-300 mb-8 leading-relaxed">
+                Encuentra repuestos originales y accesorios para tu Super Tucán.
+                <span className="text-red-400 font-bold"> Calidad garantizada</span> y
                 <span className="text-red-400 font-bold"> entrega rápida</span> en toda Latinoamérica.
               </p>
 
@@ -169,27 +211,33 @@ export function PartesSection() {
                   <svg className="w-5 h-5 text-green-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
-                  <span className="text-sm font-bold">Repuestos Originales</span>
+                  <span className="font-body text-sm font-bold">Repuestos Originales</span>
                 </div>
                 <div className="flex items-center bg-gray-800/50 px-4 py-2 rounded-full">
                   <svg className="w-5 h-5 text-green-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
-                  <span className="text-sm font-bold">Envío a {selectedCountry?.name || 'tu país'}</span>
+                  <span className="font-body text-sm font-bold">Envío a {selectedCountry?.name || 'tu país'}</span>
                 </div>
                 <div className="flex items-center bg-gray-800/50 px-4 py-2 rounded-full">
                   <svg className="w-5 h-5 text-green-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
-                  <span className="text-sm font-bold">Garantía de 6 meses</span>
+                  <span className="font-body text-sm font-bold">Garantía de 6 meses</span>
                 </div>
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <button className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-xl font-black text-lg transition-all duration-300 transform hover:scale-105" style={{ fontFamily: 'Bebas Neue' }}>
+                <button
+                  onClick={scrollToCategories}
+                  className="font-sans bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-xl font-black text-lg transition-all duration-300 transform hover:scale-105"
+                >
                   EXPLORAR CATÁLOGO
                 </button>
-                <button className="border-2 border-gray-600 text-gray-300 hover:border-white hover:text-white px-8 py-4 rounded-xl font-bold transition-all duration-300">
+                <button
+                  onClick={() => setActiveSection('dealers')}
+                  className="font-body border-2 border-gray-600 text-gray-300 hover:border-white hover:text-white px-8 py-4 rounded-xl font-bold transition-all duration-300"
+                >
                   CONTACTAR DEALER
                 </button>
               </div>
@@ -198,28 +246,28 @@ export function PartesSection() {
             {/* Estadísticas */}
             <div className="grid grid-cols-2 gap-6">
               <div className="bg-gray-800/50 backdrop-blur-sm p-6 rounded-2xl border border-gray-700">
-                <div className="text-3xl font-black text-red-400 mb-2" style={{ fontFamily: 'Bebas Neue' }}>
+                <div className="font-sans text-3xl font-black text-red-400 mb-2">
                   200+
                 </div>
-                <div className="text-sm text-gray-300">Repuestos Disponibles</div>
+                <div className="font-body text-sm text-gray-300">Repuestos Disponibles</div>
               </div>
               <div className="bg-gray-800/50 backdrop-blur-sm p-6 rounded-2xl border border-gray-700">
-                <div className="text-3xl font-black text-red-400 mb-2" style={{ fontFamily: 'Bebas Neue' }}>
+                <div className="font-sans text-3xl font-black text-red-400 mb-2">
                   12
                 </div>
-                <div className="text-sm text-gray-300">Países con Envío</div>
+                <div className="font-body text-sm text-gray-300">Países con Envío</div>
               </div>
               <div className="bg-gray-800/50 backdrop-blur-sm p-6 rounded-2xl border border-gray-700">
-                <div className="text-3xl font-black text-red-400 mb-2" style={{ fontFamily: 'Bebas Neue' }}>
+                <div className="font-sans text-3xl font-black text-red-400 mb-2">
                   24h
                 </div>
-                <div className="text-sm text-gray-300">Tiempo de Procesamiento</div>
+                <div className="font-body text-sm text-gray-300">Tiempo de Procesamiento</div>
               </div>
               <div className="bg-gray-800/50 backdrop-blur-sm p-6 rounded-2xl border border-gray-700">
-                <div className="text-3xl font-black text-red-400 mb-2" style={{ fontFamily: 'Bebas Neue' }}>
+                <div className="font-sans text-3xl font-black text-red-400 mb-2">
                   95%
                 </div>
-                <div className="text-sm text-gray-300">Satisfacción del Cliente</div>
+                <div className="font-body text-sm text-gray-300">Satisfacción del Cliente</div>
               </div>
             </div>
           </div>
@@ -227,12 +275,9 @@ export function PartesSection() {
       </div>
 
       {/* Categorías */}
-      <div ref={categoriesRef} className="py-16 bg-gray-900/50">
+      <div id="parts-categories" ref={categoriesRef} className="py-16 bg-gray-900/50">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 
-            className="text-4xl lg:text-5xl font-black text-center text-white mb-12"
-            style={{ fontFamily: 'Bebas Neue' }}
-          >
+          <h2 className="font-sans text-4xl lg:text-5xl font-black text-center text-white mb-12">
             CATEGORÍAS DE REPUESTOS
           </h2>
 
@@ -246,10 +291,10 @@ export function PartesSection() {
               }`}
             >
               <div className="text-3xl mb-3">📦</div>
-              <div className="text-lg font-black mb-1" style={{ fontFamily: 'Bebas Neue' }}>
+              <div className="font-sans text-lg font-black mb-1">
                 TODOS
               </div>
-              <div className="text-sm opacity-75">Ver todo</div>
+              <div className="font-body text-sm opacity-75">Ver todo</div>
             </button>
 
             {PARTS_CATEGORIES.map((category) => (
@@ -263,10 +308,10 @@ export function PartesSection() {
                 }`}
               >
                 <div className="text-3xl mb-3">{category.icon}</div>
-                <div className="text-lg font-black mb-1" style={{ fontFamily: 'Bebas Neue' }}>
+                <div className="font-sans text-lg font-black mb-1">
                   {category.name}
                 </div>
-                <div className="text-sm opacity-75">{category.count} productos</div>
+                <div className="font-body text-sm opacity-75">{category.count} productos</div>
               </button>
             ))}
           </div>
@@ -277,13 +322,10 @@ export function PartesSection() {
       <div ref={productsRef} className="py-16">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex justify-between items-center mb-8">
-            <h3 
-              className="text-3xl font-black text-white"
-              style={{ fontFamily: 'Bebas Neue' }}
-            >
+            <h3 className="font-sans text-3xl font-black text-white">
               {selectedCategory === 'todos' ? 'PRODUCTOS DESTACADOS' : `REPUESTOS DE ${PARTS_CATEGORIES.find(c => c.id === selectedCategory)?.name.toUpperCase()}`}
             </h3>
-            <div className="text-gray-400">
+            <div className="font-body text-gray-400">
               {filteredParts.length} productos encontrados
             </div>
           </div>
@@ -304,28 +346,26 @@ export function PartesSection() {
                     </div>
                   )}
                   <div className="w-full h-full bg-gradient-to-br from-gray-600 to-gray-800 flex items-center justify-center">
-                    <svg className="w-16 h-16 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                    </svg>
+                    <ProductIcon category={part.category} />
                   </div>
                 </div>
 
                 {/* Información del producto */}
                 <div className="p-6">
-                  <h4 className="text-lg font-black text-white mb-2" style={{ fontFamily: 'Bebas Neue' }}>
+                  <h4 className="font-sans text-lg font-black text-white mb-2">
                     {part.name}
                   </h4>
-                  <p className="text-sm text-gray-400 mb-3">
+                  <p className="font-body text-sm text-gray-400 mb-3">
                     Compatible: {part.model}
                   </p>
 
                   {/* Precio */}
                   <div className="flex items-center mb-4">
-                    <span className="text-2xl font-black text-red-400" style={{ fontFamily: 'Bebas Neue' }}>
+                    <span className="font-sans text-2xl font-black text-red-400">
                       ${part.price}
                     </span>
                     {part.originalPrice && (
-                      <span className="text-sm text-gray-500 line-through ml-2">
+                      <span className="font-body text-sm text-gray-500 line-through ml-2">
                         ${part.originalPrice}
                       </span>
                     )}
@@ -375,22 +415,25 @@ export function PartesSection() {
       {/* CTA Section */}
       <div className="py-16 bg-gray-900">
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 
-            className="text-4xl lg:text-5xl font-black text-white mb-6"
-            style={{ fontFamily: 'Bebas Neue' }}
-          >
+          <h2 className="font-sans text-4xl lg:text-5xl font-black text-white mb-6">
             ¿NO ENCUENTRAS LO QUE BUSCAS?
           </h2>
-          
-          <p className="text-xl text-gray-300 mb-8">
+
+          <p className="font-body text-xl text-gray-300 mb-8">
             Nuestro equipo de soporte puede ayudarte a encontrar el repuesto exacto que necesitas.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-xl font-black text-lg transition-all duration-300 transform hover:scale-105">
+            <button
+              onClick={() => setActiveSection('dealers')}
+              className="font-sans bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-xl font-black text-lg transition-all duration-300 transform hover:scale-105"
+            >
               CONTACTAR SOPORTE
             </button>
-            <button className="border-2 border-gray-600 text-gray-300 hover:border-white hover:text-white px-8 py-4 rounded-xl font-bold transition-all duration-300">
+            <button
+              onClick={() => setActiveSection('dealers')}
+              className="font-body border-2 border-gray-600 text-gray-300 hover:border-white hover:text-white px-8 py-4 rounded-xl font-bold transition-all duration-300"
+            >
               VER DEALERS
             </button>
           </div>

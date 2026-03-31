@@ -1,318 +1,293 @@
 import { useState, useEffect } from 'react';
-import { bikesData } from '@/data/bikes';
-import { LazyImage } from './ui/lazy-image';
-import { SkyBackground } from './ui/sky-background';
-import { useNavigationStore } from '@/store/navigationStore';
+import { Link } from 'react-router-dom';
+import { getBikesByCategory } from '@/data/bikes';
+import { CATEGORIES } from '@/types/bikes';
 import type { BikeModel, BikeColor } from '@/types/bikes';
-
-// Definición de categorías
-const categories = [
-  {
-    id: 'motocicleta',
-    name: 'MOTOCICLETA',
-    icon: '🏍️',
-    description: 'Potencia y versatilidad para todo terreno',
-    models: ['adri-sport', 'cg200']
-  },
-  {
-    id: 'passola',
-    name: 'PASSOLA',
-    icon: '🛵',
-    description: 'Ideal para la ciudad y uso urbano',
-    models: ['bws']
-  },
-  {
-    id: 'atv',
-    name: 'ATV',
-    icon: '🏎️',
-    description: 'Aventura y diversión off-road',
-    models: [] // Sin modelos por ahora
-  },
-  {
-    id: 'sport',
-    name: 'SPORT',
-    icon: '🏁',
-    description: 'Velocidad y rendimiento deportivo',
-    models: ['st-125']
-  }
-];
+import { LazyImage } from './ui/lazy-image';
+import { useNavigationStore } from '@/store/navigationStore';
+import { ModernQuoteSheet } from './ModernQuoteSheet';
 
 export function ModelosSection() {
   const { selectedCategory } = useNavigationStore();
   const [activeCategory, setActiveCategory] = useState(selectedCategory);
-  
-  // Sincronizar con el store cuando cambie la categoría seleccionada
+  const [quoteOpen, setQuoteOpen] = useState(false);
+
   useEffect(() => {
     setActiveCategory(selectedCategory);
   }, [selectedCategory]);
 
-  const getModelsForCategory = (categoryId: string) => {
-    const category = categories.find(cat => cat.id === categoryId);
-    if (!category) return [];
-    
-    return bikesData.filter(bike => category.models.includes(bike.id));
-  };
-
-  const currentModels = getModelsForCategory(activeCategory);
+  const currentModels = getBikesByCategory(activeCategory);
+  const activeCategoryInfo = CATEGORIES.find((c) => c.id === activeCategory);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black pt-40">
-      {/* Header de la sección */}
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-12 pt-16">
-          <h1 
-            className="text-4xl md:text-6xl font-black text-white mb-4 tracking-tight"
-            style={{ 
-              fontFamily: 'Bebas Neue',
-              textShadow: '0 0 30px rgba(239, 68, 68, 0.5)'
-            }}
-          >
-            NUESTROS MODELOS
-          </h1>
-          <p className="text-lg text-gray-300 max-w-2xl mx-auto">
-            Descubre la línea completa de vehículos Super Tucán
-          </p>
-        </div>
-      </div>
+    <div className="min-h-screen bg-gray-950">
+      {/* ══════════ Header con tabs de categoría ══════════ */}
+      <div className="border-b border-white/5">
+        <div className="max-w-7xl mx-auto px-6">
+          {/* Título */}
+          <div className="pt-10 pb-6">
+            <h1 className="font-display text-5xl md:text-6xl font-bold text-white tracking-tight uppercase">
+              MODELOS
+            </h1>
+            <p className="text-gray-500 text-sm font-sans mt-2 tracking-wide">
+              Descubre la línea completa de vehículos Super Tucán
+            </p>
+          </div>
 
-      {/* Layout principal con sidebar */}
-      <div className="flex">
-        {/* Sidebar de categorías */}
-        <div className="w-80 bg-gray-900/50 backdrop-blur-md border-r border-gray-700/50 min-h-screen sticky top-0">
-          <div className="p-6">
-            <h2 
-              className="text-2xl font-black text-white mb-6 tracking-wider"
-              style={{ fontFamily: 'Bebas Neue' }}
-            >
-              CATEGORÍAS
-            </h2>
-            
-            {/* Lista de categorías */}
-            <div className="space-y-3">
-              {categories.map((category) => (
+          {/* Tabs de categoría */}
+          <div className="flex gap-0 -mb-px">
+            {CATEGORIES.map((cat) => {
+              const isActive = activeCategory === cat.id;
+              const count = getBikesByCategory(cat.id).length;
+              return (
                 <button
-                  key={category.id}
-                  onClick={() => setActiveCategory(category.id)}
-                  className={`group w-full text-center py-4 px-6 rounded-xl transition-all duration-300 border-2 ${
-                    activeCategory === category.id
-                      ? 'bg-gradient-to-r from-red-600 to-red-700 text-white shadow-lg border-red-500'
-                      : 'bg-gray-800/30 text-gray-300 hover:bg-gray-700/50 border-gray-600 hover:border-red-500/50'
+                  key={cat.id}
+                  onClick={() => setActiveCategory(cat.id)}
+                  className={`relative px-6 py-3 text-xs font-bold tracking-[0.2em] font-accent transition-colors duration-300 border-b-2 ${
+                    isActive
+                      ? 'text-white border-red-600'
+                      : 'text-white/30 border-transparent hover:text-white/60'
                   }`}
                 >
-                  {/* Solo el nombre de la categoría */}
-                  <div 
-                    className="text-xl font-black tracking-wider"
-                    style={{ fontFamily: 'Bebas Neue' }}
-                  >
-                    {category.name}
-                  </div>
+                  {cat.name}
+                  {count > 0 && (
+                    <span className={`ml-2 text-[9px] px-1.5 py-0.5 rounded-full ${
+                      isActive ? 'bg-red-600 text-white' : 'bg-white/5 text-white/30'
+                    }`}>
+                      {count}
+                    </span>
+                  )}
                 </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Contenido principal - Modelos */}
-        <div className="flex-1">
-          {/* Sección con fondo del Hero */}
-          <div className="relative">
-            <SkyBackground />
-            
-            <div className="relative z-10 p-6">
-              {/* Header de categoría activa */}
-              <div className="mb-8">
-                <h2 
-                  className="text-3xl font-black text-white mb-2"
-                  style={{ fontFamily: 'Bebas Neue' }}
-                >
-                  {categories.find(c => c.id === activeCategory)?.name}
-                </h2>
-                <p className="text-gray-300">
-                  {categories.find(c => c.id === activeCategory)?.description}
-                </p>
-              </div>
-
-              {/* Grid de modelos */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-16">
-                {currentModels.length > 0 ? (
-                  currentModels.map((bike) => (
-                    <BikeImageCard key={bike.id} bike={bike} />
-                  ))
-                ) : (
-                  <div className="col-span-full text-center py-12">
-                    <div className="text-4xl mb-3">🚧</div>
-                    <h3 
-                      className="text-2xl font-black text-white mb-2"
-                      style={{ fontFamily: 'Bebas Neue' }}
-                    >
-                      PRÓXIMAMENTE
-                    </h3>
-                    <p className="text-gray-400 text-sm">
-                      Nuevos modelos en desarrollo
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
+              );
+            })}
           </div>
         </div>
       </div>
+
+      {/* ══════════ Contenido ══════════ */}
+      <div className="max-w-7xl mx-auto px-6 py-10">
+        {/* Descripción de categoría */}
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h2 className="font-display text-2xl font-bold text-white tracking-tight uppercase">
+              {activeCategoryInfo?.name}
+            </h2>
+            <p className="text-gray-500 text-sm font-sans mt-1">{activeCategoryInfo?.description}</p>
+          </div>
+          <span className="text-xs text-white/20 font-accent tracking-[0.15em]">
+            {currentModels.length} MODELO{currentModels.length !== 1 ? 'S' : ''}
+          </span>
+        </div>
+
+        {/* Grid de modelos */}
+        {currentModels.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {currentModels.map((bike) => (
+              <ModelCard key={bike.id} bike={bike} onQuote={() => setQuoteOpen(true)} />
+            ))}
+          </div>
+        ) : (
+          <EmptyState />
+        )}
+      </div>
+
+      <ModernQuoteSheet isOpen={quoteOpen} onClose={() => setQuoteOpen(false)} />
     </div>
   );
 }
 
-// Card de catálogo funcional para cada modelo
-function BikeImageCard({ bike }: { bike: BikeModel }) {
-  const [selectedColor, setSelectedColor] = useState<string>(bike.colors[0]?.value || 'azul');
-  const [isExpanded, setIsExpanded] = useState(false);
-  
-  const currentColor: BikeColor = bike.colors.find((c: BikeColor) => c.value === selectedColor) || bike.colors[0]!;
+/* ═══════════════════════════════════════════════════ */
+/* MODEL CARD                                         */
+/* ═══════════════════════════════════════════════════ */
+function ModelCard({ bike, onQuote }: { bike: BikeModel; onQuote: () => void }) {
+  const [selectedColor, setSelectedColor] = useState(bike.colors[0]?.value || '');
+  const [specsExpanded, setSpecsExpanded] = useState(false);
+  const currentColor = bike.colors.find((c) => c.value === selectedColor) || bike.colors[0]!;
   const mainImage = currentColor?.images?.main || currentColor?.images?.front;
 
   return (
-    <div className="group relative transition-all duration-500">
-      
-      {/* Imagen principal - SIN ENCASILLAR */}
-      <div className="relative mb-4">
-        {mainImage && (
-          <LazyImage
-            src={mainImage}
-            alt={`${bike.name} ${currentColor.name}`}
-            className="w-full h-auto object-contain transition-all duration-500 hover:scale-105"
+    <div className="group relative rounded-xl border border-white/5 bg-white/[0.02] hover:border-white/10 transition-all duration-400 overflow-hidden">
+      {/* Línea roja top */}
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-red-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left z-10" />
+
+      {/* Layout horizontal: imagen | info */}
+      <div className="flex flex-col sm:flex-row">
+        {/* Imagen */}
+        <div className="relative sm:w-[55%] h-56 sm:h-64 flex items-center justify-center overflow-hidden bg-black/20">
+          {/* Splash */}
+          <div
+            className="absolute inset-0 pointer-events-none"
             style={{
-              filter: 'drop-shadow(0 15px 35px rgba(0, 0, 0, 0.3)) drop-shadow(0 0 20px rgba(239, 68, 68, 0.1))'
+              background: 'radial-gradient(ellipse 70% 60% at 50% 55%, rgba(255,255,255,0.04) 0%, transparent 70%)',
             }}
           />
-        )}
-        
-        {/* Badge flotante */}
-        <div className="absolute top-3 left-3 z-10">
-          <span className="bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
-            NUEVO
-          </span>
-        </div>
-        
-        {/* Botón expandir flotante */}
-        <button 
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="absolute top-3 right-3 z-10 w-8 h-8 bg-black/70 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-red-600 transition-all duration-300 shadow-lg"
-        >
-          {isExpanded ? '−' : '+'}
-        </button>
-      </div>
-
-      {/* Información del modelo - Con fondo glassmorphism */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 space-y-3 shadow-lg border border-white/50">
-        
-        {/* Nombre del modelo */}
-        <h3 
-          className="text-gray-900 text-xl font-black tracking-wide"
-          style={{ fontFamily: 'Bebas Neue' }}
-        >
-          {bike.name}
-        </h3>
-
-        {/* Selector de colores funcional */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-700">Color:</span>
-            <span className="text-sm text-gray-600 capitalize">{currentColor.name}</span>
-          </div>
-          <div className="flex gap-2 flex-wrap">
-            {bike.colors.map((color: BikeColor) => (
-              <button
-                key={color.value}
-                onClick={() => setSelectedColor(color.value)}
-                className={`w-8 h-8 rounded-full border-3 transition-all duration-300 hover:scale-110 ${
-                  selectedColor === color.value 
-                    ? 'border-red-500 ring-2 ring-red-500/30' 
-                    : 'border-gray-300 hover:border-red-400'
-                }`}
-                style={{ backgroundColor: getColorCode(color.value) }}
-                title={color.name}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Información expandible */}
-        {isExpanded && (
-          <div className="space-y-3 animate-in slide-in-from-top duration-300">
-            
-            {/* Especificaciones */}
-            <div className="bg-gray-100 rounded-lg p-3 space-y-2">
-              <h4 className="font-bold text-gray-900 text-sm">Especificaciones:</h4>
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                <div>
-                  <span className="text-gray-500">Motor:</span>
-                  <span className="ml-1 font-medium">125-200cc</span>
-                </div>
-                <div>
-                  <span className="text-gray-500">Tipo:</span>
-                  <span className="ml-1 font-medium">4 Tiempos</span>
-                </div>
-                <div>
-                  <span className="text-gray-500">Arranque:</span>
-                  <span className="ml-1 font-medium">Eléctrico</span>
-                </div>
-                <div>
-                  <span className="text-gray-500">Tanque:</span>
-                  <span className="ml-1 font-medium">13L</span>
-                </div>
-              </div>
+          {mainImage && (
+            <LazyImage
+              src={mainImage}
+              alt={`${bike.name} ${currentColor.name}`}
+              className="relative z-10 w-full h-full object-contain p-6 group-hover:scale-105 transition-transform duration-500"
+              style={{ filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.4))' }}
+            />
+          )}
+          {/* Badge */}
+          {bike.featured && (
+            <div className="absolute top-3 left-3 z-20">
+              <span className="bg-red-600 text-white px-2.5 py-0.5 text-[9px] font-bold tracking-[0.15em] font-accent">
+                DESTACADO
+              </span>
             </div>
+          )}
+        </div>
 
-            {/* Características destacadas */}
-            <div className="space-y-1">
-              <div className="flex items-center text-xs text-gray-600">
-                <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                Garantía oficial
+        {/* Info */}
+        <div className="flex-1 p-5 flex flex-col justify-between">
+          {/* Header */}
+          <div>
+            <h3 className="font-display text-3xl font-bold text-white tracking-tight uppercase leading-none">
+              {bike.name}
+            </h3>
+            <p className="text-gray-500 text-xs font-sans mt-2 leading-relaxed line-clamp-2">
+              {bike.description}
+            </p>
+          </div>
+
+          {/* Specs */}
+          <div className="grid grid-cols-3 gap-2 mt-4">
+            <div className="bg-white/[0.03] border border-white/5 rounded px-3 py-2">
+              <div className="font-accent text-sm font-bold text-red-500">{bike.specs.engine}</div>
+              <div className="text-[9px] text-white/30 font-accent tracking-[0.15em] mt-0.5">MOTOR</div>
+            </div>
+            <div className="bg-white/[0.03] border border-white/5 rounded px-3 py-2">
+              <div className="font-accent text-sm font-bold text-red-500">{bike.specs.maxSpeed}</div>
+              <div className="text-[9px] text-white/30 font-accent tracking-[0.15em] mt-0.5">VEL. MAX</div>
+            </div>
+            {bike.specs.power && (
+              <div className="bg-white/[0.03] border border-white/5 rounded px-3 py-2">
+                <div className="font-accent text-sm font-bold text-red-500">{bike.specs.power}</div>
+                <div className="text-[9px] text-white/30 font-accent tracking-[0.15em] mt-0.5">POTENCIA</div>
               </div>
-              <div className="flex items-center text-xs text-gray-600">
-                <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                Repuestos disponibles
+            )}
+            {bike.specs.fuelTank && (
+              <div className="bg-white/[0.03] border border-white/5 rounded px-3 py-2">
+                <div className="font-accent text-sm font-bold text-red-500">{bike.specs.fuelTank}</div>
+                <div className="text-[9px] text-white/30 font-accent tracking-[0.15em] mt-0.5">TANQUE</div>
               </div>
-              <div className="flex items-center text-xs text-gray-600">
-                <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                Servicio técnico
+            )}
+            {bike.specs.weight && (
+              <div className="bg-white/[0.03] border border-white/5 rounded px-3 py-2">
+                <div className="font-accent text-sm font-bold text-red-500">{bike.specs.weight}</div>
+                <div className="text-[9px] text-white/30 font-accent tracking-[0.15em] mt-0.5">PESO</div>
               </div>
+            )}
+            {bike.specs.transmission && (
+              <div className="bg-white/[0.03] border border-white/5 rounded px-3 py-2">
+                <div className="font-accent text-sm font-bold text-red-500">{bike.specs.transmission}</div>
+                <div className="text-[9px] text-white/30 font-accent tracking-[0.15em] mt-0.5">TRANSMISIÓN</div>
+              </div>
+            )}
+          </div>
+
+          {/* Expanded specs */}
+          {specsExpanded && (
+            <div className="grid grid-cols-3 gap-2 mt-2">
+              {bike.specs.brakeType && (
+                <div className="bg-white/[0.03] border border-white/5 rounded px-3 py-2">
+                  <div className="font-accent text-sm font-bold text-red-500">{bike.specs.brakeType}</div>
+                  <div className="text-[9px] text-white/30 font-accent tracking-[0.15em] mt-0.5">FRENOS</div>
+                </div>
+              )}
+              {bike.specs.startType && (
+                <div className="bg-white/[0.03] border border-white/5 rounded px-3 py-2">
+                  <div className="font-accent text-sm font-bold text-red-500">{bike.specs.startType}</div>
+                  <div className="text-[9px] text-white/30 font-accent tracking-[0.15em] mt-0.5">ARRANQUE</div>
+                </div>
+              )}
+              {bike.specs.wheelSize && (
+                <div className="bg-white/[0.03] border border-white/5 rounded px-3 py-2">
+                  <div className="font-accent text-sm font-bold text-red-500">{bike.specs.wheelSize}</div>
+                  <div className="text-[9px] text-white/30 font-accent tracking-[0.15em] mt-0.5">RUEDAS</div>
+                </div>
+              )}
+              {bike.specs.seatHeight && (
+                <div className="bg-white/[0.03] border border-white/5 rounded px-3 py-2">
+                  <div className="font-accent text-sm font-bold text-red-500">{bike.specs.seatHeight}</div>
+                  <div className="text-[9px] text-white/30 font-accent tracking-[0.15em] mt-0.5">ALTURA ASIENTO</div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Toggle expanded specs */}
+          {(bike.specs.brakeType || bike.specs.startType || bike.specs.wheelSize || bike.specs.seatHeight) && (
+            <button
+              onClick={() => setSpecsExpanded(!specsExpanded)}
+              className="mt-2 text-[9px] text-white/30 hover:text-white/50 font-accent tracking-[0.15em] transition-colors duration-200"
+            >
+              {specsExpanded ? '- MENOS SPECS' : '+ MÁS SPECS'}
+            </button>
+          )}
+
+          {/* Colores */}
+          <div className="mt-4">
+            <div className="flex items-center gap-3">
+              <span className="text-[9px] text-white/30 font-accent tracking-[0.15em]">COLOR</span>
+              <div className="flex gap-1.5">
+                {bike.colors.map((color: BikeColor) => (
+                  <button
+                    key={color.value}
+                    onClick={() => setSelectedColor(color.value)}
+                    className={`w-6 h-6 rounded-full border-2 transition-all duration-200 hover:scale-110 ${
+                      selectedColor === color.value
+                        ? 'border-red-500 ring-1 ring-red-500/30'
+                        : 'border-white/15 hover:border-white/30'
+                    }`}
+                    style={{ backgroundColor: color.hex }}
+                    title={color.name}
+                  />
+                ))}
+              </div>
+              <span className="text-[10px] text-white/40 font-sans ml-auto">{currentColor.name}</span>
             </div>
           </div>
-        )}
 
-        {/* Botones de acción */}
-        <div className="flex gap-2 pt-2">
-          <button className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 px-3 rounded-lg text-sm font-bold transition-all duration-300 transform hover:scale-105">
-            COTIZAR
-          </button>
-          <button className="px-3 py-2 border-2 border-gray-300 text-gray-700 rounded-lg hover:border-red-600 hover:text-red-600 transition-all duration-300">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
-          </button>
-          <button className="px-3 py-2 border-2 border-gray-300 text-gray-700 rounded-lg hover:border-red-600 hover:text-red-600 transition-all duration-300">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
-            </svg>
-          </button>
+          {/* Acciones */}
+          <div className="flex gap-2 mt-4">
+            <button
+              onClick={onQuote}
+              className="flex-1 bg-red-600 hover:bg-red-500 text-white py-2.5 text-[10px] font-bold tracking-[0.2em] font-accent transition-colors duration-300"
+              style={{ clipPath: 'polygon(0 0, 100% 0, 96% 100%, 0% 100%)' }}
+            >
+              COTIZAR
+            </button>
+            <Link
+              to={`/modelos/${bike.slug}`}
+              className="px-4 py-2.5 border border-white/10 text-white/40 hover:text-white hover:border-white/25 transition-all duration-300 text-[10px] font-bold tracking-[0.2em] font-accent inline-flex items-center justify-center"
+              style={{ clipPath: 'polygon(4% 0, 100% 0, 100% 100%, 0% 100%)' }}
+            >
+              DETALLES
+            </Link>
+          </div>
         </div>
       </div>
-
     </div>
   );
 }
 
-// Función helper para obtener códigos de color
-function getColorCode(colorName: string): string {
-  const colorMap: { [key: string]: string } = {
-    'azul': '#3B82F6',
-    'blanca': '#FFFFFF',
-    'blanco': '#FFFFFF',
-    'negra': '#1F2937',
-    'negro': '#1F2937',
-    'roja': '#EF4444',
-    'rojo': '#EF4444'
-  };
-  
-  return colorMap[colorName.toLowerCase()] || '#6B7280';
+/* ═══════════════════════════════════════════════════ */
+/* EMPTY STATE                                        */
+/* ═══════════════════════════════════════════════════ */
+function EmptyState() {
+  return (
+    <div className="text-center py-20 border border-dashed border-white/10 rounded-xl">
+      <div className="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center mx-auto mb-4">
+        <svg className="w-7 h-7 text-white/15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg>
+      </div>
+      <h3 className="font-display text-2xl font-bold text-white/40 tracking-tight uppercase">
+        PRÓXIMAMENTE
+      </h3>
+      <p className="text-white/20 text-xs font-sans mt-2">Nuevos modelos en desarrollo</p>
+    </div>
+  );
 }

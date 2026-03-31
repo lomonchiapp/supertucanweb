@@ -1,23 +1,20 @@
 import { useState, useEffect, useRef } from 'react';
-import { gsap } from 'gsap';
-import { useNavigationStore } from '@/store/navigationStore';
+import { useNavigationStore, type NavigationSection } from '@/store/navigationStore';
 import { useCountryStore } from '@/store/countryStore';
 import { ModernQuoteSheet } from './ModernQuoteSheet';
+
+const NAV_ITEMS: { key: NavigationSection; name: string }[] = [
+  { key: 'modelos', name: 'MODELOS' },
+  { key: 'marca', name: 'LA MARCA' },
+  { key: 'dealers', name: 'DEALERS' },
+  { key: 'partes', name: 'PARTES' },
+];
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const [isQuoteSheetOpen, setIsQuoteSheetOpen] = useState(false);
-  const flagRef = useRef<HTMLDivElement>(null);
   const { activeSection, setActiveSection, setSelectedCategory } = useNavigationStore();
-
-  const openMenu = () => {
-    setIsMenuOpen(true);
-  };
-
-  const closeMenu = () => {
-    setIsMenuOpen(false);
-  };
 
   const handleCategoryClick = (categoryId: string) => {
     setSelectedCategory(categoryId);
@@ -26,451 +23,271 @@ export function Header() {
   };
 
   useEffect(() => {
-    if (flagRef.current) {
-      // Animación seamless - primer y último gradiente idénticos para loop perfecto
-      const gradients = [
-        'linear-gradient(45deg, #000000 0%, #1a1a1a 25%, #2a2a2a 50%, #1a1a1a 75%, #000000 100%)',
-        'linear-gradient(65deg, #1a1a1a 0%, #2a2a2a 25%, #000000 50%, #2a2a2a 75%, #1a1a1a 100%)',
-        'linear-gradient(85deg, #2a2a2a 0%, #000000 25%, #1a1a1a 50%, #000000 75%, #2a2a2a 100%)',
-        'linear-gradient(105deg, #1a1a1a 0%, #2a2a2a 25%, #000000 50%, #2a2a2a 75%, #1a1a1a 100%)',
-        'linear-gradient(45deg, #000000 0%, #1a1a1a 25%, #2a2a2a 50%, #1a1a1a 75%, #000000 100%)' // Mismo que el primero
-      ];
-
-      const tl = gsap.timeline({ repeat: -1 });
-
-      // Set inicial sin animación
-      gsap.set(flagRef.current, {
-        background: gradients[0]
-      });
-
-      // Loop seamless - empezar desde el segundo gradiente
-      for (let i = 1; i < gradients.length; i++) {
-        tl.to(flagRef.current, {
-          background: gradients[i],
-          duration: 1.2,
-          ease: "none" // Sin easing para transición uniforme
-        });
-      }
-    }
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { setIsMenuOpen(false); setIsMegaMenuOpen(false); }
+    };
+    document.addEventListener('keydown', handleEsc);
+    return () => document.removeEventListener('keydown', handleEsc);
   }, []);
 
   return (
     <>
-      {/* Header Desktop */}
-      <header className="hidden lg:block absolute top-0 left-0 right-0 z-50">
-        <div className="max-w-7xl mx-auto px-0">
-          <div className="flex items-center justify-center pt-6">
-            
-            {/* Navegación Izquierda */}
-            <div className="flex items-center space-x-8 flex-1">
-              {/* Botón Modelos con Megamenú */}
-              <div className="relative"
-                onMouseEnter={() => setIsMegaMenuOpen(true)}
-                onMouseLeave={() => setIsMegaMenuOpen(false)}
-              >
-                <NavButton 
-                  title="MODELOS" 
-                  isActive={activeSection === 'modelos'}
-                  onClick={() => setActiveSection('modelos')}
-                />
-                
-                {/* Megamenú */}
-                <div 
-                  className={`fixed left-0 right-0 w-full bg-white/95 backdrop-blur-md shadow-2xl border-b border-gray-200/50 overflow-hidden z-[40] transition-all duration-500 ${
-                    isMegaMenuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-4'
-                  }`}
-                  style={{ 
-                    top: '100px', // Posición fija desde la parte superior
-                    maxWidth: '100vw'
-                  }}
-                >
-                  <MegaMenuContent onCategoryClick={handleCategoryClick} onQuoteClick={() => setIsQuoteSheetOpen(true)} />
-                </div>
-              </div>
-              
-              <NavButton 
-                title="LA MARCA" 
-                isActive={activeSection === 'marca'}
-                onClick={() => setActiveSection('marca')}
-              />
-            </div>
+      {/* ════════════════════════════════════════════════════════ */}
+      {/* DESKTOP: Logo protagonista + barra de nav inferior      */}
+      {/* ════════════════════════════════════════════════════════ */}
+      <header className="hidden lg:block fixed top-0 left-0 right-0 z-50">
+        {/* Fondo */}
+        <div className="absolute inset-0 bg-black/80 backdrop-blur-xl border-b border-white/5" />
 
-            {/* LOGO PROTAGONISTA - Centro */}
-            <div className="mx-12">
-              <div 
-                ref={flagRef} 
-                className="relative p-10 -mt-10 shadow-2xl cursor-pointer hover:shadow-3xl transition-all duration-300 overflow-hidden"
-                style={{
-                  background: 'linear-gradient(-45deg, #000000, #1a1a1a, #000000, #2a2a2a)',
-                  backgroundSize: '400% 400%',
-                  animation: 'gradientShift 8s ease-in-out infinite'
-                }}
-                onClick={() => setActiveSection('hero')}
-              >
-                <img
-                  src="/logo-white.png"
-                  alt="Super Tucán"
-                  className="h-28 w-auto mt-10 filter drop-shadow-2xl relative z-10"
-                />
-                
-                {/* Efecto de brillo sutil */}
-                <div 
-                  className="absolute inset-0 opacity-30"
-                  style={{
-                    background: 'linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%)',
-                    animation: 'shimmer 6s ease-in-out infinite'
-                  }}
-                ></div>
-              </div>
-            </div>
-            
-            <style>{`
-              @keyframes gradientShift {
-                0% { background-position: 0% 50%; }
-                50% { background-position: 100% 50%; }
-                100% { background-position: 0% 50%; }
-              }
-              
-              @keyframes shimmer {
-                0%, 100% { transform: translateX(-100%) rotate(45deg); }
-                50% { transform: translateX(100%) rotate(45deg); }
-              }
-            `}</style>
-
-            {/* Navegación Derecha */}
-            <div className="flex items-center justify-end space-x-8 flex-1">
-              <NavButton 
-                title="DEALERS" 
-                isActive={activeSection === 'dealers'}
-                onClick={() => setActiveSection('dealers')}
-              />
-              <NavButton 
-                title="PARTES" 
-                isActive={activeSection === 'partes'}
-                onClick={() => setActiveSection('partes')}
-              />
-              
-              {/* Selector de Idioma */}
+        <div className="relative">
+          {/* Fila superior: idioma — LOGO — cotizar */}
+          <div className="flex items-center justify-between max-w-7xl mx-auto px-8 h-20">
+            {/* Izquierda: idioma */}
+            <div className="w-40">
               <LanguageSelector />
             </div>
-          </div>
-        </div>
-      </header>
 
-      {/* Header Mobile */}
-      <header className="lg:hidden absolute top-0 left-0 right-0 z-10">
-        <div className="flex items-center justify-between p-4">
-          
-          {/* LOGO CON FONDO NEGRO ANIMADO - Izquierda en Mobile */}
-          <div className="flex items-center">
-            <div ref={flagRef} className="relative bg-black p-4 -mt-4 shadow-xl rounded-lg">
+            {/* Centro: LOGO grande y protagonista */}
+            <button
+              onClick={() => setActiveSection('hero')}
+              className="flex-shrink-0 focus:outline-none group"
+              aria-label="Ir al inicio"
+            >
               <img
                 src="/logo-white.png"
                 alt="Super Tucán"
-                className="h-12 w-auto filter drop-shadow-xl cursor-pointer"
-                onClick={() => setActiveSection('hero')}
+                className="h-14 w-auto transition-transform duration-300 group-hover:scale-105"
               />
+            </button>
+
+            {/* Derecha: CTA */}
+            <div className="w-40 flex justify-end">
+              <button
+                onClick={() => setIsQuoteSheetOpen(true)}
+                className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 text-xs font-bold tracking-[0.2em] font-accent transition-all duration-300 hover:scale-105"
+                style={{ clipPath: 'polygon(8% 0, 100% 0, 92% 100%, 0% 100%)' }}
+              >
+                COTIZAR
+              </button>
             </div>
           </div>
 
-          {/* Botón de Menú Mobile */}
-          <button 
-            onClick={openMenu}
-            className="group"
+          {/* Fila inferior: barra de navegación centrada */}
+          <nav
+            className="flex items-center justify-center gap-1 border-t border-white/5 h-10"
+            aria-label="Navegación principal"
           >
-            <div className="w-12 h-12 bg-gray-900/80 backdrop-blur-md rounded-full border border-gray-700/50 shadow-xl flex items-center justify-center transition-all duration-300 group-hover:bg-gray-800/90 group-hover:scale-110">
-              <div className="flex flex-col space-y-1">
-                <div className="w-5 h-0.5 bg-white rounded-full transition-all duration-300 group-hover:w-6"></div>
-                <div className="w-3 h-0.5 bg-white rounded-full transition-all duration-300 group-hover:w-6"></div>
-                <div className="w-5 h-0.5 bg-white rounded-full transition-all duration-300 group-hover:w-6"></div>
-              </div>
+            {NAV_ITEMS.map((item) => {
+              const isModelos = item.key === 'modelos';
+              return (
+                <div
+                  key={item.key}
+                  className="relative"
+                  onMouseEnter={isModelos ? () => setIsMegaMenuOpen(true) : undefined}
+                  onMouseLeave={isModelos ? () => setIsMegaMenuOpen(false) : undefined}
+                >
+                  <button
+                    onClick={() => setActiveSection(item.key)}
+                    className={`relative px-5 py-2 text-[11px] font-bold tracking-[0.25em] font-accent transition-colors duration-300 ${
+                      activeSection === item.key
+                        ? 'text-red-500'
+                        : 'text-white/50 hover:text-white'
+                    }`}
+                    aria-expanded={isModelos ? isMegaMenuOpen : undefined}
+                  >
+                    {item.name}
+                    <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] bg-red-500 transition-all duration-300 ${
+                      activeSection === item.key ? 'w-5' : 'w-0'
+                    }`} />
+                  </button>
+
+                  {/* Mega menu solo en MODELOS */}
+                  {isModelos && (
+                    <div
+                      className={`fixed left-0 right-0 z-40 transition-all duration-500 ease-out ${
+                        isMegaMenuOpen
+                          ? 'opacity-100 visible translate-y-0'
+                          : 'opacity-0 invisible -translate-y-3 pointer-events-none'
+                      }`}
+                      style={{ top: '120px' }}
+                      role="menu"
+                    >
+                      <MegaMenuContent
+                        onCategoryClick={handleCategoryClick}
+                        onQuoteClick={() => setIsQuoteSheetOpen(true)}
+                        isOpen={isMegaMenuOpen}
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+
+            {/* Separadores decorativos entre items */}
+            <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-[88px] pointer-events-none" aria-hidden="true">
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="w-px h-3 bg-white/10" />
+              ))}
+            </div>
+          </nav>
+        </div>
+      </header>
+
+      {/* ════════════════════════════════════════════════════════ */}
+      {/* MOBILE                                                   */}
+      {/* ════════════════════════════════════════════════════════ */}
+      <header className="lg:hidden fixed top-0 left-0 right-0 z-50 h-16">
+        <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" />
+        <div className="relative h-full flex items-center justify-between px-4">
+          <button onClick={() => setActiveSection('hero')} className="focus:outline-none" aria-label="Ir al inicio">
+            <img src="/logo-white.png" alt="Super Tucán" className="h-9 w-auto" />
+          </button>
+          <button
+            onClick={() => setIsMenuOpen(true)}
+            aria-label="Abrir menú"
+            aria-expanded={isMenuOpen}
+            className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center hover:bg-white/15 transition-colors"
+          >
+            <div className="flex flex-col gap-[5px]">
+              <div className="w-[18px] h-[1.5px] bg-white rounded-full" />
+              <div className="w-[14px] h-[1.5px] bg-white rounded-full" />
+              <div className="w-[18px] h-[1.5px] bg-white rounded-full" />
             </div>
           </button>
         </div>
       </header>
 
-      {/* Offcanvas Menu */}
-      <div className={`fixed inset-0 z-[100] ${isMenuOpen ? 'block' : 'hidden'}`}>
-        {/* Backdrop */}
-        <div 
-          className="fixed inset-0 bg-black/70 backdrop-blur-lg transition-opacity duration-500"
-          onClick={closeMenu}
-        ></div>
-        
-        {/* Panel del Menú */}
-        <div className={`fixed inset-y-0 right-0 w-full md:w-96 bg-gradient-to-br from-gray-900 via-black to-gray-800 shadow-2xl transform transition-all duration-500 ease-out ${isMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}`}>
-          
-          {/* Header del menú */}
-          <div className="relative p-8 border-b border-white/10">
-            <div className="flex items-center justify-between">
-              <img 
-                src="/logo-full.png" 
-                alt="Super Tucán" 
-                className="h-12 w-auto filter drop-shadow-lg" 
-              />
-              
-              <button 
-                onClick={closeMenu}
-                className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center hover:bg-white/20 transition-all duration-300 group"
+      {/* Spacers */}
+      <div className="h-[120px] hidden lg:block" />
+      <div className="h-16 lg:hidden" />
+
+      {/* ════════════════════════════════════════════════════════ */}
+      {/* OFFCANVAS                                                */}
+      {/* ════════════════════════════════════════════════════════ */}
+      {isMenuOpen && (
+        <div className="fixed inset-0 z-[100]">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsMenuOpen(false)} />
+          <div className="fixed inset-y-0 right-0 w-full max-w-sm bg-gray-950 shadow-2xl" role="dialog" aria-modal="true">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b border-white/10">
+              <img src="/logo-white.png" alt="Super Tucán" className="h-9 w-auto" />
+              <button
+                onClick={() => setIsMenuOpen(false)}
+                className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
+                aria-label="Cerrar menú"
               >
-                <svg className="w-6 h-6 text-white group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
-          </div>
-          
-          {/* Navegación */}
-          <nav className="p-8 space-y-8">
-            {/* Selector de idioma móvil */}
-            <div className="flex justify-center mb-8">
-              <LanguageSelector />
-            </div>
-            
-            {/* Items del menú */}
-            {[
-              { key: 'modelos', name: 'MODELOS' },
-              { key: 'marca', name: 'LA MARCA' },
-              { key: 'dealers', name: 'DEALERS' },
-              { key: 'partes', name: 'PARTES' }
-            ].map((item, index) => (
-              <button 
-                key={item.key}
-                onClick={() => {
-                  setActiveSection(item.key as any);
-                  closeMenu();
-                }}
-                className="group block relative overflow-hidden w-full text-left"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-red-600/20 to-blue-600/20 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></div>
-                
-                <span 
-                  className="relative block text-3xl font-black text-white group-hover:text-red-400 transition-all duration-300 transform group-hover:translate-x-4"
-                  style={{ fontFamily: 'Bebas Neue' }}
-                >
-                  {item.name}
-                </span>
-                
-                <div className="h-0.5 bg-gradient-to-r from-red-500 to-blue-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left mt-2"></div>
-              </button>
-            ))}
-            
-            {/* CTA destacado */}
-            <div className="pt-8 mt-8 border-t border-white/10">
-              <button 
-                onClick={() => {
-                  setIsQuoteSheetOpen(true);
-                  closeMenu();
-                }}
-                className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white py-6 text-2xl font-black hover:from-red-700 hover:to-red-800 transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl"
-                style={{ fontFamily: 'Bebas Neue' }}
+
+            <nav className="p-6" aria-label="Navegación móvil">
+              <div className="space-y-1">
+                {NAV_ITEMS.map((item) => (
+                  <button
+                    key={item.key}
+                    onClick={() => { setActiveSection(item.key); setIsMenuOpen(false); }}
+                    className={`block w-full text-left px-4 py-3 rounded-lg text-lg font-bold tracking-[0.15em] font-accent transition-colors ${
+                      activeSection === item.key
+                        ? 'text-red-500 bg-red-500/10'
+                        : 'text-white hover:text-red-400 hover:bg-white/5'
+                    }`}
+                  >
+                    {item.name}
+                  </button>
+                ))}
+              </div>
+
+              <div className="mt-6 pt-6 border-t border-white/10">
+                <LanguageSelector />
+              </div>
+
+              <button
+                onClick={() => { setIsQuoteSheetOpen(true); setIsMenuOpen(false); }}
+                className="mt-6 w-full bg-red-600 hover:bg-red-700 text-white py-4 text-sm font-bold tracking-[0.2em] font-accent rounded-lg transition-colors"
               >
                 COTIZAR AHORA
               </button>
-            </div>
-            
-            {/* Información de contacto */}
-            <div className="pt-8 space-y-4 text-center">
-              <div className="text-white/60 text-sm" style={{ fontFamily: 'Bebas Neue' }}>
-                ¿NECESITAS AYUDA?
+
+              <div className="mt-8 text-center">
+                <p className="text-white/40 text-xs font-accent tracking-[0.2em] mb-1">AYUDA</p>
+                <a href="tel:+12345678900" className="text-white font-bold font-sans hover:text-red-400 transition-colors duration-300">+1 234 567 8900</a>
               </div>
-              <div className="text-white text-lg font-bold">
-                +1 234 567 8900
+            </nav>
+
+            <div className="absolute bottom-6 left-6 right-6">
+              <div className="flex justify-center gap-4">
+                {([
+                  { name: 'facebook', url: 'https://facebook.com/supertucan' },
+                  { name: 'instagram', url: 'https://instagram.com/supertucan' },
+                  { name: 'youtube', url: 'https://youtube.com/@supertucan' },
+                ] as const).map((social) => (
+                  <a key={social.name} href={social.url} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors" aria-label={social.name}>
+                    <SocialIcon name={social.name} />
+                  </a>
+                ))}
               </div>
-            </div>
-          </nav>
-          
-          {/* Footer del menú con redes sociales */}
-          <div className="absolute bottom-8 left-8 right-8">
-            <div className="flex justify-center space-x-6">
-              <a href="#" className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center hover:bg-white/20 transition-all duration-300">
-                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 6.62 5.367 11.986 11.988 11.986s11.987-5.366 11.987-11.986C24.004 5.367 18.637.001 12.017.001zM8.449 16.988c-1.297 0-2.448-.49-3.323-1.317C4.198 14.553 3.5 13.353 3.5 11.987s.698-2.566 1.626-3.684c.875-.827 2.026-1.317 3.323-1.317s2.448.49 3.323 1.317c.928 1.118 1.626 2.318 1.626 3.684s-.698 2.566-1.626 3.684c-.875.827-2.026 1.317-3.323 1.317z"/>
-                </svg>
-              </a>
-              
-              <a href="#" className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center hover:bg-white/20 transition-all duration-300">
-                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                </svg>
-              </a>
-              
-              <a href="#" className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center hover:bg-white/20 transition-all duration-300">
-                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                </svg>
-              </a>
             </div>
           </div>
         </div>
-      </div>
-      
-      {/* Sheet de Cotización Moderno */}
-      <ModernQuoteSheet 
-        isOpen={isQuoteSheetOpen} 
-        onClose={() => setIsQuoteSheetOpen(false)} 
-      />
+      )}
+
+      <ModernQuoteSheet isOpen={isQuoteSheetOpen} onClose={() => setIsQuoteSheetOpen(false)} />
     </>
   );
 }
 
-// Componente para los botones de navegación
-function NavButton({ title, isActive, onClick }: {
-  title: string;
-  isActive: boolean;
-  onClick: () => void;
-}) {
-  const { activeSection } = useNavigationStore();
-  
-  // Determinar color del texto según la sección activa
-  const getTextColor = () => {
-    if (isActive) {
-      return 'text-red-600';
-    }
-    
-    // En secciones con fondo oscuro, usar texto blanco
-    if (activeSection === 'modelos' || activeSection === 'partes') {
-      return 'text-white hover:text-red-400';
-    }
-    
-    // En otras secciones, usar texto negro
-    return 'text-black hover:text-red-600';
-  };
+/* ═════════════════════════════════════════════════════════ */
 
-  return (
-    <button
-      onClick={onClick}
-      className={`group relative px-6 py-4 transition-all duration-500 ${getTextColor()}`}
-    >
-      {/* Efecto de sombra creativo */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/5 to-black/10 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-105"></div>
-      
-      {/* Texto principal */}
-      <span 
-        className="relative text-2xl font-black tracking-widest transition-all duration-500 group-hover:scale-110 group-hover:tracking-wider"
-        style={{ 
-          fontFamily: 'Bebas Neue',
-          textShadow: (() => {
-            if (isActive) {
-              return activeSection === 'modelos' || activeSection === 'partes' 
-                ? '2px 2px 4px rgba(0,0,0,0.5)' 
-                : '2px 2px 4px rgba(0,0,0,0.3)';
-            }
-            return activeSection === 'modelos' || activeSection === 'partes'
-              ? '1px 1px 2px rgba(0,0,0,0.3)'
-              : '1px 1px 2px rgba(0,0,0,0.1)';
-          })()
-        }}
-      >
-        {title}
-      </span>
-      
-      {/* Línea decorativa mejorada */}
-      <div 
-        className={`absolute bottom-0 left-0 h-1 bg-gradient-to-r from-red-500 via-red-600 to-red-700 transition-all duration-500 rounded-full ${
-          isActive ? 'w-full shadow-lg shadow-red-500/50' : 'w-0 group-hover:w-full group-hover:shadow-md group-hover:shadow-red-500/30'
-        }`}
-      ></div>
-      
-      {/* Efectos laterales creativos */}
-      <div className={`absolute -left-2 top-1/2 transform -translate-y-1/2 w-1 h-0 bg-red-600 transition-all duration-300 ${
-        isActive ? 'h-8' : 'group-hover:h-4'
-      }`}></div>
-      <div className={`absolute -right-2 top-1/2 transform -translate-y-1/2 w-1 h-0 bg-red-600 transition-all duration-300 ${
-        isActive ? 'h-8' : 'group-hover:h-4'
-      }`}></div>
-      
-      {/* Partículas decorativas */}
-      <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1 w-2 h-2 bg-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
-    </button>
-  );
-}
-
-// Componente selector de idioma
 function LanguageSelector() {
   const [isOpen, setIsOpen] = useState(false);
-  const { activeSection } = useNavigationStore();
   const { selectedLanguage, setLanguage } = useCountryStore();
-  
-  const languages = [
+  const ref = useRef<HTMLDivElement>(null);
+
+  const langs = [
     { code: 'es', name: 'Español', flag: '🇪🇸' },
     { code: 'en', name: 'English', flag: '🇺🇸' },
-    { code: 'pt', name: 'Português', flag: '🇧🇷' }
+    { code: 'pt', name: 'Português', flag: '🇧🇷' },
   ];
-  
-  // Usar el idioma seleccionado del store global
-  const currentLanguage = languages.find(lang => lang.code === selectedLanguage?.code) || languages[0];
-  
-  // Determinar color del texto según la sección activa
-  const getTextColor = () => {
-    // En secciones con fondo oscuro, usar texto blanco
-    if (activeSection === 'modelos' || activeSection === 'partes') {
-      return 'text-white hover:text-red-400';
-    }
-    
-    // En otras secciones, usar texto negro
-    return 'text-black hover:text-red-600';
-  };
-  
+  const current = langs.find((l) => l.code === selectedLanguage?.code) || langs[0];
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const h = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setIsOpen(false); };
+    document.addEventListener('mousedown', h);
+    return () => document.removeEventListener('mousedown', h);
+  }, [isOpen]);
+
   return (
-    <div className="relative">
-      {/* Botón principal */}
+    <div className="relative" ref={ref}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`group flex items-center space-x-2 px-4 py-2 rounded-xl transition-all duration-300 ${getTextColor()}`}
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs text-white/50 hover:text-white transition-colors"
+        aria-expanded={isOpen}
+        aria-haspopup="listbox"
+        aria-label="Idioma"
       >
-        <span className="text-lg">{currentLanguage?.flag}</span>
-        <span 
-          className="font-bold text-sm tracking-wider"
-          style={{ fontFamily: 'Bebas Neue' }}
-        >
-          {currentLanguage?.code || 'ES'}
-        </span>
-        <svg 
-          className={`w-4 h-4 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} 
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        <span>{current.flag}</span>
+        <span className="font-bold tracking-[0.15em] font-accent uppercase">{current.code}</span>
+        <svg className={`w-2.5 h-2.5 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
         </svg>
-        
-        {/* Efecto de fondo al hover */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/5 to-black/10 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
       </button>
-      
-      {/* Dropdown */}
       {isOpen && (
-        <div className="absolute top-full right-0 mt-2 bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-gray-200/50 overflow-hidden z-[45] min-w-[160px]">
-          {languages.map((language) => (
+        <div className="absolute top-full left-0 mt-1 bg-gray-950 border border-white/10 rounded-lg shadow-xl overflow-hidden z-50 min-w-[140px]" role="listbox">
+          {langs.map((l) => (
             <button
-              key={language.code}
-              onClick={() => {
-                setLanguage(language);
-                setIsOpen(false);
-              }}
-              className={`w-full flex items-center space-x-3 px-4 py-3 transition-all duration-200 ${
-                selectedLanguage?.code === language.code
-                  ? 'bg-red-600 text-white'
-                  : 'text-gray-800 hover:bg-gray-100'
+              key={l.code}
+              onClick={() => { setLanguage(l); setIsOpen(false); }}
+              role="option"
+              aria-selected={selectedLanguage?.code === l.code}
+              className={`w-full flex items-center gap-2 px-3 py-2 text-xs transition-colors ${
+                selectedLanguage?.code === l.code ? 'bg-red-600 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white'
               }`}
             >
-              <span className="text-lg">{language.flag}</span>
-              <div className="flex flex-col items-start">
-                <span 
-                  className="font-bold text-sm tracking-wider"
-                  style={{ fontFamily: 'Bebas Neue' }}
-                >
-                  {language.code}
-                </span>
-                <span className="text-xs opacity-75">{language.name}</span>
-              </div>
-              {selectedLanguage?.code === language.code && (
-                <svg className="w-4 h-4 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              )}
+              <span>{l.flag}</span>
+              <span className="font-bold font-accent tracking-wider">{l.name}</span>
             </button>
           ))}
         </div>
@@ -479,135 +296,134 @@ function LanguageSelector() {
   );
 }
 
-// Componente del contenido del megamenú simplificado
-function MegaMenuContent({ onCategoryClick, onQuoteClick }: { 
+/* ═════════════════════════════════════════════════════════ */
+
+function MegaMenuContent({ onCategoryClick, onQuoteClick, isOpen }: {
   onCategoryClick: (categoryId: string) => void;
   onQuoteClick: () => void;
+  isOpen: boolean;
 }) {
-  // Definición de categorías para el megamenú
   const categories = [
-    {
-      id: 'motocicleta',
-      name: 'MOTOCICLETA',
-      image: '/src/assets/bikes/ADRI SPORT/azul/main.avif',
-      hasModels: true
-    },
-    {
-      id: 'passola',
-      name: 'PASSOLA',
-      image: '/src/assets/bikes/BWS/azul/main.avif',
-      hasModels: true
-    },
-    {
-      id: 'atv',
-      name: 'ATV',
-      image: null,
-      hasModels: false
-    },
-    {
-      id: 'sport',
-      name: 'SPORT',
-      image: '/src/assets/bikes/ST 125/azul/main.avif',
-      hasModels: true
-    }
+    { id: 'motocicleta', name: 'MOTOCICLETA', tag: '4 MODELOS', image: '/bikes/ADRI SPORT/azul/main.avif' },
+    { id: 'passola', name: 'PASSOLA', tag: '2 MODELOS', image: '/bikes/BWS/azul/main.avif' },
+    { id: 'atv', name: 'ATV', tag: 'PRONTO', image: null },
+    { id: 'sport', name: 'SPORT', tag: '1 MODELO', image: '/bikes/ST 125/azul/main.avif' },
   ];
-  
+
   return (
-    <div className="relative bg-gradient-to-br from-gray-50 via-white to-gray-100 overflow-hidden">
-      {/* Fondo decorativo */}
-      <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-blue-500/5"></div>
-      
-      <div className="relative z-10 p-8">
-        {/* Header del megamenú */}
-        <div className="text-center mb-8">
-          <h3 
-            className="text-3xl font-black text-gray-900 mb-2 tracking-wider"
-            style={{ fontFamily: 'Bebas Neue' }}
-          >
-            EXPLORA NUESTROS VEHÍCULOS
-          </h3>
-          <div className="w-24 h-1 bg-gradient-to-r from-red-500 to-red-600 mx-auto rounded-full"></div>
-        </div>
-        
+    <div className="relative overflow-hidden">
+      {/* Fondo oscuro con textura */}
+      <div className="absolute inset-0 bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950" />
+      <div
+        className="absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,0.04) 2px, rgba(255,255,255,0.04) 4px)',
+          backgroundSize: '8px 8px',
+        }}
+      />
+      {/* Línea roja top */}
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-red-600 to-transparent" />
+
+      <div className="relative max-w-6xl mx-auto px-8 py-8">
         {/* Grid de categorías */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {categories.map((category, index) => (
-            <div 
-              key={category.id}
-              className="group cursor-pointer transform transition-all duration-500 hover:scale-105"
-              onClick={() => onCategoryClick(category.id)}
-              style={{ animationDelay: `${index * 150}ms` }}
+        <div className="grid grid-cols-4 gap-4">
+          {categories.map((cat, i) => (
+            <button
+              key={cat.id}
+              onClick={() => onCategoryClick(cat.id)}
+              className="group relative overflow-hidden rounded-lg border border-white/8 hover:border-red-500/50 transition-all duration-400"
+              role="menuitem"
+              style={{
+                transitionDelay: isOpen ? `${i * 60}ms` : '0ms',
+              }}
             >
-              {/* Card contenedor */}
-              <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-200/50 overflow-hidden">
-                
-                {/* Imagen miniatura */}
-                <div className="relative h-32 overflow-hidden flex items-center justify-center">
-                  {category.image ? (
-                    <img 
-                      src={category.image}
-                      alt={category.name}
-                      className="w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-500"
-                      style={{
-                        filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.1))'
-                      }}
-                    />
-                  ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 text-white">
-                      <div className="text-3xl mb-1">🚧</div>
-                      <p 
-                        className="text-xs font-black tracking-wider"
-                        style={{ fontFamily: 'Bebas Neue' }}
-                      >
-                        PRÓXIMAMENTE
-                      </p>
+              {/* Fondo hover */}
+              <div className="absolute inset-0 bg-gradient-to-t from-red-600/20 via-red-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400" />
+
+              {/* Imagen */}
+              <div className="relative h-32 flex items-center justify-center overflow-hidden bg-black/30">
+                {cat.image ? (
+                  <img
+                    src={cat.image}
+                    alt={cat.name}
+                    className="h-full w-full object-contain p-4 group-hover:scale-110 transition-transform duration-500"
+                    style={{ filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.4))' }}
+                  />
+                ) : (
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center">
+                      <svg className="w-5 h-5 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
                     </div>
-                  )}
-                  
-                  {/* Overlay hover */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </div>
-                
-                {/* Contenido de la card */}
-                <div className="p-4">
-                  <h4 
-                    className="text-lg font-black text-gray-900 text-center tracking-wider"
-                    style={{ fontFamily: 'Bebas Neue' }}
-                  >
-                    {category.name}
-                  </h4>
-                </div>
+                    <span className="text-[9px] font-bold text-white/25 tracking-[0.2em] font-accent">PRÓXIMAMENTE</span>
+                  </div>
+                )}
               </div>
-            </div>
+
+              {/* Label */}
+              <div className="relative px-4 py-3 flex items-center justify-between border-t border-white/5">
+                <div>
+                  <span className="block text-sm font-bold text-white tracking-[0.12em] font-accent group-hover:text-red-400 transition-colors duration-300">
+                    {cat.name}
+                  </span>
+                  <span className="block text-[9px] text-white/30 tracking-[0.15em] font-accent mt-0.5">
+                    {cat.tag}
+                  </span>
+                </div>
+                {/* Flecha */}
+                <svg
+                  className="w-4 h-4 text-white/15 group-hover:text-red-400 group-hover:translate-x-1 transition-all duration-300"
+                  fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+
+              {/* Línea roja inferior animada */}
+              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-red-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-400 origin-left" />
+            </button>
           ))}
         </div>
-        
-        {/* Footer del megamenú */}
-        <div className="bg-gradient-to-r from-gray-900 via-black to-gray-900 rounded-2xl p-6 text-white shadow-2xl mt-6">
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <div className="text-center md:text-left">
-              <h4 
-                className="text-2xl font-black mb-2 tracking-wider"
-                style={{ fontFamily: 'Bebas Neue' }}
-              >
-                ¿NECESITAS AYUDA PARA ELEGIR?
-              </h4>
-              <p className="text-gray-300 text-sm">Nuestros expertos te ayudan a encontrar el vehículo perfecto</p>
+
+        {/* CTA bar */}
+        <div className="mt-5 flex items-center justify-between px-5 py-3 rounded-lg border border-white/5 bg-white/[0.02]">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded bg-red-600/20 flex items-center justify-center">
+              <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
             </div>
-            
-            <button 
-              onClick={onQuoteClick}
-              className="bg-gradient-to-r from-red-600 via-red-500 to-red-600 text-white px-8 py-4 rounded-xl font-black text-lg hover:from-red-700 hover:via-red-600 hover:to-red-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-2xl border-2 border-red-400/30"
-              style={{ fontFamily: 'Bebas Neue' }}
-            >
-              COTIZAR AHORA
-            </button>
+            <div>
+              <span className="text-xs font-bold text-white/80 tracking-[0.1em] font-accent">¿NECESITAS AYUDA?</span>
+              <span className="text-[10px] text-white/30 ml-2 font-sans">Nuestros expertos te asesoran</span>
+            </div>
           </div>
+          <button
+            onClick={onQuoteClick}
+            className="bg-red-600 hover:bg-red-500 text-white px-5 py-2 text-[10px] font-bold tracking-[0.2em] font-accent transition-colors duration-300"
+            style={{ clipPath: 'polygon(6% 0, 100% 0, 94% 100%, 0% 100%)' }}
+          >
+            COTIZAR AHORA
+          </button>
         </div>
       </div>
+
+      {/* Línea roja bottom */}
+      <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-red-600/40 to-transparent" />
     </div>
   );
 }
 
+/* ═════════════════════════════════════════════════════════ */
 
-
+function SocialIcon({ name }: { name: string }) {
+  const paths: Record<string, string> = {
+    facebook: 'M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z',
+    instagram: 'M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z',
+    youtube: 'M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z',
+  };
+  return paths[name] ? (
+    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d={paths[name]} /></svg>
+  ) : null;
+}

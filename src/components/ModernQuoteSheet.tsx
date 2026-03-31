@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { gsap } from 'gsap';
-import { getModelsByCategory, type BikeCategory, type BikeModel, type BikeColor, getModelImage } from '@/utils/bikeSystem';
+import { getModelsByCategory, getModelImage, type CategoryWithModels } from '@/utils/bikeSystem';
+import type { BikeModel, BikeColor } from '@/types/bikes';
 
 interface ModernQuoteSheetProps {
   isOpen: boolean;
@@ -9,7 +10,7 @@ interface ModernQuoteSheetProps {
 
 export function ModernQuoteSheet({ isOpen, onClose }: ModernQuoteSheetProps) {
   const [currentStep, setCurrentStep] = useState(1);
-  const [categories] = useState<BikeCategory[]>(getModelsByCategory());
+  const [categories] = useState<CategoryWithModels[]>(getModelsByCategory());
   const [formData, setFormData] = useState<QuoteFormData>({
     category: '',
     model: '',
@@ -69,7 +70,17 @@ export function ModernQuoteSheet({ isOpen, onClose }: ModernQuoteSheetProps) {
   };
 
   const handleSubmit = () => {
-    console.log('Cotización enviada:', formData);
+    const whatsappNumber = '18091234567'; // Super Tucán main number
+    const message = encodeURIComponent(
+      `🏍️ *Cotización Super Tucán*\n\n` +
+      `*Modelo:* ${selectedModel?.name || formData.model}\n` +
+      `*Color:* ${selectedColor?.name || formData.color}\n` +
+      `*Nombre:* ${formData.name}\n` +
+      `*Teléfono:* ${formData.phone}\n` +
+      `*Email:* ${formData.email}\n` +
+      `*Ciudad:* ${formData.city}`
+    );
+    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
     onClose();
     setCurrentStep(1);
     setFormData({
@@ -116,8 +127,7 @@ export function ModernQuoteSheet({ isOpen, onClose }: ModernQuoteSheetProps) {
           <div className="relative flex justify-between items-center">
             <div>
               <h2 
-                className="text-3xl font-black text-white tracking-wider"
-                style={{ fontFamily: 'Bebas Neue' }}
+                className="text-3xl font-black text-white tracking-wider font-sans"
               >
                 COTIZAR VEHÍCULO
               </h2>
@@ -255,15 +265,14 @@ export function ModernQuoteSheet({ isOpen, onClose }: ModernQuoteSheetProps) {
 
 // Componente para selección de categorías
 function CategoryStep({ categories, onSelect }: {
-  categories: BikeCategory[];
+  categories: CategoryWithModels[];
   onSelect: (categoryId: string) => void;
 }) {
   return (
     <div className="space-y-6">
       <div className="text-center">
         <h3 
-          className="text-3xl font-black text-gray-900 mb-3 tracking-wider"
-          style={{ fontFamily: 'Bebas Neue' }}
+          className="text-3xl font-black text-gray-900 mb-3 tracking-wider font-sans"
         >
           ¿QUÉ TIPO DE VEHÍCULO TE INTERESA?
         </h3>
@@ -287,8 +296,7 @@ function CategoryStep({ categories, onSelect }: {
               </div>
               
               <h4 
-                className="text-xl font-black text-gray-900 tracking-wider group-hover:text-red-600 transition-colors duration-300"
-                style={{ fontFamily: 'Bebas Neue' }}
+                className="text-xl font-black text-gray-900 tracking-wider group-hover:text-red-600 transition-colors duration-300 font-sans"
               >
                 {category.name}
               </h4>
@@ -306,15 +314,14 @@ function CategoryStep({ categories, onSelect }: {
 
 // Componente para selección de modelos
 function ModelStep({ category, onSelect }: {
-  category: BikeCategory;
+  category: CategoryWithModels;
   onSelect: (modelId: string) => void;
 }) {
   return (
     <div className="space-y-6">
       <div className="text-center">
         <h3 
-          className="text-3xl font-black text-gray-900 mb-3 tracking-wider"
-          style={{ fontFamily: 'Bebas Neue' }}
+          className="text-3xl font-black text-gray-900 mb-3 tracking-wider font-sans"
         >
           MODELOS DE {category.name}
         </h3>
@@ -331,9 +338,9 @@ function ModelStep({ category, onSelect }: {
           >
             {/* Imagen del modelo */}
             <div className="relative h-48 lg:h-56 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
-              {model.mainImage && (
+              {model.colors[0]?.images.main && (
                 <img 
-                  src={model.mainImage}
+                  src={model.colors[0]?.images.main}
                   alt={model.name}
                   className="w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-500"
                 />
@@ -346,8 +353,7 @@ function ModelStep({ category, onSelect }: {
             {/* Información del modelo */}
             <div className="p-6">
               <h4 
-                className="text-2xl font-black text-gray-900 mb-2 tracking-wider group-hover:text-red-600 transition-colors duration-300"
-                style={{ fontFamily: 'Bebas Neue' }}
+                className="text-2xl font-black text-gray-900 mb-2 tracking-wider group-hover:text-red-600 transition-colors duration-300 font-sans"
               >
                 {model.name}
               </h4>
@@ -359,7 +365,7 @@ function ModelStep({ category, onSelect }: {
                     <div 
                       key={idx}
                       className="w-4 h-4 rounded-full border-2 border-white shadow-sm"
-                      style={{ backgroundColor: color.code }}
+                      style={{ backgroundColor: color.hex }}
                     />
                   ))}
                   {model.colors.length > 4 && (
@@ -388,8 +394,7 @@ function ColorStep({ model, onSelect }: {
     <div className="space-y-6">
       <div className="text-center">
         <h3 
-          className="text-3xl font-black text-gray-900 mb-3 tracking-wider"
-          style={{ fontFamily: 'Bebas Neue' }}
+          className="text-3xl font-black text-gray-900 mb-3 tracking-wider font-sans"
         >
           ELIGE EL COLOR DE TU {model.name}
         </h3>
@@ -401,7 +406,7 @@ function ColorStep({ model, onSelect }: {
         <div className="order-2 lg:order-1">
           <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-8 h-80 flex items-center justify-center">
             <img 
-              src={getModelImage(model.folder, previewColor || model.colors[0]?.value)}
+              src={getModelImage(model.name, previewColor || model.colors[0]?.value)}
               alt={`${model.name} ${previewColor}`}
               className="w-full h-full object-contain transition-all duration-500"
               style={{
@@ -423,13 +428,12 @@ function ColorStep({ model, onSelect }: {
             >
               <div 
                 className="w-12 h-12 rounded-full border-4 border-white shadow-lg mr-4 group-hover:scale-110 transition-transform duration-300"
-                style={{ backgroundColor: color.code }}
+                style={{ backgroundColor: color.hex }}
               />
               
               <div className="flex-1 text-left">
                 <h5 
-                  className="text-lg font-black text-gray-900 group-hover:text-red-600 transition-colors duration-300"
-                  style={{ fontFamily: 'Bebas Neue' }}
+                  className="text-lg font-black text-gray-900 group-hover:text-red-600 transition-colors duration-300 font-sans"
                 >
                   {color.name}
                 </h5>
@@ -457,8 +461,7 @@ function ContactStep({ formData, onChange, selectedModel, selectedColor }: {
     <div className="space-y-6">
       <div className="text-center">
         <h3 
-          className="text-3xl font-black text-gray-900 mb-3 tracking-wider"
-          style={{ fontFamily: 'Bebas Neue' }}
+          className="text-3xl font-black text-gray-900 mb-3 tracking-wider font-sans"
         >
           INFORMACIÓN DE CONTACTO
         </h3>
@@ -469,8 +472,7 @@ function ContactStep({ formData, onChange, selectedModel, selectedColor }: {
         {/* Resumen de la selección */}
         <div className="order-2 lg:order-1 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6">
           <h4 
-            className="text-xl font-black text-gray-900 mb-4 tracking-wider"
-            style={{ fontFamily: 'Bebas Neue' }}
+            className="text-xl font-black text-gray-900 mb-4 tracking-wider font-sans"
           >
             TU SELECCIÓN
           </h4>
@@ -479,14 +481,13 @@ function ContactStep({ formData, onChange, selectedModel, selectedColor }: {
             <div className="space-y-4">
               <div className="bg-white rounded-xl p-4 flex items-center space-x-4">
                 <img 
-                  src={getModelImage(selectedModel.folder, selectedColor.value)}
+                  src={getModelImage(selectedModel.name, selectedColor.value)}
                   alt={`${selectedModel.name} ${selectedColor.name}`}
                   className="w-20 h-20 object-contain"
                 />
                 <div>
                   <h5 
-                    className="text-lg font-black text-gray-900"
-                    style={{ fontFamily: 'Bebas Neue' }}
+                    className="text-lg font-black text-gray-900 font-sans"
                   >
                     {selectedModel.name}
                   </h5>

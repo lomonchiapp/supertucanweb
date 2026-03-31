@@ -1,176 +1,140 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
+import { useNavigationStore } from '@/store/navigationStore';
+import { ModernQuoteSheet } from './ModernQuoteSheet';
+
+const STATS = [
+  { value: '15+', label: 'Años de Experiencia' },
+  { value: '50K+', label: 'Clientes Satisfechos' },
+  { value: '100+', label: 'Dealers Autorizados' },
+  { value: '24/7', label: 'Soporte Técnico' },
+];
+
+const VALUES = [
+  {
+    title: 'CALIDAD',
+    description: 'Cada vehículo Super Tucán pasa por rigurosos controles de calidad para garantizar durabilidad, seguridad y rendimiento excepcional.',
+    icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
+  },
+  {
+    title: 'INNOVACIÓN',
+    description: 'Constantemente evolucionamos nuestros diseños y tecnologías para ofrecer la mejor experiencia de conducción posible.',
+    icon: 'M13 10V3L4 14h7v7l9-11h-7z',
+  },
+  {
+    title: 'COMUNIDAD',
+    description: 'Más que clientes, somos una familia. Construimos relaciones duraderas basadas en confianza y respeto mutuo.',
+    icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z',
+  },
+];
 
 export function MarcaSection() {
   const heroRef = useRef<HTMLDivElement>(null);
   const statsRef = useRef<HTMLDivElement>(null);
   const valuesRef = useRef<HTMLDivElement>(null);
+  const historiaRef = useRef<HTMLDivElement>(null);
+  const setActiveSection = useNavigationStore((s) => s.setActiveSection);
+  const [isQuoteSheetOpen, setIsQuoteSheetOpen] = useState(false);
 
   useEffect(() => {
-    // Animaciones de entrada
     if (heroRef.current) {
-      gsap.fromTo(heroRef.current.children, 
+      gsap.fromTo(heroRef.current.children,
         { y: 50, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1, stagger: 0.2, ease: "power3.out" }
+        { y: 0, opacity: 1, duration: 1, stagger: 0.2, ease: 'power3.out' }
       );
     }
-
     if (statsRef.current) {
       gsap.fromTo(statsRef.current.children,
         { scale: 0.8, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 0.8, stagger: 0.1, delay: 0.5, ease: "back.out(1.7)" }
+        { scale: 1, opacity: 1, duration: 0.8, stagger: 0.1, delay: 0.5, ease: 'back.out(1.7)' }
       );
     }
-
     if (valuesRef.current) {
       gsap.fromTo(valuesRef.current.children,
-        { x: -50, opacity: 0 },
-        { x: 0, opacity: 1, duration: 0.8, stagger: 0.15, delay: 1, ease: "power3.out" }
+        { y: 40, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.8, stagger: 0.15, delay: 1, ease: 'power3.out' }
       );
     }
   }, []);
 
   return (
-    <div className="min-h-screen bg-white pt-40">
-      
-      {/* Hero Section */}
-      <div ref={heroRef} className="relative overflow-hidden bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white py-20">
-        <div className="absolute inset-0 bg-[url('/bg.avif')] bg-cover bg-center opacity-20"></div>
-        <div className="relative max-w-6xl mx-auto px-6 text-center">
-          
-          {/* Logo Principal */}
-          <div className="mb-8">
-            <img 
-              src="/logo-full-white.png" 
-              alt="Super Tucán" 
-              className="h-20 mx-auto filter drop-shadow-2xl"
-            />
-          </div>
-
-          {/* Título Principal */}
-          <h1 
-            className="text-5xl md:text-7xl font-black mb-6 tracking-tight"
-            style={{ fontFamily: 'Bebas Neue' }}
-          >
+    <div className="min-h-screen bg-gray-950">
+      {/* Hero */}
+      <div ref={heroRef} className="relative overflow-hidden py-24">
+        <div className="absolute inset-0 bg-[url('/bg.avif')] bg-cover bg-center opacity-10" />
+        <div
+          className="absolute inset-0"
+          style={{ background: 'radial-gradient(ellipse at center, rgba(220,38,38,0.05) 0%, transparent 70%)' }}
+        />
+        <div className="relative max-w-5xl mx-auto px-6 text-center">
+          <img src="/logo-white.png" alt="Super Tucán" className="h-16 mx-auto mb-8 opacity-80" />
+          <h1 className="font-display text-6xl md:text-8xl font-bold text-white tracking-tight uppercase mb-6">
             MÁS QUE UNA MARCA
           </h1>
-
-          {/* Subtítulo */}
-          <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-4xl mx-auto leading-relaxed">
-            Somos pasión por la movilidad, innovación en cada detalle y compromiso 
+          <p className="text-lg md:text-xl text-gray-400 mb-10 max-w-3xl mx-auto leading-relaxed font-sans">
+            Somos pasión por la movilidad, innovación en cada detalle y compromiso
             con quienes eligen la libertad sobre dos ruedas.
           </p>
-
-          {/* CTA */}
-          <div className="inline-flex items-center bg-red-600 hover:bg-red-700 px-8 py-4 rounded-full transition-all duration-300 transform hover:scale-105 shadow-2xl">
-            <span className="text-lg font-bold">DESCUBRE NUESTRA HISTORIA</span>
-            <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <button
+            onClick={() => historiaRef.current?.scrollIntoView({ behavior: 'smooth' })}
+            className="inline-flex items-center gap-2 border border-white/15 text-white/70 hover:text-white hover:border-white/30 px-6 py-3 text-xs font-bold tracking-[0.2em] font-accent transition-all duration-300"
+          >
+            DESCUBRE NUESTRA HISTORIA
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
             </svg>
-          </div>
+          </button>
         </div>
       </div>
 
-      {/* Estadísticas */}
-      <div ref={statsRef} className="py-16 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            
-            <div className="text-center">
-              <div 
-                className="text-4xl md:text-6xl font-black text-red-600 mb-2"
-                style={{ fontFamily: 'Bebas Neue' }}
-              >
-                15+
-              </div>
-              <div className="text-gray-600 font-medium">Años de Experiencia</div>
+      {/* Stats */}
+      <div className="border-y border-white/5">
+        <div ref={statsRef} className="max-w-6xl mx-auto px-6 py-14 grid grid-cols-2 md:grid-cols-4 gap-8">
+          {STATS.map((stat) => (
+            <div key={stat.label} className="text-center">
+              <div className="font-display text-5xl md:text-6xl font-bold text-red-500 mb-2">{stat.value}</div>
+              <div className="text-gray-500 text-sm font-sans font-medium">{stat.label}</div>
             </div>
-
-            <div className="text-center">
-              <div 
-                className="text-4xl md:text-6xl font-black text-red-600 mb-2"
-                style={{ fontFamily: 'Bebas Neue' }}
-              >
-                50K+
-              </div>
-              <div className="text-gray-600 font-medium">Clientes Satisfechos</div>
-            </div>
-
-            <div className="text-center">
-              <div 
-                className="text-4xl md:text-6xl font-black text-red-600 mb-2"
-                style={{ fontFamily: 'Bebas Neue' }}
-              >
-                100+
-              </div>
-              <div className="text-gray-600 font-medium">Dealers Autorizados</div>
-            </div>
-
-            <div className="text-center">
-              <div 
-                className="text-4xl md:text-6xl font-black text-red-600 mb-2"
-                style={{ fontFamily: 'Bebas Neue' }}
-              >
-                24/7
-              </div>
-              <div className="text-gray-600 font-medium">Soporte Técnico</div>
-            </div>
-
-          </div>
+          ))}
         </div>
       </div>
 
-      {/* Historia y Misión */}
-      <div className="py-20">
+      {/* Historia */}
+      <div ref={historiaRef} className="py-20" id="historia">
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-16 items-center">
-            
-            {/* Imagen */}
             <div className="relative">
-              <div className="aspect-square bg-gradient-to-br from-red-100 to-red-50 rounded-3xl overflow-hidden shadow-2xl">
-                <img 
-                  src="/logo-icon.png"
-                  alt="Super Tucán Heritage"
-                  className="w-full h-full object-contain p-16"
-                />
+              <div className="aspect-square bg-white/[0.02] border border-white/5 rounded-2xl overflow-hidden flex items-center justify-center">
+                <img src="/logo-icon.png" alt="Super Tucán Heritage" className="w-2/3 h-2/3 object-contain opacity-60" />
               </div>
-              {/* Elemento decorativo */}
-              <div className="absolute -top-8 -right-8 w-32 h-32 bg-red-600/10 rounded-full -z-10"></div>
-              <div className="absolute -bottom-8 -left-8 w-24 h-24 bg-red-600/5 rounded-full -z-10"></div>
+              <div className="absolute -top-4 -right-4 w-24 h-24 border border-red-600/20 rounded-full" />
+              <div className="absolute -bottom-4 -left-4 w-16 h-16 border border-red-600/10 rounded-full" />
             </div>
 
-            {/* Contenido */}
             <div className="space-y-8">
               <div>
-                <h2 
-                  className="text-4xl md:text-5xl font-black text-gray-900 mb-6 tracking-tight"
-                  style={{ fontFamily: 'Bebas Neue' }}
-                >
+                <h2 className="font-display text-4xl md:text-5xl font-bold text-white tracking-tight uppercase mb-6">
                   NUESTRA HISTORIA
                 </h2>
-                <p className="text-lg text-gray-600 leading-relaxed mb-6">
-                  Desde nuestros inicios, Super Tucán ha sido sinónimo de calidad, 
-                  innovación y pasión por las dos ruedas. Comenzamos como un sueño 
+                <p className="text-gray-400 leading-relaxed font-sans mb-4">
+                  Desde nuestros inicios, Super Tucán ha sido sinónimo de calidad,
+                  innovación y pasión por las dos ruedas. Comenzamos como un sueño
                   de ofrecer movilidad accesible y confiable para todos.
                 </p>
-                <p className="text-lg text-gray-600 leading-relaxed">
-                  Hoy, somos líderes en el mercado de motocicletas y scooters, 
-                  siempre comprometidos con la excelencia y la satisfacción de 
+                <p className="text-gray-400 leading-relaxed font-sans">
+                  Hoy, somos líderes en el mercado de motocicletas y scooters,
+                  siempre comprometidos con la excelencia y la satisfacción de
                   nuestros clientes.
                 </p>
               </div>
 
-              {/* Misión */}
-              <div className="bg-gradient-to-r from-red-50 to-red-100 p-6 rounded-2xl">
-                <h3 
-                  className="text-2xl font-black text-red-800 mb-3"
-                  style={{ fontFamily: 'Bebas Neue' }}
-                >
+              <div className="bg-red-600/5 border border-red-600/10 rounded-xl p-6">
+                <h3 className="font-display text-2xl font-bold text-red-500 mb-3 uppercase">
                   NUESTRA MISIÓN
                 </h3>
-                <p className="text-red-700 font-medium">
-                  Proporcionar vehículos de dos ruedas de alta calidad que conecten 
-                  a las personas con sus destinos, combinando tecnología avanzada, 
+                <p className="text-gray-400 font-sans leading-relaxed">
+                  Proporcionar vehículos de dos ruedas de alta calidad que conecten
+                  a las personas con sus destinos, combinando tecnología avanzada,
                   diseño excepcional y un servicio al cliente incomparable.
                 </p>
               </div>
@@ -180,108 +144,65 @@ export function MarcaSection() {
       </div>
 
       {/* Valores */}
-      <div ref={valuesRef} className="py-20 bg-gray-50">
+      <div className="py-20 border-t border-white/5">
         <div className="max-w-6xl mx-auto px-6">
-          
-          <div className="text-center mb-16">
-            <h2 
-              className="text-4xl md:text-5xl font-black text-gray-900 mb-6 tracking-tight"
-              style={{ fontFamily: 'Bebas Neue' }}
-            >
+          <div className="text-center mb-14">
+            <h2 className="font-display text-4xl md:text-5xl font-bold text-white tracking-tight uppercase mb-4">
               NUESTROS VALORES
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Los principios que guían cada decisión y nos mantienen conectados 
-              con nuestros clientes y comunidad.
+            <p className="text-gray-500 max-w-2xl mx-auto font-sans">
+              Los principios que guían cada decisión y nos mantienen conectados con nuestros clientes.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            
-            {/* Valor 1 */}
-            <div className="group bg-white p-8 rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-              <div className="w-16 h-16 bg-red-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 
-                className="text-2xl font-black text-gray-900 mb-4"
-                style={{ fontFamily: 'Bebas Neue' }}
+          <div ref={valuesRef} className="grid md:grid-cols-3 gap-6">
+            {VALUES.map((val) => (
+              <div
+                key={val.title}
+                className="group bg-white/[0.02] border border-white/5 hover:border-red-600/20 rounded-xl p-8 transition-all duration-300"
               >
-                CALIDAD
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Cada vehículo Super Tucán pasa por rigurosos controles de calidad 
-                para garantizar durabilidad, seguridad y rendimiento excepcional.
-              </p>
-            </div>
-
-            {/* Valor 2 */}
-            <div className="group bg-white p-8 rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-              <div className="w-16 h-16 bg-red-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
+                <div className="w-12 h-12 bg-red-600/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-red-600/20 transition-colors">
+                  <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={val.icon} />
+                  </svg>
+                </div>
+                <h3 className="font-display text-xl font-bold text-white mb-3 uppercase">{val.title}</h3>
+                <p className="text-gray-500 font-sans leading-relaxed text-sm">{val.description}</p>
               </div>
-              <h3 
-                className="text-2xl font-black text-gray-900 mb-4"
-                style={{ fontFamily: 'Bebas Neue' }}
-              >
-                INNOVACIÓN
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Constantemente evolucionamos nuestros diseños y tecnologías para 
-                ofrecer la mejor experiencia de conducción posible.
-              </p>
-            </div>
-
-            {/* Valor 3 */}
-            <div className="group bg-white p-8 rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-              <div className="w-16 h-16 bg-red-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-              </div>
-              <h3 
-                className="text-2xl font-black text-gray-900 mb-4"
-                style={{ fontFamily: 'Bebas Neue' }}
-              >
-                COMUNIDAD
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Más que clientes, somos una familia. Construimos relaciones 
-                duraderas basadas en confianza y respeto mutuo.
-              </p>
-            </div>
-
+            ))}
           </div>
         </div>
       </div>
 
-      {/* CTA Final */}
-      <div className="py-20 bg-gradient-to-r from-red-600 to-red-700 text-white">
+      {/* CTA */}
+      <div className="py-20 border-t border-white/5">
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 
-            className="text-4xl md:text-5xl font-black mb-6 tracking-tight"
-            style={{ fontFamily: 'Bebas Neue' }}
-          >
-            ¿LISTO PARA UNIRTE A LA FAMILIA?
+          <h2 className="font-display text-4xl md:text-5xl font-bold text-white tracking-tight uppercase mb-6">
+            ¿LISTO PARA UNIRTE?
           </h2>
-          <p className="text-xl mb-8 opacity-90">
+          <p className="text-gray-400 text-lg mb-10 font-sans">
             Descubre por qué miles de personas confían en Super Tucán para sus aventuras diarias.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-red-600 px-8 py-4 rounded-full font-bold hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-lg">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <button
+              onClick={() => setActiveSection('modelos')}
+              className="bg-red-600 hover:bg-red-500 text-white px-8 py-3 text-xs font-bold tracking-[0.2em] font-accent transition-colors"
+              style={{ clipPath: 'polygon(0 0, 100% 0, 96% 100%, 0% 100%)' }}
+            >
               VER MODELOS
             </button>
-            <button className="border-2 border-white text-white px-8 py-4 rounded-full font-bold hover:bg-white hover:text-red-600 transition-all duration-300 transform hover:scale-105">
+            <button
+              onClick={() => setIsQuoteSheetOpen(true)}
+              className="border border-white/15 text-white/70 hover:text-white hover:border-white/30 px-8 py-3 text-xs font-bold tracking-[0.2em] font-accent transition-all"
+              style={{ clipPath: 'polygon(4% 0, 100% 0, 100% 100%, 0% 100%)' }}
+            >
               CONTACTAR
             </button>
           </div>
         </div>
       </div>
 
+      <ModernQuoteSheet isOpen={isQuoteSheetOpen} onClose={() => setIsQuoteSheetOpen(false)} />
     </div>
   );
 }
