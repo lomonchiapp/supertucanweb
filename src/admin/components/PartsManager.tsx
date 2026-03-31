@@ -860,52 +860,24 @@ export default function PartsManager() {
       {filteredParts.length > 0 && (
         <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
           {/* Table header */}
-          <div className="hidden md:grid grid-cols-[48px_1fr_120px_1fr_100px_80px_100px] gap-4 px-5 py-3 bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-            <div />
+          <div className="hidden md:grid grid-cols-[2fr_1fr_1fr_80px_80px] gap-3 px-5 py-3 bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
             <div>Nombre</div>
-            <div>Categoria</div>
-            <div>Modelos Compatibles</div>
+            <div>Modelos</div>
             <div>Precio</div>
             <div>Stock</div>
-            <div className="text-right">Acciones</div>
+            <div className="text-right">Acc.</div>
           </div>
 
           {/* Rows */}
           {filteredParts.map((part) => (
             <div
               key={part.id}
-              className="grid grid-cols-1 md:grid-cols-[48px_1fr_120px_1fr_100px_80px_100px] gap-4 px-5 py-3 border-b border-gray-100 items-center last:border-b-0 hover:bg-gray-50 transition"
+              className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_80px_80px] gap-3 px-5 py-3 border-b border-gray-100 items-center last:border-b-0 hover:bg-gray-50 transition"
             >
-              {/* Image thumbnail */}
-              <div className="hidden md:block">
-                {part.image ? (
-                  <img
-                    src={part.image}
-                    alt={part.name}
-                    className="w-10 h-10 rounded-lg object-cover border border-gray-200"
-                  />
-                ) : (
-                  <div className="w-10 h-10 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center">
-                    <svg className="w-5 h-5 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0 0 22.5 18.75V5.25A2.25 2.25 0 0 0 20.25 3H3.75A2.25 2.25 0 0 0 1.5 5.25v13.5A2.25 2.25 0 0 0 3.75 21Z" />
-                    </svg>
-                  </div>
-                )}
-              </div>
-
-              {/* Name */}
-              <div>
+              {/* Name + category */}
+              <div className="min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">{part.name}</p>
-                {part.description && (
-                  <p className="text-xs text-gray-400 truncate mt-0.5">{part.description}</p>
-                )}
-              </div>
-
-              {/* Category badge */}
-              <div>
-                <span className="inline-block text-[11px] font-medium bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full truncate max-w-full">
-                  {getCategoryName(part.categoryId)}
-                </span>
+                <span className="text-[10px] text-gray-400">{getCategoryName(part.categoryId)}</span>
               </div>
 
               {/* Compatible models */}

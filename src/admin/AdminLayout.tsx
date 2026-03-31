@@ -112,7 +112,7 @@ export default function AdminLayout() {
       </aside>
 
       {/* Main content */}
-      <div className="ml-[250px] flex-1 flex flex-col min-h-screen">
+      <div className="ml-[250px] flex-1 flex flex-col min-h-screen min-w-0">
         {/* Top bar */}
         <header className="sticky top-0 z-20 h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8">
           <h1 className="text-lg font-semibold text-gray-800">{pageTitle}</h1>
@@ -125,7 +125,7 @@ export default function AdminLayout() {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-8 overflow-x-hidden">
           <Outlet />
         </main>
       </div>
