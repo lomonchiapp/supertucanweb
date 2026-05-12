@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { Header } from '@/components/Header';
-import { Hero } from '@/components/Hero';
+import { HomePage } from '@/components/HomePage';
 import { ModelosSection } from '@/components/ModelosSection';
 import { MarcaSection } from '@/components/MarcaSection';
 import { DealersSection } from '@/components/DealersSection';
@@ -31,13 +31,13 @@ function App() {
       window.scrollTo({ top: 0 });
 
       if (containerRef.current) {
-        gsap.timeline()
-          .set(containerRef.current, { opacity: 0, scale: 0.98, y: -20 })
+        gsap
+          .timeline()
+          .set(containerRef.current, { opacity: 0, y: 12 })
           .to(containerRef.current, {
             opacity: 1,
-            scale: 1,
             y: 0,
-            duration: 0.3,
+            duration: 0.35,
             ease: 'power3.out',
           });
       }
@@ -57,12 +57,12 @@ function App() {
       case 'partes':
         return <PartesSection />;
       default:
-        return <Hero />;
+        return <HomePage />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-black relative">
+    <div className="min-h-screen bg-white text-neutral-900 relative">
       {showLanding && <CountryLanding />}
 
       {!showLanding && (
@@ -70,8 +70,8 @@ function App() {
           <Header />
 
           {isTransitioning && (
-            <div className="absolute inset-0 bg-black/20 backdrop-blur-sm z-40 flex items-center justify-center">
-              <div className="w-12 h-12 border-4 border-red-500/30 border-t-red-500 rounded-full animate-spin" />
+            <div className="fixed inset-0 bg-white/60 backdrop-blur-sm z-40 flex items-center justify-center pointer-events-none">
+              <div className="w-12 h-12 border-4 border-[var(--color-primary)]/20 border-t-[var(--color-primary)] rounded-full animate-spin" />
             </div>
           )}
 
