@@ -596,5 +596,18 @@
       "message": "Article not found",
       "back": "BACK TO HOME"
     }
+  },
+  "financing": {
+    "eyebrow": "FINANCING",
+    "title": "Ride home today",
+    "description": "Flexible financing plans through Oriental Ramírez. Reach out to the nearest branch and ask about Super Tucán financing options.",
+    "principal": "MAIN",
+    "whatsappMessage": "Hi, I'd like information about Super Tucán motorcycle financing.",
+    "note": "Financing terms are handled directly by Oriental Ramírez, authorized Super Tucán distributor in the Dominican Republic.",
+    "cta": {
+      "whatsapp": "WHATSAPP",
+      "call": "CALL",
+      "map": "MAP"
+    }
   }
 }

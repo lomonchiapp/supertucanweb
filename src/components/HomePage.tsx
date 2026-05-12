@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { bikesData } from '@/data/bikes';
 import { useNavigationStore } from '@/store/navigationStore';
 import { ModernQuoteSheet } from './ModernQuoteSheet';
+import { FinancingDialog } from './FinancingDialog';
 import { usePublishedNews } from '@/admin/hooks/useNews';
 import type { BikeModel, BikeColor } from '@/types/bikes';
 
@@ -549,6 +550,7 @@ function FeaturedModel({ onQuote }: { onQuote: (bike?: BikeModel, color?: BikeCo
 function ServicesBanner() {
   const { t } = useTranslation();
   const { setActiveSection } = useNavigationStore();
+  const [financingOpen, setFinancingOpen] = useState(false);
 
   const services = [
     {
@@ -595,7 +597,7 @@ function ServicesBanner() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 10h18M3 14h18M5 6h14a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2z" />
         </svg>
       ),
-      action: () => {},
+      action: () => setFinancingOpen(true),
     },
   ];
 
@@ -644,6 +646,8 @@ function ServicesBanner() {
           ))}
         </div>
       </div>
+
+      <FinancingDialog isOpen={financingOpen} onClose={() => setFinancingOpen(false)} />
     </section>
   );
 }
@@ -652,13 +656,39 @@ function ServicesBanner() {
 /* NEWS SECTION                                                */
 /* ─────────────────────────────────────────────────────────── */
 
+// Noticias placeholder que se muestran cuando aún no hay nada en Firestore
+const FALLBACK_NEWS = [
+  {
+    id: 'fb-1',
+    date: '15 MAY 2026',
+    tag: 'home.news.tags.news',
+    title: 'home.news.items.expansion.title',
+    excerpt: 'home.news.items.expansion.excerpt',
+    image: '/bikes/ADRI SPORT/azul/1.avif',
+  },
+  {
+    id: 'fb-2',
+    date: '08 MAY 2026',
+    tag: 'home.news.tags.events',
+    title: 'home.news.items.testRide.title',
+    excerpt: 'home.news.items.testRide.excerpt',
+    image: '/bikes/ADRI SPORT/roja/1.avif',
+  },
+  {
+    id: 'fb-3',
+    date: '02 MAY 2026',
+    tag: 'home.news.tags.service',
+    title: 'home.news.items.maintenance.title',
+    excerpt: 'home.news.items.maintenance.excerpt',
+    image: '/bikes/CG200/rojo/main.avif',
+  },
+];
+
 function NewsSection() {
   const { t, i18n } = useTranslation();
   const { setActiveSection } = useNavigationStore();
   const { news, loading } = usePublishedNews(3);
-
-  // No mostrar la sección si no hay noticias publicadas y no estamos cargando
-  if (!loading && news.length === 0) return null;
+  const showFallback = !loading && news.length === 0;
 
   return (
     <section className="py-20 lg:py-28 bg-neutral-50">
@@ -683,60 +713,103 @@ function NewsSection() {
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6">
-          {loading
-            ? Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="bg-white border border-neutral-100 h-80 animate-pulse" />
-              ))
-            : news.map((n, i) => (
-                <Link
-                  key={n.id}
-                  to={`/noticias/${n.slug}`}
-                  className="group bg-white border border-neutral-100 overflow-hidden hover:border-[var(--color-primary)]/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-neutral-900/10 animate-slide-in-up block"
-                  style={{ animationDelay: `${i * 100}ms` }}
-                >
-                  <div className="relative aspect-[16/10] bg-neutral-100 overflow-hidden">
-                    {n.image && (
-                      <img
-                        src={n.image}
-                        alt={n.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                      />
-                    )}
-                    <div className="absolute top-3 left-3 bg-[var(--color-primary)] text-white text-[10px] font-bold tracking-[0.2em] px-3 py-1.5 font-accent uppercase">
-                      {n.tag}
-                    </div>
+          {loading &&
+            Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="bg-white border border-neutral-100 h-80 animate-pulse" />
+            ))}
+
+          {!loading && !showFallback &&
+            news.map((n, i) => (
+              <Link
+                key={n.id}
+                to={`/noticias/${n.slug}`}
+                className="group bg-white border border-neutral-100 overflow-hidden hover:border-[var(--color-primary)]/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-neutral-900/10 animate-slide-in-up block"
+                style={{ animationDelay: `${i * 100}ms` }}
+              >
+                <div className="relative aspect-[16/10] bg-neutral-100 overflow-hidden">
+                  {n.image && (
+                    <img
+                      src={n.image}
+                      alt={n.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                  )}
+                  <div className="absolute top-3 left-3 bg-[var(--color-primary)] text-white text-[10px] font-bold tracking-[0.2em] px-3 py-1.5 font-accent uppercase">
+                    {n.tag}
                   </div>
-                  <div className="p-6">
-                    <div className="text-[10px] font-bold tracking-[0.2em] text-neutral-500 mb-3 font-accent">
-                      {n.publishedAt
-                        ? n.publishedAt
-                            .toDate()
-                            .toLocaleDateString(i18n.language, {
-                              day: '2-digit',
-                              month: 'short',
-                              year: 'numeric',
-                            })
-                            .toUpperCase()
-                        : ''}
-                    </div>
-                    <h3 className="text-lg font-bold leading-snug text-neutral-900 mb-3 group-hover:text-[var(--color-primary)] transition-colors line-clamp-2">
-                      {n.title}
-                    </h3>
-                    <p className="text-sm text-neutral-600 leading-relaxed mb-4 line-clamp-3">{n.excerpt}</p>
-                    <div className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-[0.2em] text-neutral-900 group-hover:text-[var(--color-primary)] font-accent transition-colors">
-                      {t('home.news.readMore')}
-                      <svg
-                        className="w-3 h-3 group-hover:translate-x-1 transition-transform"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </div>
+                </div>
+                <div className="p-6">
+                  <div className="text-[10px] font-bold tracking-[0.2em] text-neutral-500 mb-3 font-accent">
+                    {n.publishedAt
+                      ? n.publishedAt
+                          .toDate()
+                          .toLocaleDateString(i18n.language, {
+                            day: '2-digit',
+                            month: 'short',
+                            year: 'numeric',
+                          })
+                          .toUpperCase()
+                      : ''}
                   </div>
-                </Link>
-              ))}
+                  <h3 className="text-lg font-bold leading-snug text-neutral-900 mb-3 group-hover:text-[var(--color-primary)] transition-colors line-clamp-2">
+                    {n.title}
+                  </h3>
+                  <p className="text-sm text-neutral-600 leading-relaxed mb-4 line-clamp-3">{n.excerpt}</p>
+                  <div className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-[0.2em] text-neutral-900 group-hover:text-[var(--color-primary)] font-accent transition-colors">
+                    {t('home.news.readMore')}
+                    <svg
+                      className="w-3 h-3 group-hover:translate-x-1 transition-transform"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </div>
+              </Link>
+            ))}
+
+          {showFallback &&
+            FALLBACK_NEWS.map((n, i) => (
+              <article
+                key={n.id}
+                onClick={() => setActiveSection('noticias')}
+                className="group bg-white border border-neutral-100 overflow-hidden hover:border-[var(--color-primary)]/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-neutral-900/10 animate-slide-in-up cursor-pointer"
+                style={{ animationDelay: `${i * 100}ms` }}
+              >
+                <div className="relative aspect-[16/10] bg-neutral-100 overflow-hidden">
+                  <img
+                    src={n.image}
+                    alt={t(n.title)}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute top-3 left-3 bg-[var(--color-primary)] text-white text-[10px] font-bold tracking-[0.2em] px-3 py-1.5 font-accent">
+                    {t(n.tag)}
+                  </div>
+                </div>
+                <div className="p-6">
+                  <div className="text-[10px] font-bold tracking-[0.2em] text-neutral-500 mb-3 font-accent">
+                    {n.date}
+                  </div>
+                  <h3 className="text-lg font-bold leading-snug text-neutral-900 mb-3 group-hover:text-[var(--color-primary)] transition-colors line-clamp-2">
+                    {t(n.title)}
+                  </h3>
+                  <p className="text-sm text-neutral-600 leading-relaxed mb-4 line-clamp-3">{t(n.excerpt)}</p>
+                  <div className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-[0.2em] text-neutral-900 group-hover:text-[var(--color-primary)] font-accent transition-colors">
+                    {t('home.news.readMore')}
+                    <svg
+                      className="w-3 h-3 group-hover:translate-x-1 transition-transform"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </div>
+              </article>
+            ))}
         </div>
       </div>
     </section>

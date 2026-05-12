@@ -596,5 +596,18 @@
       "message": "Noticia no encontrada",
       "back": "VOLVER AL INICIO"
     }
+  },
+  "financing": {
+    "eyebrow": "FINANCIAMIENTO",
+    "title": "Estrena tu moto hoy",
+    "description": "Planes flexibles a través de Oriental Ramírez. Contacta la sucursal más cercana y pregunta por las opciones de financiamiento Super Tucán.",
+    "principal": "PRINCIPAL",
+    "whatsappMessage": "Hola, quisiera información sobre el financiamiento de motocicletas Super Tucán.",
+    "note": "Las condiciones de financiamiento son procesadas directamente por Oriental Ramírez, distribuidor autorizado de Super Tucán en República Dominicana.",
+    "cta": {
+      "whatsapp": "WHATSAPP",
+      "call": "LLAMAR",
+      "map": "MAPA"
+    }
   }
 }

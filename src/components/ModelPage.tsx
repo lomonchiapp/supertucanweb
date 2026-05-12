@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { doc, getDoc, collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 import { getBikeBySlug, bikesData } from '@/data/bikes';
-import type { BikeColor } from '@/types/bikes';
+import type { BikeColor, BikeModel, BikeCategory } from '@/types/bikes';
 import { LazyImage } from './ui/lazy-image';
 import { Header } from './Header';
 import { Footer } from './Footer';
@@ -22,13 +24,103 @@ const SPEC_LABEL_KEYS: Record<string, string> = {
   seatHeight: 'modelPage.specs.seatHeight',
 };
 
+// Convierte un doc de Firestore + sus colores a la forma BikeModel que espera la UI
+async function loadBikeFromFirestore(slug: string): Promise<BikeModel | null> {
+  // Los modelos se guardan con el slug como doc ID (ver seed-firebase.ts)
+  const snapshot = await getDoc(doc(db, 'models', slug));
+  if (!snapshot.exists()) return null;
+
+  const data = snapshot.data();
+  const colorsSnap = await getDocs(
+    query(collection(db, 'models', slug, 'colors'), orderBy('order', 'asc'))
+  );
+  const colors: BikeColor[] = colorsSnap.docs.map((d) => {
+    const c = d.data();
+    return {
+      name: c.name ?? '',
+      value: c.value ?? d.id,
+      hex: c.hex ?? '#6B7280',
+      images: {
+        main: c.images?.main ?? '',
+        front: c.images?.front ?? c.images?.main ?? '',
+        additional: Array.isArray(c.images?.additional) ? c.images.additional : [],
+      },
+    };
+  });
+
+  return {
+    id: snapshot.id,
+    name: data.name ?? snapshot.id,
+    slug: data.slug ?? snapshot.id,
+    category: (data.category ?? data.categoryId ?? 'motocicleta') as BikeCategory,
+    featured: data.featured ?? false,
+    description: data.description ?? '',
+    specs: {
+      engine: data.specs?.engine ?? '',
+      maxSpeed: data.specs?.maxSpeed ?? '',
+      power: data.specs?.power,
+      fuelTank: data.specs?.fuelTank,
+      weight: data.specs?.weight,
+      brakeType: data.specs?.brakeType,
+      transmission: data.specs?.transmission,
+      startType: data.specs?.startType,
+      wheelSize: data.specs?.wheelSize,
+      seatHeight: data.specs?.seatHeight,
+    },
+    colors,
+  };
+}
+
 export default function ModelPage() {
   const { t } = useTranslation();
   const { slug } = useParams<{ slug: string }>();
-  const bike = slug ? getBikeBySlug(slug) : undefined;
+
+  // Lookup en data estática primero
+  const staticBike = slug ? getBikeBySlug(slug) : undefined;
+  const [dynamicBike, setDynamicBike] = useState<BikeModel | null>(null);
+  const [loadingDynamic, setLoadingDynamic] = useState(!staticBike && !!slug);
+
+  useEffect(() => {
+    if (staticBike || !slug) return;
+    let cancelled = false;
+    setLoadingDynamic(true);
+    loadBikeFromFirestore(slug)
+      .then((b) => {
+        if (!cancelled) setDynamicBike(b);
+      })
+      .catch(() => {
+        if (!cancelled) setDynamicBike(null);
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingDynamic(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [slug, staticBike]);
+
+  const bike = staticBike ?? dynamicBike ?? undefined;
 
   const [selectedColor, setSelectedColor] = useState(bike?.colors[0]?.value || '');
   const [quoteOpen, setQuoteOpen] = useState(false);
+
+  useEffect(() => {
+    if (bike && !selectedColor) {
+      setSelectedColor(bike.colors[0]?.value || '');
+    }
+  }, [bike, selectedColor]);
+
+  if (loadingDynamic) {
+    return (
+      <div className="min-h-screen bg-gray-950 flex flex-col">
+        <Header />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="w-8 h-8 border-4 border-red-600/30 border-t-red-600 rounded-full animate-spin" />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!bike) {
     return (
