@@ -8,15 +8,18 @@ interface LazyImageProps {
   fallbackSrc?: string;
   placeholder?: React.ReactNode;
   style?: React.CSSProperties;
+  /** Controla cómo se ajusta la imagen dentro del contenedor. Default: cover. */
+  objectFit?: 'cover' | 'contain';
 }
 
-export function LazyImage({ 
-  src, 
-  alt, 
+export function LazyImage({
+  src,
+  alt,
   className,
   fallbackSrc = '/placeholder-bike.png',
   placeholder,
-  style
+  style,
+  objectFit = 'cover',
 }: LazyImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isInView, setIsInView] = useState(false);
@@ -87,8 +90,9 @@ export function LazyImage({
           src={hasError ? fallbackSrc : src}
           alt={alt}
           className={cn(
-            "w-full h-full object-cover transition-opacity duration-500",
-            isLoaded ? "opacity-100" : "opacity-0"
+            'w-full h-full transition-opacity duration-500',
+            objectFit === 'contain' ? 'object-contain' : 'object-cover',
+            isLoaded ? 'opacity-100' : 'opacity-0'
           )}
           onLoad={handleLoad}
           onError={handleError}

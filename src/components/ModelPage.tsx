@@ -407,13 +407,15 @@ function ModelPageContent({
                 }}
               />
 
-              {/* Bike image — max-height fija evita que la columna crezca de más */}
+              {/* Bike image — plain <img> con object-contain garantiza imagen entera.
+                  No usamos LazyImage acá porque su wrapper hardcodea object-cover y recorta. */}
               {mainImage && (
-                <LazyImage
+                <img
                   key={`${bike.id}-${currentColor.value}`}
                   src={mainImage}
                   alt={`${bike.name} ${currentColor.name}`}
-                  className="relative z-10 max-w-[95%] max-h-[260px] sm:max-h-[340px] lg:max-h-[58vh] w-auto h-auto object-contain"
+                  loading="eager"
+                  className="relative z-10 max-w-[92%] max-h-[260px] sm:max-h-[340px] lg:max-h-[55vh] w-auto h-auto object-contain"
                   style={{
                     filter: 'drop-shadow(0 24px 40px rgba(0,0,0,0.18))',
                     animation: 'mpBikeIn 0.6s ease-out, mpBikeFloat 4s ease-in-out 0.6s infinite',
@@ -608,7 +610,7 @@ function ModelPageContent({
                   >
                     <div className="relative aspect-[4/3] bg-gradient-to-br from-neutral-50 to-neutral-100 flex items-center justify-center overflow-hidden p-4">
                       {relatedImage && (
-                        <LazyImage
+                        <LazyImage objectFit="contain"
                           src={relatedImage}
                           alt={related.name}
                           className="max-w-full max-h-full w-auto h-auto object-contain group-hover:scale-105 transition-transform duration-500"
@@ -690,7 +692,7 @@ function BentoGallery({ images, alt }: { images: string[]; alt: string }) {
           className="group relative aspect-[16/10] lg:aspect-[4/3] bg-gradient-to-br from-neutral-50 to-neutral-100 overflow-hidden border border-neutral-100 hover:border-[var(--color-primary)]/40 transition-colors"
         >
           <div className="absolute inset-0 flex items-center justify-center p-4 lg:p-8">
-            <LazyImage
+            <LazyImage objectFit="contain"
               src={hero}
               alt={`${alt} 1`}
               className="max-w-full max-h-full w-auto h-auto object-contain group-hover:scale-105 transition-transform duration-500"
@@ -708,7 +710,7 @@ function BentoGallery({ images, alt }: { images: string[]; alt: string }) {
                 className="group relative aspect-square bg-gradient-to-br from-neutral-50 to-neutral-100 overflow-hidden border border-neutral-100 hover:border-[var(--color-primary)]/40 transition-colors"
               >
                 <div className="absolute inset-0 flex items-center justify-center p-3">
-                  <LazyImage
+                  <LazyImage objectFit="contain"
                     src={img}
                     alt={`${alt} ${i + 2}`}
                     className="max-w-full max-h-full w-auto h-auto object-contain group-hover:scale-105 transition-transform duration-500"
@@ -730,7 +732,7 @@ function BentoGallery({ images, alt }: { images: string[]; alt: string }) {
               className="group relative aspect-square bg-gradient-to-br from-neutral-50 to-neutral-100 overflow-hidden border border-neutral-100 hover:border-[var(--color-primary)]/40 transition-colors"
             >
               <div className="absolute inset-0 flex items-center justify-center p-3">
-                <LazyImage
+                <LazyImage objectFit="contain"
                   src={img}
                   alt={`${alt} ${i + 6}`}
                   className="max-w-full max-h-full w-auto h-auto object-contain group-hover:scale-105 transition-transform duration-500"
