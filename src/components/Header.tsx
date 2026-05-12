@@ -173,10 +173,7 @@ export function Header() {
             onMouseLeave={() => setOpenMegaKey(null)}
           >
             {item.key === 'modelos' && (
-              <ModelosMegaMenu
-                onCategoryClick={handleCategoryClick}
-                onQuoteClick={() => setIsQuoteSheetOpen(true)}
-              />
+              <ModelosMegaMenu onCategoryClick={handleCategoryClick} />
             )}
           </div>
         ))}
@@ -427,10 +424,8 @@ function LanguageSelector() {
 
 function ModelosMegaMenu({
   onCategoryClick,
-  onQuoteClick,
 }: {
   onCategoryClick: (categoryId: string) => void;
-  onQuoteClick: () => void;
 }) {
   const { t } = useTranslation();
   const categories = [
@@ -553,21 +548,6 @@ function ModelosMegaMenu({
               );
             })}
           </div>
-
-          {/* CTA bar */}
-          <button
-            onClick={onQuoteClick}
-            className="mt-4 w-full flex items-center justify-between bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white px-5 py-3 transition-colors duration-300"
-            style={{ clipPath: 'polygon(2% 0, 100% 0, 98% 100%, 0% 100%)' }}
-          >
-            <div>
-              <div className="text-[10px] tracking-[0.2em] opacity-80 font-accent">{t('header.mega.ctaEyebrow')}</div>
-              <div className="text-sm font-bold tracking-[0.1em] font-accent">{t('header.mega.ctaTitle')}</div>
-            </div>
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
         </div>
       </div>
     </div>
