@@ -227,7 +227,10 @@ function ModelPageContent({
       <Header />
 
       {/* ════════════════ HERO ════════════════ */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-neutral-100 via-white to-neutral-50 pt-20 lg:pt-24 pb-8 lg:pb-10">
+      {/* En desktop el hero ocupa exactamente el viewport menos el header (108px),
+          y la moto se posiciona absoluta de top a bottom: manubrios bajo el nav,
+          ruedas al pie donde arranca el selector de color. */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-neutral-100 via-white to-neutral-50 pt-20 lg:pt-[108px] pb-8 lg:pb-0 lg:h-[calc(100vh-0px)] lg:min-h-[640px]">
         {/* Diagonal pattern muy sutil */}
         <div
           className="absolute inset-0 pointer-events-none opacity-[0.06]"
@@ -245,9 +248,77 @@ function ModelPageContent({
           }}
         />
 
-        <div className="relative max-w-[1400px] mx-auto px-5 lg:px-8">
-          {/* Breadcrumb */}
-          <div className="mb-6 lg:mb-8">
+        {/* ═════════ Desktop only: bike absolutamente posicionada ═════════
+            Va desde justo debajo del nav (top-[108px]) hasta el bottom del hero.
+            La imagen llena toda la altura disponible con object-contain →
+            manubrios pegados arriba, ruedas pegadas abajo. */}
+        {mainImage && (
+          <div
+            className="hidden lg:block absolute top-[108px] right-0 bottom-0 w-[55%] xl:w-[58%] pointer-events-none z-[5]"
+            aria-hidden="true"
+          >
+            {/* Speed lines */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+              {[
+                { top: '18%', delay: '0s', duration: '2.4s', width: '60%' },
+                { top: '32%', delay: '0.5s', duration: '2.8s', width: '50%' },
+                { top: '46%', delay: '0.2s', duration: '2.2s', width: '70%' },
+                { top: '60%', delay: '1s', duration: '3s', width: '55%' },
+                { top: '74%', delay: '0.4s', duration: '2.6s', width: '45%' },
+              ].map((line, i) => (
+                <span
+                  key={i}
+                  className="absolute h-px"
+                  style={{
+                    top: line.top,
+                    width: line.width,
+                    background:
+                      'linear-gradient(90deg, transparent 0%, rgba(227,6,19,0.55) 50%, transparent 100%)',
+                    animation: `mpSpeedStreak ${line.duration} linear ${line.delay} infinite`,
+                    opacity: 0.22,
+                  }}
+                />
+              ))}
+            </div>
+
+            {/* Huge background letters */}
+            <span
+              className="absolute top-1/2 -translate-y-1/2 right-4 font-display font-bold leading-none text-neutral-100 select-none uppercase whitespace-nowrap"
+              style={{ fontSize: 'clamp(8rem, 16vw, 20rem)' }}
+            >
+              {bike.name.split(' ')[0]}
+            </span>
+
+            {/* Radial glow */}
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  'radial-gradient(ellipse 65% 55% at 50% 55%, rgba(227,6,19,0.08), transparent 70%)',
+              }}
+            />
+
+            {/* Bike — llena la altura del contenedor.
+                object-contain con object-bottom: las ruedas tocan el bottom
+                (donde está el color selector) y los manubrios van hacia arriba */}
+            <img
+              key={`${bike.id}-${currentColor.value}-desktop`}
+              src={mainImage}
+              alt=""
+              loading="eager"
+              className="absolute inset-0 w-full h-full object-contain"
+              style={{
+                objectPosition: 'center bottom',
+                filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.15))',
+                animation: 'mpBikeIn 0.6s ease-out, mpBikeFloat 4s ease-in-out 0.6s infinite',
+              }}
+            />
+          </div>
+        )}
+
+        <div className="relative max-w-[1400px] mx-auto px-5 lg:px-8 lg:h-full lg:flex lg:flex-col lg:justify-center">
+          {/* Breadcrumb — solo mobile (en desktop está en el flujo justo arriba del título) */}
+          <div className="mb-6 lg:hidden">
             <Link
               to="/"
               className="inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.2em] font-accent text-neutral-500 hover:text-[var(--color-primary)] transition-colors"
@@ -262,6 +333,17 @@ function ModelPageContent({
           <div className="grid lg:grid-cols-[1fr_1.2fr] gap-8 lg:gap-12 items-start">
             {/* Left: text content */}
             <div className="relative z-10 text-center lg:text-left order-2 lg:order-1">
+              {/* Breadcrumb desktop */}
+              <Link
+                to="/"
+                className="hidden lg:inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.2em] font-accent text-neutral-500 hover:text-[var(--color-primary)] transition-colors mb-6"
+              >
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+                </svg>
+                {t('modelPage.backToCatalog')}
+              </Link>
+
               <div className="flex items-center justify-center lg:justify-start gap-3 mb-5">
                 <div className="h-[2px] w-10 bg-[var(--color-primary)]" />
                 <span className="text-[11px] font-bold tracking-[0.3em] text-[var(--color-primary)] font-accent uppercase">
@@ -363,8 +445,8 @@ function ModelPageContent({
               </div>
             </div>
 
-            {/* Right: bike showcase — alturas viewport-relative para que SIEMPRE quepa */}
-            <div className="relative order-1 lg:order-2 flex items-center justify-center min-h-[280px] sm:min-h-[360px] lg:min-h-[58vh] lg:max-h-[65vh] overflow-hidden">
+            {/* Right: bike showcase MOBILE ONLY (en desktop la moto está absolutamente posicionada arriba) */}
+            <div className="relative lg:hidden order-1 flex items-center justify-center min-h-[280px] sm:min-h-[360px] overflow-hidden">
               {/* Speed lines detrás de la moto */}
               <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
                 {[
