@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { bikesData } from '@/data/bikes';
 import { useNavigationStore } from '@/store/navigationStore';
 import { ModernQuoteSheet } from './ModernQuoteSheet';
+import { usePublishedNews } from '@/admin/hooks/useNews';
 import type { BikeModel, BikeColor } from '@/types/bikes';
 
 /* ─────────────────────────────────────────────────────────── */
@@ -76,33 +78,6 @@ const CATEGORIES = [
     description: 'home.categoryGrid.items.atv.description',
     image: null,
     count: 0,
-  },
-];
-
-const NEWS = [
-  {
-    id: 1,
-    date: '15 MAY 2026',
-    tag: 'home.news.tags.news',
-    title: 'home.news.items.expansion.title',
-    excerpt: 'home.news.items.expansion.excerpt',
-    image: '/bikes/ADRI SPORT/azul/1.avif',
-  },
-  {
-    id: 2,
-    date: '08 MAY 2026',
-    tag: 'home.news.tags.events',
-    title: 'home.news.items.testRide.title',
-    excerpt: 'home.news.items.testRide.excerpt',
-    image: '/bikes/ADRI SPORT/roja/1.avif',
-  },
-  {
-    id: 3,
-    date: '02 MAY 2026',
-    tag: 'home.news.tags.service',
-    title: 'home.news.items.maintenance.title',
-    excerpt: 'home.news.items.maintenance.excerpt',
-    image: '/bikes/CG200/rojo/main.avif',
   },
 ];
 
@@ -228,7 +203,7 @@ function HeroCarousel({ onQuote }: { onQuote: () => void }) {
         </div>
 
         {/* Right: bike image */}
-        <div className="relative flex items-center justify-center min-h-[300px] lg:min-h-[480px]">
+        <div className="relative flex items-center justify-center min-h-[300px] lg:min-h-[480px] overflow-hidden">
           {/* Soft radial glow */}
           <div
             className="absolute inset-0 pointer-events-none"
@@ -238,6 +213,30 @@ function HeroCarousel({ onQuote }: { onQuote: () => void }) {
             }}
           />
 
+          {/* Speed lines — streak desde la derecha hacia la izquierda detrás de la moto */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+            {[
+              { top: '24%', delay: '0s', duration: '2.4s', width: '60%', opacity: 0.22 },
+              { top: '36%', delay: '0.6s', duration: '2.8s', width: '50%', opacity: 0.18 },
+              { top: '48%', delay: '0.2s', duration: '2.2s', width: '70%', opacity: 0.28 },
+              { top: '60%', delay: '1.1s', duration: '3s', width: '55%', opacity: 0.2 },
+              { top: '72%', delay: '0.4s', duration: '2.6s', width: '45%', opacity: 0.15 },
+            ].map((line, i) => (
+              <span
+                key={i}
+                className="absolute h-px"
+                style={{
+                  top: line.top,
+                  width: line.width,
+                  background:
+                    'linear-gradient(90deg, transparent 0%, rgba(227,6,19,0.6) 50%, transparent 100%)',
+                  opacity: line.opacity,
+                  animation: `speedStreak ${line.duration} linear ${line.delay} infinite`,
+                }}
+              />
+            ))}
+          </div>
+
           {/* Huge background number */}
           <span
             className="absolute -top-4 right-0 lg:right-8 font-display font-bold text-[12rem] lg:text-[20rem] leading-none text-neutral-100 select-none pointer-events-none"
@@ -246,21 +245,23 @@ function HeroCarousel({ onQuote }: { onQuote: () => void }) {
             0{idx + 1}
           </span>
 
-          {/* Bike */}
+          {/* Bike — con micro-oscilación (idle breathing) */}
           <img
             key={`bike-${slide.id}`}
             src={slide.image}
             alt={slide.title}
             className="relative z-10 max-w-[90%] max-h-[420px] lg:max-h-[520px] object-contain drop-shadow-2xl animate-slide-in-right"
+            style={{ animation: 'slide-in-right 0.7s ease-out, bikeFloat 4s ease-in-out 0.7s infinite' }}
           />
 
-          {/* Ground reflection */}
+          {/* Ground reflection con leve pulso */}
           <div
             className="absolute bottom-4 left-1/2 -translate-x-1/2 w-3/4 h-12 pointer-events-none"
             style={{
               background:
                 'radial-gradient(ellipse 100% 100% at 50% 0%, rgba(0,0,0,0.12), transparent 70%)',
               filter: 'blur(6px)',
+              animation: 'reflectPulse 4s ease-in-out infinite',
             }}
           />
         </div>
@@ -314,7 +315,27 @@ function HeroCarousel({ onQuote }: { onQuote: () => void }) {
         </div>
       </div>
 
-      <style>{`@keyframes progressBar { from { width: 0%; } to { width: 100%; } }`}</style>
+      <style>{`
+        @keyframes progressBar { from { width: 0%; } to { width: 100%; } }
+        @keyframes speedStreak {
+          0% { transform: translateX(110%); opacity: 0; }
+          15% { opacity: var(--speed-op, 0.25); }
+          85% { opacity: var(--speed-op, 0.25); }
+          100% { transform: translateX(-130%); opacity: 0; }
+        }
+        @keyframes bikeFloat {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-6px); }
+        }
+        @keyframes reflectPulse {
+          0%, 100% { transform: translateX(-50%) scaleX(1); opacity: 1; }
+          50% { transform: translateX(-50%) scaleX(0.92); opacity: 0.85; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .relative img[alt][src*="/bikes/"],
+          .relative div[style*="reflectPulse"] { animation: none !important; }
+        }
+      `}</style>
     </section>
   );
 }
@@ -632,7 +653,13 @@ function ServicesBanner() {
 /* ─────────────────────────────────────────────────────────── */
 
 function NewsSection() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { setActiveSection } = useNavigationStore();
+  const { news, loading } = usePublishedNews(3);
+
+  // No mostrar la sección si no hay noticias publicadas y no estamos cargando
+  if (!loading && news.length === 0) return null;
+
   return (
     <section className="py-20 lg:py-28 bg-neutral-50">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-8">
@@ -644,7 +671,10 @@ function NewsSection() {
             align="left"
             embedded
           />
-          <button className="self-start lg:self-end inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.2em] text-neutral-900 hover:text-[var(--color-primary)] font-accent transition-colors">
+          <button
+            onClick={() => setActiveSection('noticias')}
+            className="self-start lg:self-end inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.2em] text-neutral-900 hover:text-[var(--color-primary)] font-accent transition-colors"
+          >
             {t('home.news.viewAll')}
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
@@ -653,44 +683,60 @@ function NewsSection() {
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6">
-          {NEWS.map((n, i) => (
-            <article
-              key={n.id}
-              className="group bg-white border border-neutral-100 overflow-hidden hover:border-[var(--color-primary)]/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-neutral-900/10 animate-slide-in-up"
-              style={{ animationDelay: `${i * 100}ms` }}
-            >
-              <div className="relative aspect-[16/10] bg-neutral-100 overflow-hidden">
-                <img
-                  src={n.image}
-                  alt={t(n.title)}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute top-3 left-3 bg-[var(--color-primary)] text-white text-[10px] font-bold tracking-[0.2em] px-3 py-1.5 font-accent">
-                  {t(n.tag)}
-                </div>
-              </div>
-              <div className="p-6">
-                <div className="text-[10px] font-bold tracking-[0.2em] text-neutral-500 mb-3 font-accent">
-                  {n.date}
-                </div>
-                <h3 className="text-lg font-bold leading-snug text-neutral-900 mb-3 group-hover:text-[var(--color-primary)] transition-colors">
-                  {t(n.title)}
-                </h3>
-                <p className="text-sm text-neutral-600 leading-relaxed mb-4">{t(n.excerpt)}</p>
-                <div className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-[0.2em] text-neutral-900 group-hover:text-[var(--color-primary)] font-accent transition-colors">
-                  {t('home.news.readMore')}
-                  <svg
-                    className="w-3 h-3 group-hover:translate-x-1 transition-transform"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
-              </div>
-            </article>
-          ))}
+          {loading
+            ? Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="bg-white border border-neutral-100 h-80 animate-pulse" />
+              ))
+            : news.map((n, i) => (
+                <Link
+                  key={n.id}
+                  to={`/noticias/${n.slug}`}
+                  className="group bg-white border border-neutral-100 overflow-hidden hover:border-[var(--color-primary)]/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-neutral-900/10 animate-slide-in-up block"
+                  style={{ animationDelay: `${i * 100}ms` }}
+                >
+                  <div className="relative aspect-[16/10] bg-neutral-100 overflow-hidden">
+                    {n.image && (
+                      <img
+                        src={n.image}
+                        alt={n.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      />
+                    )}
+                    <div className="absolute top-3 left-3 bg-[var(--color-primary)] text-white text-[10px] font-bold tracking-[0.2em] px-3 py-1.5 font-accent uppercase">
+                      {n.tag}
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    <div className="text-[10px] font-bold tracking-[0.2em] text-neutral-500 mb-3 font-accent">
+                      {n.publishedAt
+                        ? n.publishedAt
+                            .toDate()
+                            .toLocaleDateString(i18n.language, {
+                              day: '2-digit',
+                              month: 'short',
+                              year: 'numeric',
+                            })
+                            .toUpperCase()
+                        : ''}
+                    </div>
+                    <h3 className="text-lg font-bold leading-snug text-neutral-900 mb-3 group-hover:text-[var(--color-primary)] transition-colors line-clamp-2">
+                      {n.title}
+                    </h3>
+                    <p className="text-sm text-neutral-600 leading-relaxed mb-4 line-clamp-3">{n.excerpt}</p>
+                    <div className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-[0.2em] text-neutral-900 group-hover:text-[var(--color-primary)] font-accent transition-colors">
+                      {t('home.news.readMore')}
+                      <svg
+                        className="w-3 h-3 group-hover:translate-x-1 transition-transform"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </div>
+                </Link>
+              ))}
         </div>
       </div>
     </section>

@@ -6,6 +6,7 @@ import { ModelosSection } from '@/components/ModelosSection';
 import { MarcaSection } from '@/components/MarcaSection';
 import { DealersSection } from '@/components/DealersSection';
 import { PartesSection } from '@/components/PartesSection';
+import { NoticiasSection } from '@/components/NoticiasSection';
 import { Footer } from '@/components/Footer';
 import { useNavigationStore } from '@/store/navigationStore';
 
@@ -45,6 +46,8 @@ function App() {
         return <DealersSection />;
       case 'partes':
         return <PartesSection />;
+      case 'noticias':
+        return <NoticiasSection />;
       default:
         return <HomePage />;
     }

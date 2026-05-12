@@ -12,6 +12,9 @@ const AdminRoutes = lazy(() => import('./admin/routes.tsx'))
 // Lazy load model detail page
 const ModelPage = lazy(() => import('./components/ModelPage.tsx'))
 
+// Lazy load news detail page
+const NoticiaPage = lazy(() => import('./components/NoticiaPage.tsx'))
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <HelmetProvider>
@@ -30,6 +33,20 @@ createRoot(document.getElementById('root')!).render(
                 </div>
               }>
                 <ModelPage />
+              </Suspense>
+            }
+          />
+
+          {/* News detail page (lazy loaded) */}
+          <Route
+            path="/noticias/:slug"
+            element={
+              <Suspense fallback={
+                <div className="min-h-screen bg-white flex items-center justify-center">
+                  <div className="w-8 h-8 border-4 border-red-600/30 border-t-red-600 rounded-full animate-spin" />
+                </div>
+              }>
+                <NoticiaPage />
               </Suspense>
             }
           />

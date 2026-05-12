@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type NavigationSection = 'hero' | 'modelos' | 'marca' | 'dealers' | 'partes';
+export type NavigationSection = 'hero' | 'modelos' | 'marca' | 'dealers' | 'partes' | 'noticias';
 
 interface NavigationState {
   activeSection: NavigationSection;

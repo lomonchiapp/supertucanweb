@@ -28,7 +28,8 @@
       "modelos": "MODELS",
       "marca": "BRAND",
       "dealers": "DEALERS",
-      "partes": "PARTS"
+      "partes": "PARTS",
+      "noticias": "NEWS"
     },
     "aria": {
       "goHome": "Go to home",
@@ -562,5 +563,37 @@
     "negro": "Black",
     "roja": "Red",
     "rojo": "Red"
+  },
+  "noticias": {
+    "hero": {
+      "eyebrow": "NEWSROOM",
+      "title": "News",
+      "description": "Launches, events and updates from the Super Tucán world."
+    },
+    "filters": {
+      "all": "ALL"
+    },
+    "tags": {
+      "noticias": "NEWS",
+      "eventos": "EVENTS",
+      "servicio": "SERVICE",
+      "producto": "PRODUCT"
+    },
+    "card": {
+      "readMore": "READ MORE"
+    },
+    "empty": {
+      "title": "NO NEWS YET",
+      "description": "Check back soon for updates."
+    },
+    "detail": {
+      "back": "BACK TO NEWS",
+      "relatedEyebrow": "YOU MIGHT ALSO LIKE",
+      "relatedTitle": "Other news"
+    },
+    "notFound": {
+      "message": "Article not found",
+      "back": "BACK TO HOME"
+    }
   }
 }

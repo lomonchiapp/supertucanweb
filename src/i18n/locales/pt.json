@@ -28,7 +28,8 @@
       "modelos": "MODELOS",
       "marca": "A MARCA",
       "dealers": "CONCESSIONÁRIAS",
-      "partes": "PEÇAS"
+      "partes": "PEÇAS",
+      "noticias": "NOTÍCIAS"
     },
     "aria": {
       "goHome": "Ir para o início",
@@ -562,5 +563,37 @@
     "negro": "Preto",
     "roja": "Vermelha",
     "rojo": "Vermelho"
+  },
+  "noticias": {
+    "hero": {
+      "eyebrow": "NEWSROOM",
+      "title": "Notícias",
+      "description": "Lançamentos, eventos e novidades do mundo Super Tucán."
+    },
+    "filters": {
+      "all": "TODAS"
+    },
+    "tags": {
+      "noticias": "NOTÍCIAS",
+      "eventos": "EVENTOS",
+      "servicio": "SERVIÇO",
+      "producto": "PRODUTO"
+    },
+    "card": {
+      "readMore": "LER MAIS"
+    },
+    "empty": {
+      "title": "SEM NOTÍCIAS POR ENQUANTO",
+      "description": "Volte em breve para ver as novidades."
+    },
+    "detail": {
+      "back": "VOLTAR PARA NOTÍCIAS",
+      "relatedEyebrow": "VOCÊ TAMBÉM PODE GOSTAR",
+      "relatedTitle": "Outras notícias"
+    },
+    "notFound": {
+      "message": "Notícia não encontrada",
+      "back": "VOLTAR AO INÍCIO"
+    }
   }
 }

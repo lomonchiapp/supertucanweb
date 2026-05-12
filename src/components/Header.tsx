@@ -17,6 +17,7 @@ const NAV_ITEMS: NavItem[] = [
   { key: 'marca', name: 'header.nav.marca' },
   { key: 'dealers', name: 'header.nav.dealers' },
   { key: 'partes', name: 'header.nav.partes' },
+  { key: 'noticias', name: 'header.nav.noticias' },
 ];
 
 export function Header() {

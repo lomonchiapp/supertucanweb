@@ -6,6 +6,7 @@ import ModelList from '@/admin/components/ModelList';
 import ModelEditor from '@/admin/components/ModelEditor';
 import CategoryManager from '@/admin/components/CategoryManager';
 import PartsManager from '@/admin/components/PartsManager';
+import NewsManager from '@/admin/components/NewsManager';
 
 export default function AdminRoutes() {
   const { user, loading } = useAuth();
@@ -36,6 +37,7 @@ export default function AdminRoutes() {
         <Route path="models/:id" element={<ModelEditor />} />
         <Route path="parts" element={<PartsManager />} />
         <Route path="categories" element={<CategoryManager />} />
+        <Route path="news" element={<NewsManager />} />
       </Route>
     </Routes>
   );
