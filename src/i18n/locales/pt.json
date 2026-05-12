@@ -21,6 +21,7 @@
     "topbar": {
       "hours": "Atendimento: Seg–Sáb 8:00 — 18:00",
       "customerService": "Atendimento ao Cliente",
+      "customerServiceMessage": "Olá, vim do site da Super Tucán e preciso de ajuda.",
       "findDealer": "Encontre sua Concessionária"
     },
     "nav": {

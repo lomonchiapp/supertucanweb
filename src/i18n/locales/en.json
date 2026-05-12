@@ -21,6 +21,7 @@
     "topbar": {
       "hours": "Hours: Mon–Sat 8:00 — 18:00",
       "customerService": "Customer Service",
+      "customerServiceMessage": "Hi, I'm visiting the Super Tucán site and I need help.",
       "findDealer": "Find your Dealer"
     },
     "nav": {
