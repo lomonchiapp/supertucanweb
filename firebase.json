@@ -5,5 +5,11 @@
     "rewrites": [
       { "source": "**", "destination": "/index.html" }
     ]
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "firestore": {
+    "rules": "firestore.rules"
   }
 }
