@@ -34,13 +34,18 @@ export function useModel(id: string | undefined): UseModelReturn {
       if (modelLoaded && colorsLoaded && modelData) {
         setModel({
           id: id!,
-          name: modelData.name as string,
-          slug: modelData.slug as string,
-          categoryId: modelData.categoryId as string,
-          featured: modelData.featured as boolean,
-          description: modelData.description as string,
-          specs: modelData.specs as { engine: string; maxSpeed: string },
-          order: modelData.order as number,
+          name: (modelData.name as string) ?? '',
+          slug: (modelData.slug as string) ?? id!,
+          // Soporta data legacy con `category` (slug) además de `categoryId`
+          categoryId:
+            (modelData.categoryId as string) ?? (modelData.category as string) ?? '',
+          featured: (modelData.featured as boolean) ?? false,
+          description: (modelData.description as string) ?? '',
+          specs: (modelData.specs as { engine: string; maxSpeed: string }) ?? {
+            engine: '',
+            maxSpeed: '',
+          },
+          order: (modelData.order as number) ?? 0,
           createdAt: modelData.createdAt,
           updatedAt: modelData.updatedAt,
           colors: colorsData,

@@ -38,13 +38,14 @@ export function useModels(): UseModelsReturn {
           const colors = await fetchColorsForModel(doc.id);
           return {
             id: doc.id,
-            name: data.name,
-            slug: data.slug,
-            categoryId: data.categoryId,
-            featured: data.featured,
-            description: data.description,
-            specs: data.specs,
-            order: data.order,
+            name: data.name ?? '',
+            slug: data.slug ?? doc.id,
+            // Soporta data legacy con `category` (slug) además de `categoryId`
+            categoryId: data.categoryId ?? data.category ?? '',
+            featured: data.featured ?? false,
+            description: data.description ?? '',
+            specs: data.specs ?? { engine: '', maxSpeed: '' },
+            order: data.order ?? 0,
             createdAt: data.createdAt,
             updatedAt: data.updatedAt,
             colors,

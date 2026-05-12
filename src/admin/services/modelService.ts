@@ -78,13 +78,14 @@ export async function getModels(): Promise<Model[]> {
       const colors = await fetchColors(d.id);
       return {
         id: d.id,
-        name: data.name,
-        slug: data.slug,
-        categoryId: data.categoryId,
-        featured: data.featured,
-        description: data.description,
-        specs: data.specs,
-        order: data.order,
+        name: data.name ?? '',
+        slug: data.slug ?? d.id,
+        // Soporta data legacy con `category` (slug) además de `categoryId`
+        categoryId: data.categoryId ?? data.category ?? '',
+        featured: data.featured ?? false,
+        description: data.description ?? '',
+        specs: data.specs ?? { engine: '', maxSpeed: '' },
+        order: data.order ?? 0,
         createdAt: data.createdAt,
         updatedAt: data.updatedAt,
         colors,
@@ -108,13 +109,13 @@ export async function getModel(id: string): Promise<Model | null> {
 
   return {
     id: snapshot.id,
-    name: data.name,
-    slug: data.slug,
-    categoryId: data.categoryId,
-    featured: data.featured,
-    description: data.description,
-    specs: data.specs,
-    order: data.order,
+    name: data.name ?? '',
+    slug: data.slug ?? snapshot.id,
+    categoryId: data.categoryId ?? data.category ?? '',
+    featured: data.featured ?? false,
+    description: data.description ?? '',
+    specs: data.specs ?? { engine: '', maxSpeed: '' },
+    order: data.order ?? 0,
     createdAt: data.createdAt,
     updatedAt: data.updatedAt,
     colors,
@@ -132,10 +133,11 @@ export async function createModel(data: ModelInput): Promise<string> {
 
 export async function updateModel(id: string, data: Partial<ModelInput>): Promise<void> {
   const docRef = doc(db, 'models', id);
-  await updateDoc(docRef, {
-    ...data,
-    updatedAt: serverTimestamp(),
-  });
+  // Firestore rechaza valores undefined. Los stripeamos antes de enviar.
+  const clean = Object.fromEntries(
+    Object.entries(data).filter(([, v]) => v !== undefined)
+  ) as Partial<ModelInput>;
+  await updateDoc(docRef, { ...clean, updatedAt: serverTimestamp() });
 }
 
 export async function deleteModel(id: string): Promise<void> {
