@@ -6,7 +6,6 @@ import { doc, getDoc, collection, getDocs, query, orderBy } from 'firebase/fires
 import { db } from '@/lib/firebase';
 import { getBikeBySlug, bikesData } from '@/data/bikes';
 import type { BikeColor, BikeModel, BikeCategory } from '@/types/bikes';
-import { LazyImage } from './ui/lazy-image';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { FinancingDialog } from './FinancingDialog';
@@ -690,12 +689,13 @@ function ModelPageContent({
                     to={`/modelos/${related.slug}`}
                     className="group block bg-white border border-neutral-100 overflow-hidden hover:border-[var(--color-primary)]/40 hover:shadow-xl hover:shadow-neutral-900/10 hover:-translate-y-1 transition-all duration-300"
                   >
-                    <div className="relative aspect-[4/3] bg-gradient-to-br from-neutral-50 to-neutral-100 flex items-center justify-center overflow-hidden p-4">
+                    <div className="relative aspect-[4/3] bg-gradient-to-br from-neutral-50 to-neutral-100 overflow-hidden">
                       {relatedImage && (
-                        <LazyImage objectFit="contain"
+                        <img
                           src={relatedImage}
                           alt={related.name}
-                          className="max-w-full max-h-full w-auto h-auto object-contain group-hover:scale-105 transition-transform duration-500"
+                          loading="lazy"
+                          className="absolute inset-0 w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
                           style={{ filter: 'drop-shadow(0 12px 24px rgba(0,0,0,0.15))' }}
                         />
                       )}
@@ -773,13 +773,12 @@ function BentoGallery({ images, alt }: { images: string[]; alt: string }) {
           onClick={() => setLightbox(hero)}
           className="group relative aspect-[16/10] lg:aspect-[4/3] bg-gradient-to-br from-neutral-50 to-neutral-100 overflow-hidden border border-neutral-100 hover:border-[var(--color-primary)]/40 transition-colors"
         >
-          <div className="absolute inset-0 flex items-center justify-center p-4 lg:p-8">
-            <LazyImage objectFit="contain"
-              src={hero}
-              alt={`${alt} 1`}
-              className="max-w-full max-h-full w-auto h-auto object-contain group-hover:scale-105 transition-transform duration-500"
-            />
-          </div>
+          <img
+            src={hero}
+            alt={`${alt} 1`}
+            loading="lazy"
+            className="absolute inset-0 w-full h-full object-contain p-4 lg:p-8 group-hover:scale-105 transition-transform duration-500"
+          />
         </button>
 
         {/* Rest in 2-col grid */}
@@ -791,13 +790,12 @@ function BentoGallery({ images, alt }: { images: string[]; alt: string }) {
                 onClick={() => setLightbox(img)}
                 className="group relative aspect-square bg-gradient-to-br from-neutral-50 to-neutral-100 overflow-hidden border border-neutral-100 hover:border-[var(--color-primary)]/40 transition-colors"
               >
-                <div className="absolute inset-0 flex items-center justify-center p-3">
-                  <LazyImage objectFit="contain"
-                    src={img}
-                    alt={`${alt} ${i + 2}`}
-                    className="max-w-full max-h-full w-auto h-auto object-contain group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
+                <img
+                  src={img}
+                  alt={`${alt} ${i + 2}`}
+                  loading="lazy"
+                  className="absolute inset-0 w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-500"
+                />
               </button>
             ))}
           </div>
@@ -813,13 +811,12 @@ function BentoGallery({ images, alt }: { images: string[]; alt: string }) {
               onClick={() => setLightbox(img)}
               className="group relative aspect-square bg-gradient-to-br from-neutral-50 to-neutral-100 overflow-hidden border border-neutral-100 hover:border-[var(--color-primary)]/40 transition-colors"
             >
-              <div className="absolute inset-0 flex items-center justify-center p-3">
-                <LazyImage objectFit="contain"
-                  src={img}
-                  alt={`${alt} ${i + 6}`}
-                  className="max-w-full max-h-full w-auto h-auto object-contain group-hover:scale-105 transition-transform duration-500"
-                />
-              </div>
+              <img
+                src={img}
+                alt={`${alt} ${i + 6}`}
+                loading="lazy"
+                className="absolute inset-0 w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-500"
+              />
             </button>
           ))}
         </div>
