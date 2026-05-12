@@ -155,15 +155,19 @@ export function DealersSection() {
       {/* ══════════ Hero ══════════ */}
       <div
         ref={headerRef}
-        className="relative overflow-hidden bg-gradient-to-br from-[var(--color-primary)] via-[var(--color-primary-dark)] to-neutral-900 text-white py-20"
+        className="relative overflow-hidden bg-gradient-to-br from-neutral-950 via-neutral-900 to-neutral-800 text-white py-16 lg:py-20"
       >
+        {/* Soft red glow */}
         <div
-          className="absolute inset-0 pointer-events-none opacity-[0.08]"
+          className="absolute inset-0 pointer-events-none"
           style={{
-            backgroundImage:
-              'repeating-linear-gradient(135deg, transparent, transparent 14px, rgba(255,255,255,0.6) 14px, rgba(255,255,255,0.6) 15px)',
+            background:
+              'radial-gradient(ellipse 60% 80% at 50% 0%, rgba(227,6,19,0.18), transparent 60%)',
           }}
         />
+        {/* Bottom accent line */}
+        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[var(--color-primary)] to-transparent" />
+
         <div className="relative max-w-[1100px] mx-auto px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-3 mb-5">
             <div className="h-[2px] w-10 bg-white/70" />

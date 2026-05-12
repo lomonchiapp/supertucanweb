@@ -1,12 +1,9 @@
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigationStore } from '@/store/navigationStore';
 
 export function Footer() {
   const { t } = useTranslation();
   const { setActiveSection, setSelectedCategory } = useNavigationStore();
-  const [email, setEmail] = useState('');
-  const [submitted, setSubmitted] = useState(false);
 
   const handleProductClick = (category: string) => {
     setSelectedCategory(category);
@@ -17,16 +14,6 @@ export function Footer() {
   const handleServiceClick = (section: 'dealers' | 'partes' | 'marca') => {
     setActiveSection(section);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
-    setSubmitted(true);
-    setTimeout(() => {
-      setEmail('');
-      setSubmitted(false);
-    }, 2500);
   };
 
   return (
@@ -41,58 +28,6 @@ export function Footer() {
       />
       {/* Red accent strip */}
       <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-[var(--color-primary)] to-transparent" />
-
-      {/* Newsletter */}
-      <div className="relative border-b border-white/5">
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-8 py-10 lg:py-12 grid lg:grid-cols-2 gap-8 items-center">
-          <div>
-            <div className="flex items-center gap-3 mb-3">
-              <div className="h-[2px] w-8 bg-[var(--color-primary)]" />
-              <span className="text-[11px] font-bold tracking-[0.3em] text-[var(--color-primary)] font-accent">
-                {t('footer.newsletter.eyebrow')}
-              </span>
-            </div>
-            <h3 className="font-display text-3xl lg:text-4xl font-bold uppercase text-white leading-tight">
-              {t('footer.newsletter.title')}
-            </h3>
-            <p className="text-sm text-neutral-400 mt-2 max-w-md">
-              {t('footer.newsletter.description')}
-            </p>
-          </div>
-          <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3">
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder={t('footer.newsletter.placeholder')}
-              className="flex-1 bg-white/[0.04] border border-white/10 focus:border-[var(--color-primary)] text-white placeholder:text-neutral-500 px-5 py-3.5 text-sm outline-none transition-colors"
-            />
-            <button
-              type="submit"
-              disabled={submitted}
-              className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] disabled:bg-emerald-600 text-white px-7 py-3.5 text-xs font-bold tracking-[0.18em] font-accent transition-all duration-300 flex items-center justify-center gap-2"
-              style={{ clipPath: 'polygon(4% 0, 100% 0, 96% 100%, 0% 100%)' }}
-            >
-              {submitted ? (
-                <>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                  </svg>
-                  {t('footer.newsletter.subscribed')}
-                </>
-              ) : (
-                <>
-                  {t('footer.newsletter.subscribe')}
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                  </svg>
-                </>
-              )}
-            </button>
-          </form>
-        </div>
-      </div>
 
       {/* Main columns */}
       <div className="relative max-w-[1400px] mx-auto px-6 lg:px-8 py-14 lg:py-16">
