@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# Claude Code
+.claude/worktrees/
+.claude/projects/
+
 # Firebase
 scripts/service-account.json
 
