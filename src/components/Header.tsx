@@ -584,6 +584,7 @@ function ModelosMegaMenu({
 
 function SearchOverlay({ onClose }: { onClose: () => void }) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState('');
 
@@ -597,8 +598,17 @@ function SearchOverlay({ onClose }: { onClose: () => void }) {
   }, [onClose]);
 
   const filtered = query
-    ? bikesData.filter((b) => b.name.toLowerCase().includes(query.toLowerCase()) || b.category.toLowerCase().includes(query.toLowerCase()))
+    ? bikesData.filter(
+        (b) =>
+          b.name.toLowerCase().includes(query.toLowerCase()) ||
+          b.category.toLowerCase().includes(query.toLowerCase())
+      )
     : [];
+
+  const goToModel = (slug: string) => {
+    navigate(`/modelos/${slug}`);
+    onClose();
+  };
 
   return (
     <div className="fixed inset-0 z-[150] flex items-start justify-center pt-24 lg:pt-32">
@@ -631,33 +641,51 @@ function SearchOverlay({ onClose }: { onClose: () => void }) {
           {filtered.length > 0 && (
             <div className="p-2">
               {filtered.map((b) => (
-                <a
+                <button
                   key={b.id}
-                  href={`/modelos/${b.slug}`}
-                  className="flex items-center gap-4 p-3 rounded-lg hover:bg-neutral-50 transition-colors"
+                  onClick={() => goToModel(b.slug)}
+                  className="w-full flex items-center gap-4 p-3 rounded-lg hover:bg-neutral-50 transition-colors text-left"
                 >
-                  <div className="w-14 h-14 rounded-lg bg-neutral-100 flex items-center justify-center overflow-hidden">
+                  <div className="w-14 h-14 rounded-lg bg-neutral-100 flex items-center justify-center overflow-hidden shrink-0">
                     <img src={b.colors[0].images.main} alt={b.name} className="w-full h-full object-contain p-1" />
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <div className="text-sm font-bold text-neutral-900 font-accent tracking-wider">{b.name}</div>
-                    <div className="text-xs text-neutral-500 uppercase tracking-wider">{b.category} · {b.specs.engine}</div>
+                    <div className="text-xs text-neutral-500 uppercase tracking-wider">
+                      {b.category} · {b.specs.engine}
+                    </div>
                   </div>
-                </a>
+                </button>
               ))}
             </div>
           )}
           {!query && (
             <div className="p-5">
-              <p className="text-[10px] font-bold tracking-[0.25em] text-neutral-400 mb-3 font-accent">{t('header.search.suggestions')}</p>
-              <div className="flex flex-wrap gap-2">
-                {['Adri Sport', 'BWS', 'CG200', 'ST 125', 'Repuestos', 'Cotizar'].map((s) => (
+              <p className="text-[10px] font-bold tracking-[0.25em] text-neutral-400 mb-3 font-accent">
+                {t('header.search.suggestions')}
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {bikesData.map((b) => (
                   <button
-                    key={s}
-                    onClick={() => setQuery(s)}
-                    className="px-3 py-1.5 rounded-full bg-neutral-100 hover:bg-[var(--color-primary)] hover:text-white text-xs text-neutral-700 font-bold tracking-wide transition-colors"
+                    key={b.id}
+                    onClick={() => goToModel(b.slug)}
+                    className="group flex items-center gap-2.5 p-2 rounded-lg bg-neutral-50 hover:bg-neutral-100 transition-colors text-left"
                   >
-                    {s}
+                    <div className="w-10 h-10 rounded-md bg-white border border-neutral-200 flex items-center justify-center overflow-hidden shrink-0">
+                      <img
+                        src={b.colors[0].images.main}
+                        alt={b.name}
+                        className="w-full h-full object-contain p-0.5"
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-xs font-bold text-neutral-900 font-accent tracking-wider truncate group-hover:text-[var(--color-primary)] transition-colors">
+                        {b.name}
+                      </div>
+                      <div className="text-[10px] text-neutral-500 uppercase tracking-wider truncate">
+                        {b.specs.engine}
+                      </div>
+                    </div>
                   </button>
                 ))}
               </div>

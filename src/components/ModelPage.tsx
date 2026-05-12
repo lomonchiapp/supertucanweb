@@ -227,7 +227,7 @@ function ModelPageContent({
       <Header />
 
       {/* ════════════════ HERO ════════════════ */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-neutral-100 via-white to-neutral-50 pt-20 lg:pt-24 pb-10 lg:pb-14">
+      <section className="relative overflow-hidden bg-gradient-to-br from-neutral-100 via-white to-neutral-50 pt-20 lg:pt-24 pb-8 lg:pb-10">
         {/* Diagonal pattern muy sutil */}
         <div
           className="absolute inset-0 pointer-events-none opacity-[0.06]"
@@ -363,8 +363,8 @@ function ModelPageContent({
               </div>
             </div>
 
-            {/* Right: bike showcase */}
-            <div className="relative order-1 lg:order-2 flex items-center justify-center min-h-[340px] sm:min-h-[460px] lg:min-h-[600px] overflow-hidden">
+            {/* Right: bike showcase — alturas viewport-relative para que SIEMPRE quepa */}
+            <div className="relative order-1 lg:order-2 flex items-center justify-center min-h-[280px] sm:min-h-[360px] lg:min-h-[58vh] lg:max-h-[65vh] overflow-hidden">
               {/* Speed lines detrás de la moto */}
               <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
                 {[
@@ -413,7 +413,7 @@ function ModelPageContent({
                   key={`${bike.id}-${currentColor.value}`}
                   src={mainImage}
                   alt={`${bike.name} ${currentColor.name}`}
-                  className="relative z-10 max-w-[95%] max-h-[320px] sm:max-h-[440px] lg:max-h-[580px] w-auto h-auto object-contain"
+                  className="relative z-10 max-w-[95%] max-h-[260px] sm:max-h-[340px] lg:max-h-[58vh] w-auto h-auto object-contain"
                   style={{
                     filter: 'drop-shadow(0 24px 40px rgba(0,0,0,0.18))',
                     animation: 'mpBikeIn 0.6s ease-out, mpBikeFloat 4s ease-in-out 0.6s infinite',
