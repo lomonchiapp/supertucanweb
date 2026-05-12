@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { bikesData } from '@/data/bikes';
 import { useNavigationStore } from '@/store/navigationStore';
 import { ModernQuoteSheet } from './ModernQuoteSheet';
+import type { BikeModel, BikeColor } from '@/types/bikes';
 
 /* ─────────────────────────────────────────────────────────── */
 /* CONFIG                                                      */
@@ -10,38 +12,38 @@ import { ModernQuoteSheet } from './ModernQuoteSheet';
 const HERO_SLIDES = [
   {
     id: 'adri-sport-roja',
-    eyebrow: 'NUEVO LANZAMIENTO',
+    eyebrow: 'home.hero.adriSport.eyebrow',
     title: 'ADRI SPORT',
-    subtitle: 'POTENCIA DEPORTIVA EN ESTADO PURO',
-    description: 'Diseño agresivo, 125cc de pura adrenalina y la tecnología que define una nueva era de motociclismo en el Caribe.',
+    subtitle: 'home.hero.adriSport.subtitle',
+    description: 'home.hero.adriSport.description',
     image: '/bikes/ADRI SPORT/roja/main.avif',
     bikeId: 'adri-sport',
     color: 'roja',
-    cta: 'DESCUBRE ADRI SPORT',
+    cta: 'home.hero.adriSport.cta',
     accent: '#e30613',
   },
   {
     id: 'cg200-rojo',
-    eyebrow: 'AVENTURA',
+    eyebrow: 'home.hero.cg200.eyebrow',
     title: 'CG 200',
-    subtitle: 'PARA TODO TERRENO Y TODA OCASIÓN',
-    description: 'La resistencia que necesitas, la potencia que mereces. 200cc preparados para conquistar cualquier camino.',
+    subtitle: 'home.hero.cg200.subtitle',
+    description: 'home.hero.cg200.description',
     image: '/bikes/CG200/rojo/main.avif',
     bikeId: 'cg200',
     color: 'rojo',
-    cta: 'EXPLORA CG 200',
+    cta: 'home.hero.cg200.cta',
     accent: '#b8050f',
   },
   {
     id: 'bws-azul',
-    eyebrow: 'URBANO',
+    eyebrow: 'home.hero.bws.eyebrow',
     title: 'BWS',
-    subtitle: 'LA CIUDAD ES TU PISTA',
-    description: 'Diseño compacto, automática y lista para conquistar la jungla urbana con estilo y eficiencia.',
+    subtitle: 'home.hero.bws.subtitle',
+    description: 'home.hero.bws.description',
     image: '/bikes/BWS/azul/main.avif',
     bikeId: 'bws',
     color: 'azul',
-    cta: 'CONOCE BWS',
+    cta: 'home.hero.bws.cta',
     accent: '#1a1a1a',
   },
 ];
@@ -49,29 +51,29 @@ const HERO_SLIDES = [
 const CATEGORIES = [
   {
     id: 'motocicleta',
-    name: 'MOTOCICLETA',
-    description: 'Potencia y carácter para todo terreno',
+    name: 'home.categoryGrid.items.motocicleta.name',
+    description: 'home.categoryGrid.items.motocicleta.description',
     image: '/bikes/ADRI SPORT/negra/main.avif',
     count: bikesData.filter((b) => b.category === 'motocicleta').length,
   },
   {
     id: 'passola',
-    name: 'PASSOLA',
-    description: 'Movilidad urbana sin complicaciones',
+    name: 'home.categoryGrid.items.passola.name',
+    description: 'home.categoryGrid.items.passola.description',
     image: '/bikes/BWS/blanco/main.avif',
     count: bikesData.filter((b) => b.category === 'passola').length,
   },
   {
     id: 'sport',
-    name: 'SPORT',
-    description: 'Velocidad pura y estilo deportivo',
+    name: 'home.categoryGrid.items.sport.name',
+    description: 'home.categoryGrid.items.sport.description',
     image: '/bikes/ST 125/rojo/main.avif',
     count: bikesData.filter((b) => b.category === 'sport').length,
   },
   {
     id: 'atv',
-    name: 'ATV',
-    description: 'Próximamente — Aventura sin límites',
+    name: 'home.categoryGrid.items.atv.name',
+    description: 'home.categoryGrid.items.atv.description',
     image: null,
     count: 0,
   },
@@ -81,25 +83,25 @@ const NEWS = [
   {
     id: 1,
     date: '15 MAY 2026',
-    tag: 'NOTICIAS',
-    title: 'Super Tucán expande su red de dealers en Centroamérica',
-    excerpt: 'Nuevas alianzas estratégicas refuerzan la presencia de la marca en mercados clave.',
+    tag: 'home.news.tags.news',
+    title: 'home.news.items.expansion.title',
+    excerpt: 'home.news.items.expansion.excerpt',
     image: '/bikes/ADRI SPORT/azul/1.avif',
   },
   {
     id: 2,
     date: '08 MAY 2026',
-    tag: 'EVENTOS',
-    title: 'Test ride exclusivo: prueba la nueva ADRI SPORT',
-    excerpt: 'Te invitamos a vivir la experiencia de manejar nuestro modelo más esperado del año.',
+    tag: 'home.news.tags.events',
+    title: 'home.news.items.testRide.title',
+    excerpt: 'home.news.items.testRide.excerpt',
     image: '/bikes/ADRI SPORT/roja/1.avif',
   },
   {
     id: 3,
     date: '02 MAY 2026',
-    tag: 'SERVICIO',
-    title: 'Programa de mantenimiento: tu moto siempre lista',
-    excerpt: 'Conoce los planes de servicio diseñados para que tu Super Tucán dure más.',
+    tag: 'home.news.tags.service',
+    title: 'home.news.items.maintenance.title',
+    excerpt: 'home.news.items.maintenance.excerpt',
     image: '/bikes/CG200/rojo/main.avif',
   },
 ];
@@ -110,17 +112,30 @@ const NEWS = [
 
 export function HomePage() {
   const [isQuoteOpen, setIsQuoteOpen] = useState(false);
+  const [quoteBike, setQuoteBike] = useState<BikeModel | undefined>();
+  const [quoteColor, setQuoteColor] = useState<BikeColor | undefined>();
+
+  const openQuote = (bike?: BikeModel, color?: BikeColor) => {
+    setQuoteBike(bike);
+    setQuoteColor(color);
+    setIsQuoteOpen(true);
+  };
 
   return (
     <div className="bg-white text-neutral-900">
-      <HeroCarousel onQuote={() => setIsQuoteOpen(true)} />
+      <HeroCarousel onQuote={() => openQuote()} />
       <CategoryGrid />
-      <FeaturedModel onQuote={() => setIsQuoteOpen(true)} />
+      <FeaturedModel onQuote={openQuote} />
       <ServicesBanner />
       <NewsSection />
       <QuickStats />
 
-      <ModernQuoteSheet isOpen={isQuoteOpen} onClose={() => setIsQuoteOpen(false)} />
+      <ModernQuoteSheet
+        isOpen={isQuoteOpen}
+        onClose={() => setIsQuoteOpen(false)}
+        prefilledBike={quoteBike}
+        prefilledColor={quoteColor}
+      />
     </div>
   );
 }
@@ -130,6 +145,7 @@ export function HomePage() {
 /* ─────────────────────────────────────────────────────────── */
 
 function HeroCarousel({ onQuote }: { onQuote: () => void }) {
+  const { t } = useTranslation();
   const [idx, setIdx] = useState(0);
   const [paused, setPaused] = useState(false);
   const intervalRef = useRef<number | null>(null);
@@ -151,7 +167,7 @@ function HeroCarousel({ onQuote }: { onQuote: () => void }) {
       className="relative overflow-hidden bg-gradient-to-br from-neutral-100 via-white to-neutral-50"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
-      aria-label="Slider principal"
+      aria-label={t('home.hero.aria')}
     >
       {/* Diagonal accent shapes */}
       <div
@@ -171,11 +187,11 @@ function HeroCarousel({ onQuote }: { onQuote: () => void }) {
 
       <div className="relative max-w-[1400px] mx-auto px-6 lg:px-8 min-h-[540px] lg:min-h-[640px] grid lg:grid-cols-2 items-center gap-8 py-12 lg:py-16">
         {/* Left: text */}
-        <div key={`text-${slide.id}`} className="relative z-10 animate-slide-in-up">
-          <div className="flex items-center gap-3 mb-5">
+        <div key={`text-${slide.id}`} className="relative z-10 animate-slide-in-up text-center lg:text-left">
+          <div className="flex items-center justify-center lg:justify-start gap-3 mb-5">
             <div className="h-[2px] w-10 bg-[var(--color-primary)]" />
             <span className="text-[11px] font-bold tracking-[0.3em] text-[var(--color-primary)] font-accent">
-              {slide.eyebrow}
+              {t(slide.eyebrow)}
             </span>
           </div>
           <h1
@@ -184,19 +200,19 @@ function HeroCarousel({ onQuote }: { onQuote: () => void }) {
             {slide.title}
           </h1>
           <h2 className="text-lg lg:text-xl font-bold tracking-[0.05em] text-neutral-700 uppercase mb-5">
-            {slide.subtitle}
+            {t(slide.subtitle)}
           </h2>
-          <p className="text-sm lg:text-base text-neutral-600 leading-relaxed max-w-md mb-8">
-            {slide.description}
+          <p className="text-sm lg:text-base text-neutral-600 leading-relaxed max-w-md mx-auto lg:mx-0 mb-8">
+            {t(slide.description)}
           </p>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
             <a
               href={`/modelos/${slide.bikeId}`}
               className="group inline-flex items-center gap-3 bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white px-8 py-4 text-[12px] font-bold tracking-[0.18em] font-accent transition-all duration-300 shadow-lg shadow-red-500/10 hover:shadow-red-500/30"
               style={{ clipPath: 'polygon(4% 0, 100% 0, 96% 100%, 0% 100%)' }}
             >
-              {slide.cta}
+              {t(slide.cta)}
               <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
               </svg>
@@ -206,7 +222,7 @@ function HeroCarousel({ onQuote }: { onQuote: () => void }) {
               className="inline-flex items-center gap-3 border-2 border-neutral-900 hover:bg-neutral-900 hover:text-white text-neutral-900 px-7 py-3.5 text-[12px] font-bold tracking-[0.18em] font-accent transition-all duration-300"
               style={{ clipPath: 'polygon(0 0, 100% 0, 96% 100%, 4% 100%)' }}
             >
-              COTIZAR AHORA
+              {t('home.hero.quoteNow')}
             </button>
           </div>
         </div>
@@ -260,7 +276,7 @@ function HeroCarousel({ onQuote }: { onQuote: () => void }) {
               className={`group relative h-1.5 rounded-full overflow-hidden transition-all duration-500 ${
                 i === idx ? 'w-16 bg-neutral-200' : 'w-8 bg-neutral-200 hover:bg-neutral-300'
               }`}
-              aria-label={`Ir al slide ${i + 1}`}
+              aria-label={t('home.hero.goToSlide', { n: i + 1 })}
             >
               {i === idx && !paused && (
                 <span
@@ -280,7 +296,7 @@ function HeroCarousel({ onQuote }: { onQuote: () => void }) {
           <button
             onClick={() => setIdx((i) => (i - 1 + HERO_SLIDES.length) % HERO_SLIDES.length)}
             className="w-11 h-11 rounded-full border border-neutral-200 hover:border-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white text-neutral-700 flex items-center justify-center transition-all duration-300"
-            aria-label="Slide anterior"
+            aria-label={t('home.hero.prev')}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -289,7 +305,7 @@ function HeroCarousel({ onQuote }: { onQuote: () => void }) {
           <button
             onClick={() => setIdx((i) => (i + 1) % HERO_SLIDES.length)}
             className="w-11 h-11 rounded-full border border-neutral-200 hover:border-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white text-neutral-700 flex items-center justify-center transition-all duration-300"
-            aria-label="Slide siguiente"
+            aria-label={t('home.hero.next')}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -308,6 +324,7 @@ function HeroCarousel({ onQuote }: { onQuote: () => void }) {
 /* ─────────────────────────────────────────────────────────── */
 
 function CategoryGrid() {
+  const { t } = useTranslation();
   const { setActiveSection, setSelectedCategory } = useNavigationStore();
 
   const goToCategory = (id: string) => {
@@ -320,9 +337,9 @@ function CategoryGrid() {
     <section className="py-20 lg:py-28 bg-white">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-8">
         <SectionHeader
-          eyebrow="NUESTROS PRODUCTOS"
-          title="Explora por categoría"
-          description="Descubre la motocicleta que se adapta a tu estilo de vida"
+          eyebrow={t('home.categoryGrid.eyebrow')}
+          title={t('home.categoryGrid.title')}
+          description={t('home.categoryGrid.description')}
         />
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mt-12">
@@ -343,7 +360,7 @@ function CategoryGrid() {
                   <div className="absolute inset-0 flex items-center justify-center p-4 lg:p-8">
                     <img
                       src={cat.image}
-                      alt={cat.name}
+                      alt={t(cat.name)}
                       className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700"
                     />
                   </div>
@@ -352,7 +369,7 @@ function CategoryGrid() {
                     <svg className="w-16 h-16 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <span className="text-xs font-bold tracking-[0.3em] font-accent">PRÓXIMAMENTE</span>
+                    <span className="text-xs font-bold tracking-[0.3em] font-accent">{t('home.categoryGrid.comingSoon')}</span>
                   </div>
                 )}
 
@@ -368,16 +385,16 @@ function CategoryGrid() {
                 {/* Label */}
                 <div className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-white via-white/90 to-transparent">
                   <div className="text-[10px] font-bold tracking-[0.3em] text-[var(--color-primary)] mb-1 font-accent">
-                    {disabled ? '· EN CAMINO ·' : `${cat.count} MODELO${cat.count > 1 ? 'S' : ''}`}
+                    {disabled ? t('home.categoryGrid.comingLabel') : `${cat.count} ${cat.count > 1 ? t('home.categoryGrid.modelsSuffixPlural') : t('home.categoryGrid.modelsSuffix')}`}
                   </div>
                   <h3 className="text-xl lg:text-2xl font-bold tracking-[0.05em] text-neutral-900 font-display uppercase mb-1">
-                    {cat.name}
+                    {t(cat.name)}
                   </h3>
-                  <p className="text-xs text-neutral-600 leading-snug">{cat.description}</p>
+                  <p className="text-xs text-neutral-600 leading-snug">{t(cat.description)}</p>
 
                   {!disabled && (
                     <div className="mt-3 inline-flex items-center gap-1.5 text-[10px] font-bold tracking-[0.2em] text-neutral-900 group-hover:text-[var(--color-primary)] font-accent transition-colors">
-                      EXPLORAR
+                      {t('home.categoryGrid.explore')}
                       <svg className="w-3 h-3 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
                       </svg>
@@ -397,16 +414,17 @@ function CategoryGrid() {
 /* FEATURED MODEL                                              */
 /* ─────────────────────────────────────────────────────────── */
 
-function FeaturedModel({ onQuote }: { onQuote: () => void }) {
+function FeaturedModel({ onQuote }: { onQuote: (bike?: BikeModel, color?: BikeColor) => void }) {
+  const { t } = useTranslation();
   // Use ADRI SPORT en roja como destacado
   const bike = bikesData.find((b) => b.id === 'adri-sport') || bikesData[0];
   const color = bike.colors.find((c) => c.value === 'roja') || bike.colors[0];
 
   const features = [
-    { label: 'CILINDRAJE', value: bike.specs.engine },
-    { label: 'POTENCIA', value: bike.specs.power },
-    { label: 'VEL. MÁXIMA', value: bike.specs.maxSpeed },
-    { label: 'TRANSMISIÓN', value: bike.specs.transmission },
+    { label: t('home.featured.specs.engine'), value: bike.specs.engine },
+    { label: t('home.featured.specs.power'), value: bike.specs.power },
+    { label: t('home.featured.specs.maxSpeed'), value: bike.specs.maxSpeed },
+    { label: t('home.featured.specs.transmission'), value: bike.specs.transmission },
   ];
 
   return (
@@ -434,7 +452,7 @@ function FeaturedModel({ onQuote }: { onQuote: () => void }) {
           <div className="flex items-center gap-3 mb-5">
             <div className="h-[2px] w-10 bg-[var(--color-primary)]" />
             <span className="text-[11px] font-bold tracking-[0.3em] text-[var(--color-primary)] font-accent">
-              MODELO DESTACADO
+              {t('home.featured.eyebrow')}
             </span>
           </div>
 
@@ -442,7 +460,7 @@ function FeaturedModel({ onQuote }: { onQuote: () => void }) {
             {bike.name}
           </h2>
           <p className="text-base lg:text-lg text-neutral-300 leading-relaxed max-w-lg mb-8">
-            {bike.description}
+            {t(bike.description)}
           </p>
 
           {/* Specs grid */}
@@ -469,17 +487,17 @@ function FeaturedModel({ onQuote }: { onQuote: () => void }) {
               className="group inline-flex items-center gap-3 bg-[var(--color-primary)] hover:bg-[var(--color-primary-light)] text-white px-8 py-4 text-[12px] font-bold tracking-[0.18em] font-accent transition-all duration-300"
               style={{ clipPath: 'polygon(4% 0, 100% 0, 96% 100%, 0% 100%)' }}
             >
-              VER ESPECIFICACIONES
+              {t('home.featured.ctaSpecs')}
               <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
               </svg>
             </a>
             <button
-              onClick={onQuote}
+              onClick={() => onQuote(bike, color)}
               className="inline-flex items-center gap-3 border border-white/30 hover:border-white hover:bg-white hover:text-neutral-900 text-white px-7 py-3.5 text-[12px] font-bold tracking-[0.18em] font-accent transition-all duration-300"
               style={{ clipPath: 'polygon(0 0, 100% 0, 96% 100%, 4% 100%)' }}
             >
-              COTIZAR
+              {t('home.featured.ctaQuote')}
             </button>
           </div>
         </div>
@@ -508,13 +526,14 @@ function FeaturedModel({ onQuote }: { onQuote: () => void }) {
 /* ─────────────────────────────────────────────────────────── */
 
 function ServicesBanner() {
+  const { t } = useTranslation();
   const { setActiveSection } = useNavigationStore();
 
   const services = [
     {
       id: 'dealers',
-      title: 'Encuentra un Dealer',
-      description: 'Localiza tu punto de venta y servicio más cercano',
+      title: t('home.services.dealers.title'),
+      description: t('home.services.dealers.description'),
       icon: (
         <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -525,8 +544,8 @@ function ServicesBanner() {
     },
     {
       id: 'partes',
-      title: 'Repuestos Genuinos',
-      description: 'Catálogo completo de piezas originales Super Tucán',
+      title: t('home.services.parts.title'),
+      description: t('home.services.parts.description'),
       icon: (
         <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -537,8 +556,8 @@ function ServicesBanner() {
     },
     {
       id: 'service',
-      title: 'Mantenimiento',
-      description: 'Servicio técnico certificado y planes preventivos',
+      title: t('home.services.maintenance.title'),
+      description: t('home.services.maintenance.description'),
       icon: (
         <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118L2.045 10.1c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
@@ -548,8 +567,8 @@ function ServicesBanner() {
     },
     {
       id: 'finance',
-      title: 'Financiamiento',
-      description: 'Planes flexibles para que estrenes tu moto hoy',
+      title: t('home.services.financing.title'),
+      description: t('home.services.financing.description'),
       icon: (
         <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 10h18M3 14h18M5 6h14a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2z" />
@@ -563,9 +582,9 @@ function ServicesBanner() {
     <section className="py-20 lg:py-24 bg-white">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-8">
         <SectionHeader
-          eyebrow="SERVICIOS"
-          title="Más que motos, una experiencia"
-          description="Todo lo que necesitas para sacarle el máximo a tu Super Tucán"
+          eyebrow={t('home.services.eyebrow')}
+          title={t('home.services.title')}
+          description={t('home.services.description')}
         />
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mt-12">
@@ -590,7 +609,7 @@ function ServicesBanner() {
               </h3>
               <p className="text-sm text-neutral-600 leading-relaxed">{s.description}</p>
               <div className="mt-5 inline-flex items-center gap-1.5 text-[10px] font-bold tracking-[0.2em] text-neutral-900 group-hover:text-[var(--color-primary)] font-accent transition-colors">
-                CONOCER MÁS
+                {t('home.services.learnMore')}
                 <svg
                   className="w-3 h-3 group-hover:translate-x-1 transition-transform"
                   fill="none"
@@ -613,19 +632,20 @@ function ServicesBanner() {
 /* ─────────────────────────────────────────────────────────── */
 
 function NewsSection() {
+  const { t } = useTranslation();
   return (
     <section className="py-20 lg:py-28 bg-neutral-50">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-12">
           <SectionHeader
-            eyebrow="NEWSROOM"
-            title="Lo último de Super Tucán"
-            description="Noticias, eventos y novedades de la marca"
+            eyebrow={t('home.news.eyebrow')}
+            title={t('home.news.title')}
+            description={t('home.news.description')}
             align="left"
             embedded
           />
           <button className="self-start lg:self-end inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.2em] text-neutral-900 hover:text-[var(--color-primary)] font-accent transition-colors">
-            VER TODAS LAS NOTICIAS
+            {t('home.news.viewAll')}
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
             </svg>
@@ -642,11 +662,11 @@ function NewsSection() {
               <div className="relative aspect-[16/10] bg-neutral-100 overflow-hidden">
                 <img
                   src={n.image}
-                  alt={n.title}
+                  alt={t(n.title)}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
                 <div className="absolute top-3 left-3 bg-[var(--color-primary)] text-white text-[10px] font-bold tracking-[0.2em] px-3 py-1.5 font-accent">
-                  {n.tag}
+                  {t(n.tag)}
                 </div>
               </div>
               <div className="p-6">
@@ -654,11 +674,11 @@ function NewsSection() {
                   {n.date}
                 </div>
                 <h3 className="text-lg font-bold leading-snug text-neutral-900 mb-3 group-hover:text-[var(--color-primary)] transition-colors">
-                  {n.title}
+                  {t(n.title)}
                 </h3>
-                <p className="text-sm text-neutral-600 leading-relaxed mb-4">{n.excerpt}</p>
+                <p className="text-sm text-neutral-600 leading-relaxed mb-4">{t(n.excerpt)}</p>
                 <div className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-[0.2em] text-neutral-900 group-hover:text-[var(--color-primary)] font-accent transition-colors">
-                  LEER MÁS
+                  {t('home.news.readMore')}
                   <svg
                     className="w-3 h-3 group-hover:translate-x-1 transition-transform"
                     fill="none"
@@ -682,11 +702,12 @@ function NewsSection() {
 /* ─────────────────────────────────────────────────────────── */
 
 function QuickStats() {
+  const { t } = useTranslation();
   const stats = [
-    { value: '15+', label: 'AÑOS EN EL CARIBE' },
-    { value: '50K+', label: 'CLIENTES SATISFECHOS' },
-    { value: '120+', label: 'PUNTOS DE SERVICIO' },
-    { value: '4', label: 'MODELOS DISPONIBLES' },
+    { value: '15+', label: t('home.stats.years') },
+    { value: '50K+', label: t('home.stats.customers') },
+    { value: '120+', label: t('home.stats.service') },
+    { value: '4', label: t('home.stats.models') },
   ];
 
   return (

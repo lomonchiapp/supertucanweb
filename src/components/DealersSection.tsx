@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { gsap } from 'gsap';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
@@ -29,44 +30,54 @@ interface Dealer {
 const dealersData: Dealer[] = [
   {
     id: 1,
-    name: 'Super Tucán Central',
-    address: 'Av. Principal 123, Santo Domingo',
-    phone: '+1 809-123-4567',
-    email: 'central@supertucan.com',
-    coordinates: { lat: 18.4861, lng: -69.9312 },
-    services: ['Ventas', 'Servicio Técnico', 'Repuestos'],
-    hours: 'Lun–Vie: 8:00–18:00 · Sáb: 8:00–16:00',
+    name: 'Importadora Oriental Ramirez',
+    address: 'Av. Francisco A. Caamaño, San Pedro de Macorís',
+    phone: '(809) 526-1515',
+    email: 'info@orientalramirez.com',
+    coordinates: { lat: 18.4614093, lng: -69.3142985 },
+    services: ['dealers.services.sales', 'dealers.services.service', 'dealers.services.parts'],
+    hours: 'Lun–Vie: 8:00–18:00 · Sáb: 9:00–14:00',
     featured: true,
   },
   {
     id: 2,
-    name: 'Moto Center Norte',
-    address: 'Calle Comercial 456, Santiago',
-    phone: '+1 809-234-5678',
-    email: 'norte@supertucan.com',
-    coordinates: { lat: 19.4517, lng: -70.697 },
-    services: ['Ventas', 'Repuestos'],
-    hours: 'Lun–Sáb: 9:00–17:00',
+    name: 'Auto Motoprestamos Oriental',
+    address: 'Calle José Martí #45, San Pedro de Macorís',
+    phone: '(809) 526-1414',
+    email: 'info@orientalramirez.com',
+    coordinates: { lat: 18.4566342, lng: -69.296238 },
+    services: ['dealers.services.sales', 'dealers.services.service'],
+    hours: 'Lun–Vie: 8:00–18:00 · Sáb: 9:00–14:00',
   },
   {
     id: 3,
-    name: 'Dealer Este',
-    address: 'Zona Oriental 789, La Romana',
-    phone: '+1 809-345-6789',
-    email: 'este@supertucan.com',
-    coordinates: { lat: 18.4273, lng: -68.9728 },
-    services: ['Ventas', 'Servicio Técnico'],
-    hours: 'Lun–Vie: 8:30–17:30',
+    name: 'Motoprestamos Oriental Higüey',
+    address: 'Carretera Mella, La Altagracia, Higüey',
+    phone: '(809) 554-1414',
+    email: 'info@orientalramirez.com',
+    coordinates: { lat: 18.616932, lng: -68.706924 },
+    services: ['dealers.services.sales', 'dealers.services.service'],
+    hours: 'Lun–Vie: 8:00–18:00 · Sáb: 9:00–14:00',
   },
   {
     id: 4,
-    name: 'Moto Sur',
-    address: 'Av. Sur 321, Barahona',
-    phone: '+1 809-456-7890',
-    email: 'sur@supertucan.com',
-    coordinates: { lat: 18.2085, lng: -71.1011 },
-    services: ['Ventas'],
-    hours: 'Lun–Vie: 9:00–17:00',
+    name: 'Oriental Ramirez André',
+    address: 'Av. Duarte, Boca Chica',
+    phone: '(809) 523-1414',
+    email: 'info@orientalramirez.com',
+    coordinates: { lat: 18.444086, lng: -69.632469 },
+    services: ['dealers.services.sales', 'dealers.services.service'],
+    hours: 'Lun–Vie: 8:00–18:00 · Sáb: 9:00–14:00',
+  },
+  {
+    id: 5,
+    name: 'Oriental Ramirez Bonao',
+    address: 'Av. Aniana Vargas, Bonao',
+    phone: '(809) 525-1414',
+    email: 'info@orientalramirez.com',
+    coordinates: { lat: 18.939554, lng: -70.404884 },
+    services: ['dealers.services.sales', 'dealers.services.service'],
+    hours: 'Lun–Vie: 8:00–18:00 · Sáb: 9:00–14:00',
   },
 ];
 
@@ -94,6 +105,7 @@ const redMarkerIcon = new L.Icon({
 });
 
 export function DealersSection() {
+  const { t } = useTranslation();
   const [selectedDealer, setSelectedDealer] = useState<Dealer | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -156,23 +168,22 @@ export function DealersSection() {
           <div className="flex items-center justify-center gap-3 mb-5">
             <div className="h-[2px] w-10 bg-white/70" />
             <span className="text-[11px] font-bold tracking-[0.3em] text-white/90 font-accent">
-              RED OFICIAL
+              {t('dealers.hero.eyebrow')}
             </span>
             <div className="h-[2px] w-10 bg-white/70" />
           </div>
           <h1 className="font-display text-5xl md:text-7xl font-bold tracking-tight uppercase mb-5 leading-[0.95]">
-            ENCUENTRA TU DEALER
+            {t('dealers.hero.title')}
           </h1>
           <p className="text-lg text-white/80 mb-10 max-w-3xl mx-auto font-sans leading-relaxed">
-            Localiza el dealer Super Tucán más cercano a ti. Nuestros socios autorizados te brindarán
-            el mejor servicio y asesoramiento especializado.
+            {t('dealers.hero.description')}
           </p>
 
           {/* Search bar */}
           <div className="max-w-lg mx-auto relative">
             <input
               type="text"
-              placeholder="Buscar por ciudad o nombre..."
+              placeholder={t('dealers.hero.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-12 pr-5 py-4 text-neutral-900 placeholder-neutral-400 bg-white border-2 border-transparent shadow-xl focus:outline-none focus:border-white/50 text-base font-sans"
@@ -201,14 +212,14 @@ export function DealersSection() {
                 <div className="flex items-center gap-3 mb-2">
                   <div className="h-[2px] w-6 bg-[var(--color-primary)]" />
                   <span className="text-[10px] font-bold tracking-[0.3em] text-[var(--color-primary)] font-accent">
-                    UBICACIONES
+                    {t('dealers.list.eyebrow')}
                   </span>
                 </div>
                 <h2 className="font-display text-2xl font-bold text-neutral-900 tracking-tight uppercase">
-                  NUESTROS DEALERS
+                  {t('dealers.list.title')}
                 </h2>
                 <p className="text-neutral-500 text-xs font-accent tracking-[0.1em] mt-1 font-bold">
-                  {filteredDealers.length} resultado{filteredDealers.length !== 1 ? 's' : ''}
+                  {filteredDealers.length} {filteredDealers.length !== 1 ? t('dealers.list.resultsPlural') : t('dealers.list.resultsSingular')}
                 </p>
               </div>
 
@@ -224,7 +235,7 @@ export function DealersSection() {
                 ))}
                 {filteredDealers.length === 0 && (
                   <div className="p-10 text-center text-neutral-400 font-sans text-sm">
-                    No se encontraron dealers con esa búsqueda.
+                    {t('dealers.list.noResults')}
                   </div>
                 )}
               </div>
@@ -269,7 +280,7 @@ export function DealersSection() {
                               key={service}
                               className="bg-red-50 text-[var(--color-primary)] text-xs px-2 py-0.5 rounded-full font-bold"
                             >
-                              {service}
+                              {t(service)}
                             </span>
                           ))}
                         </div>
@@ -290,33 +301,33 @@ export function DealersSection() {
             <div className="flex items-center justify-center gap-3 mb-4">
               <div className="h-[2px] w-8 bg-[var(--color-primary)]" />
               <span className="text-[11px] font-bold tracking-[0.3em] text-[var(--color-primary)] font-accent">
-                CALIDAD GARANTIZADA
+                {t('dealers.why.eyebrow')}
               </span>
               <div className="h-[2px] w-8 bg-[var(--color-primary)]" />
             </div>
             <h2 className="font-display text-4xl md:text-5xl font-bold text-neutral-900 mb-4 tracking-tight uppercase leading-[0.95]">
-              ¿POR QUÉ ELEGIR UN DEALER AUTORIZADO?
+              {t('dealers.why.title')}
             </h2>
             <p className="text-neutral-600 font-sans">
-              Nuestros dealers autorizados cumplen con los más altos estándares de calidad y servicio.
+              {t('dealers.why.description')}
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
             {[
               {
-                title: 'Garantía Oficial',
-                description: 'Todos los vehículos incluyen garantía oficial Super Tucán.',
+                title: t('dealers.why.warranty.title'),
+                description: t('dealers.why.warranty.description'),
                 icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
               },
               {
-                title: 'Técnicos Certificados',
-                description: 'Personal especializado y certificado por la fábrica.',
+                title: t('dealers.why.technicians.title'),
+                description: t('dealers.why.technicians.description'),
                 icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z',
               },
               {
-                title: 'Repuestos Originales',
-                description: 'Acceso garantizado a repuestos y accesorios originales.',
+                title: t('dealers.why.originalParts.title'),
+                description: t('dealers.why.originalParts.description'),
                 icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
               },
             ].map((item) => (
@@ -340,6 +351,38 @@ export function DealersSection() {
           </div>
         </div>
       </div>
+
+      {/* ══════════ Distribuidor autorizado banner ══════════ */}
+      <div className="bg-neutral-900 text-white py-14 lg:py-16">
+        <div className="max-w-[1200px] mx-auto px-6 lg:px-8 flex flex-col lg:flex-row items-center justify-between gap-8">
+          <div className="text-center lg:text-left">
+            <div className="flex items-center justify-center lg:justify-start gap-3 mb-3">
+              <div className="h-[2px] w-8 bg-[var(--color-primary)]" />
+              <span className="text-[11px] font-bold tracking-[0.3em] text-[var(--color-primary)] font-accent">
+                {t('dealers.authorized.eyebrow')}
+              </span>
+            </div>
+            <h3 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-tight leading-[1]">
+              {t('dealers.authorized.title')}
+            </h3>
+            <p className="text-neutral-300 mt-3 max-w-xl">
+              {t('dealers.authorized.description')}
+            </p>
+          </div>
+          <a
+            href="https://orientalramirez.com/sucursales"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="shrink-0 inline-flex items-center gap-3 bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white px-8 py-4 text-xs font-bold tracking-[0.18em] font-accent transition-colors"
+            style={{ clipPath: 'polygon(4% 0, 100% 0, 96% 100%, 0% 100%)' }}
+          >
+            {t('dealers.authorized.cta')}
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </a>
+        </div>
+      </div>
     </div>
   );
 }
@@ -355,6 +398,7 @@ function DealerCard({
   isSelected: boolean;
   onClick: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div
       onClick={onClick}
@@ -373,7 +417,7 @@ function DealerCard({
             className="bg-[var(--color-primary)] text-white text-[9px] px-2 py-0.5 font-bold tracking-[0.15em] font-accent"
             style={{ clipPath: 'polygon(0 0, 100% 0, 92% 100%, 0% 100%)' }}
           >
-            PRINCIPAL
+            {t('dealers.list.featuredBadge')}
           </span>
         )}
       </div>
@@ -408,7 +452,7 @@ function DealerCard({
             key={service}
             className="bg-neutral-100 text-neutral-700 text-[10px] px-2 py-1 rounded-full font-accent tracking-wider font-bold"
           >
-            {service}
+            {t(service)}
           </span>
         ))}
       </div>

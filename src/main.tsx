@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import './index.css'
+import './i18n'
 import App from './App.tsx'
 
 // Lazy load admin to keep it out of the main bundle

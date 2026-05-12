@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigationStore, type NavigationSection } from '@/store/navigationStore';
-import { useCountryStore } from '@/store/countryStore';
+import { useCountryStore, type Language } from '@/store/countryStore';
+import i18n from '@/i18n';
 import { ModernQuoteSheet } from './ModernQuoteSheet';
 import { bikesData } from '@/data/bikes';
 
@@ -11,13 +13,14 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { key: 'modelos', name: 'MODELOS', hasMega: true },
-  { key: 'marca', name: 'LA MARCA' },
-  { key: 'dealers', name: 'DEALERS' },
-  { key: 'partes', name: 'PARTES' },
+  { key: 'modelos', name: 'header.nav.modelos', hasMega: true },
+  { key: 'marca', name: 'header.nav.marca' },
+  { key: 'dealers', name: 'header.nav.dealers' },
+  { key: 'partes', name: 'header.nav.partes' },
 ];
 
 export function Header() {
+  const { t } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openMegaKey, setOpenMegaKey] = useState<NavigationSection | null>(null);
   const [isQuoteSheetOpen, setIsQuoteSheetOpen] = useState(false);
@@ -66,19 +69,19 @@ export function Header() {
         <div className="bg-neutral-950 text-neutral-300">
           <div className="max-w-[1400px] mx-auto px-8 h-9 flex items-center justify-between text-[11px]">
             <div className="flex items-center gap-5">
-              <a href="tel:+18091234567" className="flex items-center gap-1.5 hover:text-[var(--color-primary)] transition-colors">
+              <a href="tel:+18092468383" className="flex items-center gap-1.5 hover:text-[var(--color-primary)] transition-colors">
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.95.68l1.5 4.5a1 1 0 01-.5 1.21l-2.25 1.13a11 11 0 005.5 5.5l1.13-2.25a1 1 0 011.21-.5l4.5 1.5a1 1 0 01.68.95V19a2 2 0 01-2 2h-1C9.72 21 3 14.28 3 6V5z" />
                 </svg>
-                <span className="font-semibold tracking-wide">+1 809 123 4567</span>
+                <span className="font-semibold tracking-wide">+1 809 246 8383</span>
               </a>
               <span className="text-neutral-700">|</span>
-              <span className="tracking-wide">Atención: Lun–Sáb 8:00 — 18:00</span>
+              <span className="tracking-wide">{t('header.topbar.hours')}</span>
             </div>
             <div className="flex items-center gap-5">
-              <button className="hover:text-[var(--color-primary)] transition-colors tracking-wide">Servicio al Cliente</button>
+              <button className="hover:text-[var(--color-primary)] transition-colors tracking-wide">{t('header.topbar.customerService')}</button>
               <span className="text-neutral-700">|</span>
-              <button className="hover:text-[var(--color-primary)] transition-colors tracking-wide">Encuentra tu Dealer</button>
+              <button className="hover:text-[var(--color-primary)] transition-colors tracking-wide">{t('header.topbar.findDealer')}</button>
               <span className="text-neutral-700">|</span>
               <LanguageSelector />
             </div>
@@ -91,7 +94,7 @@ export function Header() {
           <button
             onClick={() => setActiveSection('hero')}
             className="flex-shrink-0 focus:outline-none group"
-            aria-label="Ir al inicio"
+            aria-label={t('header.aria.goHome')}
           >
             <img
               src="/logo-full.png"
@@ -108,7 +111,7 @@ export function Header() {
           {/* Nav horizontal */}
           <nav
             className="flex items-stretch flex-1 self-stretch"
-            aria-label="Navegación principal"
+            aria-label={t('header.aria.mainNav')}
             onMouseLeave={() => setOpenMegaKey(null)}
           >
             {NAV_ITEMS.map((item) => {
@@ -128,7 +131,7 @@ export function Header() {
                     }`}
                     aria-expanded={item.hasMega ? isMegaOpen : undefined}
                   >
-                    {item.name}
+                    {t(item.name)}
                   </button>
                 </div>
               );
@@ -140,7 +143,7 @@ export function Header() {
             <button
               onClick={() => setIsSearchOpen(true)}
               className="w-10 h-10 rounded-full hover:bg-neutral-100 flex items-center justify-center text-neutral-700 hover:text-[var(--color-primary)] transition-colors"
-              aria-label="Buscar"
+              aria-label={t('header.aria.search')}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
@@ -152,7 +155,7 @@ export function Header() {
               className="ml-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white px-6 py-2.5 text-xs font-bold tracking-[0.18em] font-accent transition-all duration-300 hover:shadow-lg hover:shadow-red-500/20"
               style={{ clipPath: 'polygon(8% 0, 100% 0, 92% 100%, 0% 100%)' }}
             >
-              COTIZAR
+              {t('header.cta.quote')}
             </button>
           </div>
         </div>
@@ -187,7 +190,7 @@ export function Header() {
           <button
             onClick={() => setActiveSection('hero')}
             className="focus:outline-none"
-            aria-label="Ir al inicio"
+            aria-label={t('header.aria.goHome')}
           >
             <img
               src="/logo-full.png"
@@ -203,7 +206,7 @@ export function Header() {
             <button
               onClick={() => setIsSearchOpen(true)}
               className="w-10 h-10 rounded-full hover:bg-neutral-100 flex items-center justify-center text-neutral-700"
-              aria-label="Buscar"
+              aria-label={t('header.aria.search')}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
@@ -211,7 +214,7 @@ export function Header() {
             </button>
             <button
               onClick={() => setIsMenuOpen(true)}
-              aria-label="Abrir menú"
+              aria-label={t('header.aria.openMenu')}
               aria-expanded={isMenuOpen}
               className="w-10 h-10 rounded-full hover:bg-neutral-100 flex items-center justify-center"
             >
@@ -249,7 +252,7 @@ export function Header() {
               <button
                 onClick={() => setIsMenuOpen(false)}
                 className="w-10 h-10 rounded-full hover:bg-neutral-100 flex items-center justify-center text-neutral-700"
-                aria-label="Cerrar menú"
+                aria-label={t('header.aria.closeMenu')}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -257,7 +260,7 @@ export function Header() {
               </button>
             </div>
 
-            <nav className="px-4 py-4" aria-label="Navegación móvil">
+            <nav className="px-4 py-4" aria-label={t('header.aria.mobileNav')}>
               <div className="space-y-0.5">
                 {NAV_ITEMS.map((item) => (
                   <button
@@ -272,7 +275,7 @@ export function Header() {
                         : 'text-neutral-800 hover:bg-neutral-50'
                     }`}
                   >
-                    <span>{item.name}</span>
+                    <span>{t(item.name)}</span>
                     <svg className="w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
@@ -288,15 +291,18 @@ export function Header() {
                 className="mt-6 w-full bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white py-4 text-sm font-bold tracking-[0.2em] font-accent transition-colors"
                 style={{ clipPath: 'polygon(4% 0, 100% 0, 96% 100%, 0% 100%)' }}
               >
-                COTIZAR AHORA
+                {t('header.cta.quoteNow')}
               </button>
 
               <div className="mt-6 pt-6 border-t border-neutral-100">
-                <p className="text-neutral-500 text-[10px] font-bold tracking-[0.25em] font-accent mb-3">ATENCIÓN</p>
-                <a href="tel:+18091234567" className="block text-neutral-900 font-bold text-xl hover:text-[var(--color-primary)] transition-colors">
-                  +1 809 123 4567
+                <p className="text-neutral-500 text-[10px] font-bold tracking-[0.25em] font-accent mb-3">{t('header.mobile.attention')}</p>
+                <a href="tel:+18092468383" className="block text-neutral-900 font-bold text-xl hover:text-[var(--color-primary)] transition-colors">
+                  +1 809 246 8383
                 </a>
-                <p className="text-neutral-500 text-xs mt-1">Lun–Sáb 8:00 — 18:00</p>
+                <a href="tel:+18092466630" className="block text-neutral-900 font-bold text-xl hover:text-[var(--color-primary)] transition-colors mt-1">
+                  +1 809 246 6630
+                </a>
+                <p className="text-neutral-500 text-xs mt-1">{t('header.mobile.phoneHours')}</p>
               </div>
 
               <div className="mt-6 pt-6 border-t border-neutral-100">
@@ -345,11 +351,12 @@ export function Header() {
 /* ═════════════════════════════════════════════════════════ */
 
 function LanguageSelector() {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const { selectedLanguage, setLanguage } = useCountryStore();
   const ref = useRef<HTMLDivElement>(null);
 
-  const langs = [
+  const langs: Language[] = [
     { code: 'es', name: 'Español', flag: '🇪🇸' },
     { code: 'en', name: 'English', flag: '🇺🇸' },
     { code: 'pt', name: 'Português', flag: '🇧🇷' },
@@ -372,7 +379,7 @@ function LanguageSelector() {
         className="flex items-center gap-1.5 text-[11px] text-neutral-600 hover:text-[var(--color-primary)] transition-colors tracking-wide"
         aria-expanded={isOpen}
         aria-haspopup="listbox"
-        aria-label="Idioma"
+        aria-label={t('header.aria.language')}
       >
         <span>{current.flag}</span>
         <span className="font-bold uppercase">{current.code}</span>
@@ -395,6 +402,7 @@ function LanguageSelector() {
               key={l.code}
               onClick={() => {
                 setLanguage(l);
+                i18n.changeLanguage(l.code);
                 setIsOpen(false);
               }}
               role="option"
@@ -424,29 +432,30 @@ function ModelosMegaMenu({
   onCategoryClick: (categoryId: string) => void;
   onQuoteClick: () => void;
 }) {
+  const { t } = useTranslation();
   const categories = [
     {
       id: 'motocicleta',
-      name: 'MOTOCICLETA',
-      tagline: 'Potencia y resistencia',
+      name: 'header.mega.motocicleta.name',
+      tagline: 'header.mega.motocicleta.tagline',
       image: '/bikes/ADRI SPORT/roja/main.avif',
     },
     {
       id: 'passola',
-      name: 'PASSOLA',
-      tagline: 'Urbano y versátil',
+      name: 'header.mega.passola.name',
+      tagline: 'header.mega.passola.tagline',
       image: '/bikes/BWS/azul/main.avif',
     },
     {
       id: 'sport',
-      name: 'SPORT',
-      tagline: 'Velocidad y estilo',
+      name: 'header.mega.sport.name',
+      tagline: 'header.mega.sport.tagline',
       image: '/bikes/ST 125/rojo/main.avif',
     },
     {
       id: 'atv',
-      name: 'ATV',
-      tagline: 'Próximamente',
+      name: 'header.mega.atv.name',
+      tagline: 'header.mega.atv.tagline',
       image: null,
     },
   ];
@@ -462,12 +471,12 @@ function ModelosMegaMenu({
         {/* Columna izquierda: categorías */}
         <div className="col-span-7">
           <div className="flex items-center justify-between mb-5">
-            <h3 className="text-[11px] font-bold tracking-[0.3em] text-neutral-500 font-accent">CATEGORÍAS</h3>
+            <h3 className="text-[11px] font-bold tracking-[0.3em] text-neutral-500 font-accent">{t('header.mega.categoriesTitle')}</h3>
             <button
               onClick={() => onCategoryClick('all')}
               className="text-[11px] font-bold tracking-[0.15em] text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] transition-colors"
             >
-              VER TODAS →
+              {t('header.mega.viewAll')}
             </button>
           </div>
 
@@ -483,7 +492,7 @@ function ModelosMegaMenu({
                     {cat.image ? (
                       <img
                         src={cat.image}
-                        alt={cat.name}
+                        alt={t(cat.name)}
                         className="w-full h-full object-contain p-1.5 group-hover:scale-110 transition-transform duration-500"
                       />
                     ) : (
@@ -494,9 +503,9 @@ function ModelosMegaMenu({
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-bold text-neutral-900 tracking-[0.1em] font-accent group-hover:text-[var(--color-primary)] transition-colors">
-                      {cat.name}
+                      {t(cat.name)}
                     </div>
-                    <div className="text-xs text-neutral-500 mt-1">{cat.tagline}</div>
+                    <div className="text-xs text-neutral-500 mt-1">{t(cat.tagline)}</div>
                   </div>
                   <svg
                     className="w-4 h-4 text-neutral-300 group-hover:text-[var(--color-primary)] group-hover:translate-x-0.5 transition-all duration-300"
@@ -515,7 +524,7 @@ function ModelosMegaMenu({
         {/* Columna derecha: modelos destacados */}
         <div className="col-span-5">
           <div className="flex items-center justify-between mb-5">
-            <h3 className="text-[11px] font-bold tracking-[0.3em] text-neutral-500 font-accent">DESTACADOS</h3>
+            <h3 className="text-[11px] font-bold tracking-[0.3em] text-neutral-500 font-accent">{t('header.mega.featuredTitle')}</h3>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -552,8 +561,8 @@ function ModelosMegaMenu({
             style={{ clipPath: 'polygon(2% 0, 100% 0, 98% 100%, 0% 100%)' }}
           >
             <div>
-              <div className="text-[10px] tracking-[0.2em] opacity-80 font-accent">¿INTERESADO?</div>
-              <div className="text-sm font-bold tracking-[0.1em] font-accent">SOLICITA TU COTIZACIÓN</div>
+              <div className="text-[10px] tracking-[0.2em] opacity-80 font-accent">{t('header.mega.ctaEyebrow')}</div>
+              <div className="text-sm font-bold tracking-[0.1em] font-accent">{t('header.mega.ctaTitle')}</div>
             </div>
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -568,6 +577,7 @@ function ModelosMegaMenu({
 /* ═════════════════════════════════════════════════════════ */
 
 function SearchOverlay({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState('');
 
@@ -596,20 +606,20 @@ function SearchOverlay({ onClose }: { onClose: () => void }) {
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Busca modelo, categoría, repuesto..."
+            placeholder={t('header.search.placeholder')}
             className="flex-1 text-base text-neutral-900 placeholder:text-neutral-400 outline-none bg-transparent"
           />
           <button
             onClick={onClose}
             className="text-[11px] font-bold tracking-[0.15em] font-accent text-neutral-500 hover:text-[var(--color-primary)] transition-colors"
           >
-            ESC
+            {t('header.search.esc')}
           </button>
         </div>
         <div className="max-h-[60vh] overflow-y-auto">
           {query && filtered.length === 0 && (
             <div className="px-5 py-10 text-center text-sm text-neutral-500">
-              No encontramos resultados para <span className="font-bold text-neutral-700">"{query}"</span>
+              {t('header.search.noResults')} <span className="font-bold text-neutral-700">"{query}"</span>
             </div>
           )}
           {filtered.length > 0 && (
@@ -633,7 +643,7 @@ function SearchOverlay({ onClose }: { onClose: () => void }) {
           )}
           {!query && (
             <div className="p-5">
-              <p className="text-[10px] font-bold tracking-[0.25em] text-neutral-400 mb-3 font-accent">SUGERENCIAS</p>
+              <p className="text-[10px] font-bold tracking-[0.25em] text-neutral-400 mb-3 font-accent">{t('header.search.suggestions')}</p>
               <div className="flex flex-wrap gap-2">
                 {['Adri Sport', 'BWS', 'CG200', 'ST 125', 'Repuestos', 'Cotizar'].map((s) => (
                   <button

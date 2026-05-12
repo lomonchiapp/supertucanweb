@@ -7,23 +7,12 @@ import { MarcaSection } from '@/components/MarcaSection';
 import { DealersSection } from '@/components/DealersSection';
 import { PartesSection } from '@/components/PartesSection';
 import { Footer } from '@/components/Footer';
-import { CountryLanding } from '@/components/CountryLanding';
 import { useNavigationStore } from '@/store/navigationStore';
-import { useCountryStore } from '@/store/countryStore';
 
 function App() {
   const { activeSection, isTransitioning } = useNavigationStore();
-  const { hasSelectedCountry, lastSelectionDate } = useCountryStore();
   const containerRef = useRef<HTMLDivElement>(null);
   const previousSection = useRef(activeSection);
-
-  // Derive showLanding from reactive store values
-  const showLanding = (() => {
-    if (!hasSelectedCountry) return true;
-    if (!lastSelectionDate) return true;
-    const daysSince = (Date.now() - new Date(lastSelectionDate).getTime()) / (1000 * 60 * 60 * 24);
-    return daysSince > 30;
-  })();
 
   // Scroll to top and animate on section change
   useEffect(() => {
@@ -63,28 +52,19 @@ function App() {
 
   return (
     <div className="min-h-screen bg-white text-neutral-900 relative">
-      {showLanding && <CountryLanding />}
+      <Header />
 
-      {!showLanding && (
-        <>
-          <Header />
-
-          {isTransitioning && (
-            <div className="fixed inset-0 bg-white/60 backdrop-blur-sm z-40 flex items-center justify-center pointer-events-none">
-              <div className="w-12 h-12 border-4 border-[var(--color-primary)]/20 border-t-[var(--color-primary)] rounded-full animate-spin" />
-            </div>
-          )}
-
-          <main
-            ref={containerRef}
-            className={isTransitioning ? 'pointer-events-none' : ''}
-          >
-            {renderActiveSection()}
-          </main>
-
-          <Footer />
-        </>
+      {isTransitioning && (
+        <div className="fixed inset-0 bg-white/60 backdrop-blur-sm z-40 flex items-center justify-center pointer-events-none">
+          <div className="w-12 h-12 border-4 border-[var(--color-primary)]/20 border-t-[var(--color-primary)] rounded-full animate-spin" />
+        </div>
       )}
+
+      <main ref={containerRef} className={isTransitioning ? 'pointer-events-none' : ''}>
+        {renderActiveSection()}
+      </main>
+
+      <Footer />
     </div>
   );
 }

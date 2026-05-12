@@ -1,37 +1,36 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { gsap } from 'gsap';
 import { useNavigationStore } from '@/store/navigationStore';
 import { ModernQuoteSheet } from './ModernQuoteSheet';
 
 const STATS = [
-  { value: '15+', label: 'AÑOS DE EXPERIENCIA' },
-  { value: '50K+', label: 'CLIENTES SATISFECHOS' },
-  { value: '120+', label: 'DEALERS AUTORIZADOS' },
-  { value: '24/7', label: 'SOPORTE TÉCNICO' },
+  { value: '15+', label: 'marca.stats.experience' },
+  { value: '50K+', label: 'marca.stats.customers' },
+  { value: '120+', label: 'marca.stats.dealers' },
+  { value: '24/7', label: 'marca.stats.support' },
 ];
 
 const VALUES = [
   {
-    title: 'CALIDAD',
-    description:
-      'Cada vehículo Super Tucán pasa por rigurosos controles de calidad para garantizar durabilidad, seguridad y rendimiento excepcional.',
+    title: 'marca.values.quality.title',
+    description: 'marca.values.quality.description',
     icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
   },
   {
-    title: 'INNOVACIÓN',
-    description:
-      'Constantemente evolucionamos nuestros diseños y tecnologías para ofrecer la mejor experiencia de conducción posible.',
+    title: 'marca.values.innovation.title',
+    description: 'marca.values.innovation.description',
     icon: 'M13 10V3L4 14h7v7l9-11h-7z',
   },
   {
-    title: 'COMUNIDAD',
-    description:
-      'Más que clientes, somos una familia. Construimos relaciones duraderas basadas en confianza y respeto mutuo.',
+    title: 'marca.values.community.title',
+    description: 'marca.values.community.description',
     icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z',
   },
 ];
 
 export function MarcaSection() {
+  const { t } = useTranslation();
   const heroRef = useRef<HTMLDivElement>(null);
   const statsRef = useRef<HTMLDivElement>(null);
   const valuesRef = useRef<HTMLDivElement>(null);
@@ -94,23 +93,22 @@ export function MarcaSection() {
           <div className="flex items-center justify-center gap-3 mb-5">
             <div className="h-[2px] w-10 bg-[var(--color-primary)]" />
             <span className="text-[11px] font-bold tracking-[0.3em] text-[var(--color-primary)] font-accent">
-              SOBRE NOSOTROS
+              {t('marca.hero.eyebrow')}
             </span>
             <div className="h-[2px] w-10 bg-[var(--color-primary)]" />
           </div>
           <h1 className="font-display text-6xl md:text-8xl font-bold text-neutral-900 tracking-tight uppercase mb-6 leading-[0.9]">
-            MÁS QUE UNA MARCA
+            {t('marca.hero.title')}
           </h1>
           <p className="text-lg md:text-xl text-neutral-600 mb-10 max-w-3xl mx-auto leading-relaxed font-sans">
-            Somos pasión por la movilidad, innovación en cada detalle y compromiso con quienes eligen
-            la libertad sobre dos ruedas.
+            {t('marca.hero.description')}
           </p>
           <button
             onClick={() => historiaRef.current?.scrollIntoView({ behavior: 'smooth' })}
             className="inline-flex items-center gap-2 border border-neutral-200 hover:border-neutral-900 text-neutral-700 hover:bg-neutral-900 hover:text-white px-7 py-3.5 text-[11px] font-bold tracking-[0.2em] font-accent transition-all duration-300"
             style={{ clipPath: 'polygon(4% 0, 100% 0, 96% 100%, 0% 100%)' }}
           >
-            DESCUBRE NUESTRA HISTORIA
+            {t('marca.hero.cta')}
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
             </svg>
@@ -137,7 +135,7 @@ export function MarcaSection() {
                 {stat.value.slice(1)}
               </div>
               <div className="text-neutral-400 text-[10px] md:text-xs font-bold tracking-[0.25em] font-accent">
-                {stat.label}
+                {t(stat.label)}
               </div>
             </div>
           ))}
@@ -152,7 +150,7 @@ export function MarcaSection() {
               <div className="aspect-square bg-gradient-to-br from-neutral-50 to-neutral-100 border border-neutral-100 rounded-2xl overflow-hidden flex items-center justify-center">
                 <img
                   src="/logo-icon.png"
-                  alt="Super Tucán Heritage"
+                  alt={t('marca.history.imageAlt')}
                   className="w-2/3 h-2/3 object-contain"
                 />
               </div>
@@ -172,32 +170,26 @@ export function MarcaSection() {
                 <div className="flex items-center gap-3 mb-4">
                   <div className="h-[2px] w-10 bg-[var(--color-primary)]" />
                   <span className="text-[11px] font-bold tracking-[0.3em] text-[var(--color-primary)] font-accent">
-                    DESDE 2010
+                    {t('marca.history.eyebrow')}
                   </span>
                 </div>
                 <h2 className="font-display text-4xl md:text-5xl font-bold text-neutral-900 tracking-tight uppercase mb-5 leading-[0.95]">
-                  NUESTRA HISTORIA
+                  {t('marca.history.title')}
                 </h2>
                 <p className="text-neutral-600 leading-relaxed font-sans mb-4">
-                  Desde nuestros inicios, Super Tucán ha sido sinónimo de calidad, innovación y pasión
-                  por las dos ruedas. Comenzamos como un sueño de ofrecer movilidad accesible y
-                  confiable para todos.
+                  {t('marca.history.p1')}
                 </p>
                 <p className="text-neutral-600 leading-relaxed font-sans">
-                  Hoy, somos líderes en el mercado de motocicletas y scooters en el Caribe y
-                  Latinoamérica, siempre comprometidos con la excelencia y la satisfacción de
-                  nuestros clientes.
+                  {t('marca.history.p2')}
                 </p>
               </div>
 
               <div className="relative bg-neutral-50 border-l-4 border-[var(--color-primary)] p-6">
                 <h3 className="font-display text-2xl font-bold text-[var(--color-primary)] mb-3 uppercase">
-                  NUESTRA MISIÓN
+                  {t('marca.history.missionTitle')}
                 </h3>
                 <p className="text-neutral-700 font-sans leading-relaxed">
-                  Proporcionar vehículos de dos ruedas de alta calidad que conecten a las personas con
-                  sus destinos, combinando tecnología avanzada, diseño excepcional y un servicio al
-                  cliente incomparable.
+                  {t('marca.history.missionText')}
                 </p>
               </div>
             </div>
@@ -212,15 +204,15 @@ export function MarcaSection() {
             <div className="flex items-center justify-center gap-3 mb-4">
               <div className="h-[2px] w-8 bg-[var(--color-primary)]" />
               <span className="text-[11px] font-bold tracking-[0.3em] text-[var(--color-primary)] font-accent">
-                FILOSOFÍA
+                {t('marca.values.eyebrow')}
               </span>
               <div className="h-[2px] w-8 bg-[var(--color-primary)]" />
             </div>
             <h2 className="font-display text-4xl md:text-5xl font-bold text-neutral-900 tracking-tight uppercase mb-4 leading-[0.95]">
-              NUESTROS VALORES
+              {t('marca.values.title')}
             </h2>
             <p className="text-neutral-600 font-sans">
-              Los principios que guían cada decisión y nos mantienen conectados con nuestros clientes.
+              {t('marca.values.description')}
             </p>
           </div>
 
@@ -245,9 +237,9 @@ export function MarcaSection() {
                   </svg>
                 </div>
                 <h3 className="font-display text-2xl font-bold text-neutral-900 mb-3 uppercase">
-                  {val.title}
+                  {t(val.title)}
                 </h3>
-                <p className="text-neutral-600 font-sans leading-relaxed text-sm">{val.description}</p>
+                <p className="text-neutral-600 font-sans leading-relaxed text-sm">{t(val.description)}</p>
               </div>
             ))}
           </div>
@@ -274,15 +266,15 @@ export function MarcaSection() {
           <div className="flex items-center justify-center gap-3 mb-5">
             <div className="h-[2px] w-10 bg-[var(--color-primary)]" />
             <span className="text-[11px] font-bold tracking-[0.3em] text-[var(--color-primary)] font-accent">
-              ÚNETE A LA FAMILIA
+              {t('marca.cta.eyebrow')}
             </span>
             <div className="h-[2px] w-10 bg-[var(--color-primary)]" />
           </div>
           <h2 className="font-display text-4xl md:text-6xl font-bold tracking-tight uppercase mb-5 leading-[0.95]">
-            ¿LISTO PARA UNIRTE?
+            {t('marca.cta.title')}
           </h2>
           <p className="text-neutral-300 text-lg mb-10 font-sans max-w-2xl mx-auto">
-            Descubre por qué miles de personas confían en Super Tucán para sus aventuras diarias.
+            {t('marca.cta.description')}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
@@ -290,14 +282,14 @@ export function MarcaSection() {
               className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-light)] text-white px-8 py-4 text-xs font-bold tracking-[0.2em] font-accent transition-colors"
               style={{ clipPath: 'polygon(4% 0, 100% 0, 96% 100%, 0% 100%)' }}
             >
-              VER MODELOS
+              {t('marca.cta.viewModels')}
             </button>
             <button
               onClick={() => setIsQuoteSheetOpen(true)}
               className="border border-white/30 hover:border-white hover:bg-white hover:text-neutral-900 text-white px-8 py-4 text-xs font-bold tracking-[0.2em] font-accent transition-all"
               style={{ clipPath: 'polygon(0 0, 100% 0, 96% 100%, 4% 100%)' }}
             >
-              CONTACTAR
+              {t('marca.cta.contact')}
             </button>
           </div>
         </div>

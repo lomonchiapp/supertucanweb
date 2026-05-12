@@ -37,7 +37,7 @@ export const bikesData: BikeModel[] = [
     slug: 'adri-sport',
     category: 'motocicleta',
     featured: true,
-    description: 'Experimenta la potencia y agilidad de nuestra motocicleta deportiva más avanzada',
+    description: 'bikes.adri-sport.description',
     specs: {
       engine: '125CC',
       maxSpeed: '85KM/H',
@@ -62,7 +62,7 @@ export const bikesData: BikeModel[] = [
     name: 'BWS',
     slug: 'bws',
     category: 'passola',
-    description: 'Diseño urbano y versatilidad para la ciudad moderna',
+    description: 'bikes.bws.description',
     specs: {
       engine: '125CC',
       maxSpeed: '80KM/H',
@@ -85,7 +85,7 @@ export const bikesData: BikeModel[] = [
     name: 'CG200',
     slug: 'cg200',
     category: 'motocicleta',
-    description: 'Potencia y resistencia para todas tus aventuras',
+    description: 'bikes.cg200.description',
     specs: {
       engine: '200CC',
       maxSpeed: '95KM/H',
@@ -107,7 +107,7 @@ export const bikesData: BikeModel[] = [
     name: 'ST 125',
     slug: 'st-125',
     category: 'sport',
-    description: 'Rendimiento deportivo con estilo moderno',
+    description: 'bikes.st-125.description',
     specs: {
       engine: '125CC',
       maxSpeed: '90KM/H',

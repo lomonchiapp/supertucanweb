@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigationStore } from '@/store/navigationStore';
 
 export function Footer() {
+  const { t } = useTranslation();
   const { setActiveSection, setSelectedCategory } = useNavigationStore();
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
@@ -47,14 +49,14 @@ export function Footer() {
             <div className="flex items-center gap-3 mb-3">
               <div className="h-[2px] w-8 bg-[var(--color-primary)]" />
               <span className="text-[11px] font-bold tracking-[0.3em] text-[var(--color-primary)] font-accent">
-                NEWSLETTER
+                {t('footer.newsletter.eyebrow')}
               </span>
             </div>
             <h3 className="font-display text-3xl lg:text-4xl font-bold uppercase text-white leading-tight">
-              Sé el primero en saber
+              {t('footer.newsletter.title')}
             </h3>
             <p className="text-sm text-neutral-400 mt-2 max-w-md">
-              Recibe noticias sobre lanzamientos, promociones exclusivas y eventos directamente en tu correo.
+              {t('footer.newsletter.description')}
             </p>
           </div>
           <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3">
@@ -63,7 +65,7 @@ export function Footer() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="tucorreo@ejemplo.com"
+              placeholder={t('footer.newsletter.placeholder')}
               className="flex-1 bg-white/[0.04] border border-white/10 focus:border-[var(--color-primary)] text-white placeholder:text-neutral-500 px-5 py-3.5 text-sm outline-none transition-colors"
             />
             <button
@@ -77,11 +79,11 @@ export function Footer() {
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                   </svg>
-                  ¡SUSCRITO!
+                  {t('footer.newsletter.subscribed')}
                 </>
               ) : (
                 <>
-                  SUSCRIBIRME
+                  {t('footer.newsletter.subscribe')}
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
                   </svg>
@@ -106,7 +108,7 @@ export function Footer() {
               }}
             />
             <p className="text-sm text-neutral-400 leading-relaxed max-w-sm mb-6">
-              Líderes en motocicletas en el Caribe y Latinoamérica. Más de 15 años de innovación, confiabilidad y servicio excepcional para quienes viven sobre dos ruedas.
+              {t('footer.brand.description')}
             </p>
 
             {/* Contacto rápido */}
@@ -116,8 +118,13 @@ export function Footer() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.95.68l1.5 4.5a1 1 0 01-.5 1.21l-2.25 1.13a11 11 0 005.5 5.5l1.13-2.25a1 1 0 011.21-.5l4.5 1.5a1 1 0 01.68.95V19a2 2 0 01-2 2h-1C9.72 21 3 14.28 3 6V5z" />
                 </svg>
                 <div>
-                  <div className="text-white font-bold">+1 809 123 4567</div>
-                  <div className="text-xs text-neutral-500">Lun–Sáb 8:00 — 18:00</div>
+                  <a href="tel:+18092468383" className="block text-white font-bold hover:text-[var(--color-primary)] transition-colors">
+                    +1 809 246 8383
+                  </a>
+                  <a href="tel:+18092466630" className="block text-white font-bold hover:text-[var(--color-primary)] transition-colors">
+                    +1 809 246 6630
+                  </a>
+                  <div className="text-xs text-neutral-500 mt-1">{t('footer.brand.hours')}</div>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -125,8 +132,8 @@ export function Footer() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l9 6 9-6M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
                 <div>
-                  <a href="mailto:info@supertucan.com" className="text-white hover:text-[var(--color-primary)] transition-colors">
-                    info@supertucan.com
+                  <a href="mailto:info@orientalramirez.com" className="text-white hover:text-[var(--color-primary)] transition-colors">
+                    info@orientalramirez.com
                   </a>
                 </div>
               </div>
@@ -136,45 +143,45 @@ export function Footer() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
                 <div className="text-sm text-neutral-400">
-                  Santo Domingo, República Dominicana
+                  {t('footer.brand.address')}
                 </div>
               </div>
             </div>
           </div>
 
           {/* Productos */}
-          <FooterCol title="Productos" className="lg:col-span-2">
-            <FooterLink onClick={() => handleProductClick('motocicleta')}>Motocicleta</FooterLink>
-            <FooterLink onClick={() => handleProductClick('passola')}>Passola</FooterLink>
-            <FooterLink onClick={() => handleProductClick('sport')}>Sport</FooterLink>
-            <FooterLink onClick={() => handleProductClick('atv')}>ATV <span className="text-[10px] text-neutral-500 ml-1">PRONTO</span></FooterLink>
+          <FooterCol title={t('footer.columns.products')} className="lg:col-span-2">
+            <FooterLink onClick={() => handleProductClick('motocicleta')}>{t('footer.products.motocicleta')}</FooterLink>
+            <FooterLink onClick={() => handleProductClick('passola')}>{t('footer.products.passola')}</FooterLink>
+            <FooterLink onClick={() => handleProductClick('sport')}>{t('footer.products.sport')}</FooterLink>
+            <FooterLink onClick={() => handleProductClick('atv')}>{t('footer.products.atv')} <span className="text-[10px] text-neutral-500 ml-1">{t('footer.products.atvSoon')}</span></FooterLink>
           </FooterCol>
 
           {/* Servicios */}
-          <FooterCol title="Servicios" className="lg:col-span-2">
-            <FooterLink onClick={() => handleServiceClick('dealers')}>Encuentra tu Dealer</FooterLink>
-            <FooterLink onClick={() => handleServiceClick('partes')}>Repuestos Genuinos</FooterLink>
-            <FooterLink onClick={() => handleServiceClick('partes')}>Mantenimiento</FooterLink>
-            <FooterLink href="#">Financiamiento</FooterLink>
-            <FooterLink href="#">Garantía</FooterLink>
+          <FooterCol title={t('footer.columns.services')} className="lg:col-span-2">
+            <FooterLink onClick={() => handleServiceClick('dealers')}>{t('footer.services.findDealer')}</FooterLink>
+            <FooterLink onClick={() => handleServiceClick('partes')}>{t('footer.services.genuineParts')}</FooterLink>
+            <FooterLink onClick={() => handleServiceClick('partes')}>{t('footer.services.maintenance')}</FooterLink>
+            <FooterLink href="#">{t('footer.services.financing')}</FooterLink>
+            <FooterLink href="#">{t('footer.services.warranty')}</FooterLink>
           </FooterCol>
 
           {/* Empresa */}
-          <FooterCol title="Empresa" className="lg:col-span-2">
-            <FooterLink onClick={() => handleServiceClick('marca')}>Sobre Super Tucán</FooterLink>
-            <FooterLink href="#">Historia</FooterLink>
-            <FooterLink href="#">Carreras</FooterLink>
-            <FooterLink href="#">Prensa</FooterLink>
-            <FooterLink href="#">Sostenibilidad</FooterLink>
+          <FooterCol title={t('footer.columns.company')} className="lg:col-span-2">
+            <FooterLink onClick={() => handleServiceClick('marca')}>{t('footer.company.about')}</FooterLink>
+            <FooterLink href="#">{t('footer.company.history')}</FooterLink>
+            <FooterLink href="#">{t('footer.company.careers')}</FooterLink>
+            <FooterLink href="#">{t('footer.company.press')}</FooterLink>
+            <FooterLink href="#">{t('footer.company.sustainability')}</FooterLink>
           </FooterCol>
 
           {/* Soporte */}
-          <FooterCol title="Soporte" className="lg:col-span-2">
-            <FooterLink href="#">Centro de ayuda</FooterLink>
-            <FooterLink href="#">Manuales</FooterLink>
-            <FooterLink href="#">Garantías</FooterLink>
-            <FooterLink href="#">Política de privacidad</FooterLink>
-            <FooterLink href="#">Términos y condiciones</FooterLink>
+          <FooterCol title={t('footer.columns.support')} className="lg:col-span-2">
+            <FooterLink href="#">{t('footer.support.helpCenter')}</FooterLink>
+            <FooterLink href="#">{t('footer.support.manuals')}</FooterLink>
+            <FooterLink href="#">{t('footer.support.warranties')}</FooterLink>
+            <FooterLink href="#">{t('footer.support.privacy')}</FooterLink>
+            <FooterLink href="#">{t('footer.support.terms')}</FooterLink>
           </FooterCol>
         </div>
       </div>
@@ -183,7 +190,7 @@ export function Footer() {
       <div className="relative border-t border-white/5">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-8 py-6 flex flex-col lg:flex-row items-center justify-between gap-5">
           <div className="text-xs text-neutral-500 tracking-wide text-center lg:text-left">
-            © {new Date().getFullYear()} Super Tucán Motors. Todos los derechos reservados.
+            © {new Date().getFullYear()} {t('footer.copyright')}
           </div>
 
           <div className="flex items-center gap-2">
@@ -209,7 +216,7 @@ export function Footer() {
           </div>
 
           <div className="text-[10px] text-neutral-500 tracking-[0.2em] font-accent">
-            POWERED BY <span className="text-[var(--color-primary)] font-bold">SUPER TUCÁN MOTORS</span>
+            {t('footer.poweredBy')} <span className="text-[var(--color-primary)] font-bold">SUPER TUCÁN MOTORS</span>
           </div>
         </div>
       </div>

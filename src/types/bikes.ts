@@ -44,22 +44,22 @@ export interface CategoryInfo {
 export const CATEGORIES: CategoryInfo[] = [
   {
     id: 'motocicleta',
-    name: 'MOTOCICLETA',
-    description: 'Potencia y versatilidad para todo terreno',
+    name: 'categories.motocicleta.name',
+    description: 'categories.motocicleta.description',
   },
   {
     id: 'passola',
-    name: 'PASSOLA',
-    description: 'Ideal para la ciudad y uso urbano',
+    name: 'categories.passola.name',
+    description: 'categories.passola.description',
   },
   {
     id: 'atv',
-    name: 'ATV',
-    description: 'Aventura y diversión off-road',
+    name: 'categories.atv.name',
+    description: 'categories.atv.description',
   },
   {
     id: 'sport',
-    name: 'SPORT',
-    description: 'Velocidad y rendimiento deportivo',
+    name: 'categories.sport.name',
+    description: 'categories.sport.description',
   },
 ];

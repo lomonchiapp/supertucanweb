@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { gsap } from 'gsap';
 import { getModelsByCategory, getModelImage, type CategoryWithModels } from '@/utils/bikeSystem';
 import type { BikeModel, BikeColor } from '@/types/bikes';
@@ -6,558 +7,10 @@ import type { BikeModel, BikeColor } from '@/types/bikes';
 interface ModernQuoteSheetProps {
   isOpen: boolean;
   onClose: () => void;
+  prefilledBike?: BikeModel;
+  prefilledColor?: BikeColor;
 }
 
-export function ModernQuoteSheet({ isOpen, onClose }: ModernQuoteSheetProps) {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [categories] = useState<CategoryWithModels[]>(getModelsByCategory());
-  const [formData, setFormData] = useState<QuoteFormData>({
-    category: '',
-    model: '',
-    color: '',
-    name: '',
-    phone: '',
-    email: '',
-    city: ''
-  });
-
-  const selectedCategory = categories.find(cat => cat.id === formData.category);
-  const selectedModel = selectedCategory?.models.find(model => model.id === formData.model);
-  const selectedColor = selectedModel?.colors.find(color => color.value === formData.color);
-
-  // Animaciones de entrada
-  useEffect(() => {
-    if (isOpen) {
-      gsap.fromTo('.quote-sheet-content', 
-        { y: 100, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5, ease: 'back.out(1.7)' }
-      );
-    }
-  }, [isOpen]);
-
-  const handleNext = () => {
-    if (currentStep < 4) {
-      gsap.to('.step-content', {
-        x: -20,
-        opacity: 0,
-        duration: 0.3,
-        onComplete: () => {
-          setCurrentStep(currentStep + 1);
-          gsap.fromTo('.step-content', 
-            { x: 20, opacity: 0 },
-            { x: 0, opacity: 1, duration: 0.3 }
-          );
-        }
-      });
-    }
-  };
-
-  const handleBack = () => {
-    if (currentStep > 1) {
-      gsap.to('.step-content', {
-        x: 20,
-        opacity: 0,
-        duration: 0.3,
-        onComplete: () => {
-          setCurrentStep(currentStep - 1);
-          gsap.fromTo('.step-content', 
-            { x: -20, opacity: 0 },
-            { x: 0, opacity: 1, duration: 0.3 }
-          );
-        }
-      });
-    }
-  };
-
-  const handleSubmit = () => {
-    const whatsappNumber = '18091234567'; // Super Tucán main number
-    const message = encodeURIComponent(
-      `🏍️ *Cotización Super Tucán*\n\n` +
-      `*Modelo:* ${selectedModel?.name || formData.model}\n` +
-      `*Color:* ${selectedColor?.name || formData.color}\n` +
-      `*Nombre:* ${formData.name}\n` +
-      `*Teléfono:* ${formData.phone}\n` +
-      `*Email:* ${formData.email}\n` +
-      `*Ciudad:* ${formData.city}`
-    );
-    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
-    onClose();
-    setCurrentStep(1);
-    setFormData({
-      category: '',
-      model: '',
-      color: '',
-      name: '',
-      phone: '',
-      email: '',
-      city: ''
-    });
-  };
-
-  const resetForm = () => {
-    setFormData({
-      category: '',
-      model: '',
-      color: '',
-      name: '',
-      phone: '',
-      email: '',
-      city: ''
-    });
-    setCurrentStep(1);
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-[200] flex items-end lg:items-center lg:justify-center">
-      {/* Backdrop */}
-      <div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      />
-      
-      {/* Sheet Container */}
-      <div className="quote-sheet-content relative w-full lg:w-auto lg:min-w-[600px] lg:max-w-4xl bg-gradient-to-br from-white via-gray-50 to-white rounded-t-3xl lg:rounded-3xl shadow-2xl overflow-hidden">
-        
-        {/* Header con gradiente */}
-        <div className="relative bg-gradient-to-r from-gray-900 via-black to-gray-900 px-6 py-6">
-          <div className="absolute inset-0 bg-gradient-to-r from-red-600/10 to-blue-600/10" />
-          
-          <div className="relative flex justify-between items-center">
-            <div>
-              <h2 
-                className="text-3xl font-black text-white tracking-wider font-sans"
-              >
-                COTIZAR VEHÍCULO
-              </h2>
-              <p className="text-gray-300 text-sm mt-1">
-                Paso {currentStep} de 4 • {['Categoría', 'Modelo', 'Color', 'Contacto'][currentStep - 1]}
-              </p>
-            </div>
-            
-            <button 
-              onClick={onClose}
-              className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center hover:bg-white/20 transition-all duration-300 group"
-            >
-              <svg className="w-6 h-6 text-white group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-          
-          {/* Progress bar moderno */}
-          <div className="mt-6 relative">
-            <div className="w-full bg-gray-700/50 rounded-full h-2">
-              <div 
-                className="bg-gradient-to-r from-red-500 to-red-600 h-2 rounded-full transition-all duration-700 ease-out relative overflow-hidden"
-                style={{ width: `${(currentStep / 4) * 100}%` }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse" />
-              </div>
-            </div>
-            <div className="flex justify-between mt-2">
-              {[1, 2, 3, 4].map((step) => (
-                <div 
-                  key={step}
-                  className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
-                    step <= currentStep 
-                      ? 'bg-red-600 text-white shadow-lg shadow-red-600/50' 
-                      : 'bg-gray-600 text-gray-300'
-                  }`}
-                >
-                  {step}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="step-content p-6 lg:p-8 min-h-[400px] lg:min-h-[500px]">
-          
-          {/* Paso 1: Categorías */}
-          {currentStep === 1 && (
-            <CategoryStep 
-              categories={categories}
-              onSelect={(categoryId) => {
-                setFormData({...formData, category: categoryId, model: '', color: ''});
-                handleNext();
-              }}
-            />
-          )}
-          
-          {/* Paso 2: Modelos */}
-          {currentStep === 2 && selectedCategory && (
-            <ModelStep 
-              category={selectedCategory}
-              onSelect={(modelId) => {
-                setFormData({...formData, model: modelId, color: ''});
-                handleNext();
-              }}
-            />
-          )}
-          
-          {/* Paso 3: Colores */}
-          {currentStep === 3 && selectedModel && (
-            <ColorStep 
-              model={selectedModel}
-              onSelect={(colorValue) => {
-                setFormData({...formData, color: colorValue});
-                handleNext();
-              }}
-            />
-          )}
-          
-          {/* Paso 4: Información de contacto */}
-          {currentStep === 4 && (
-            <ContactStep 
-              formData={formData}
-              onChange={setFormData}
-              selectedModel={selectedModel}
-              selectedColor={selectedColor}
-            />
-          )}
-        </div>
-        
-        {/* Footer */}
-        <div className="bg-gray-100 px-6 lg:px-8 py-4 flex justify-between items-center border-t border-gray-200">
-          <div className="flex space-x-3">
-            {currentStep > 1 && (
-              <button 
-                onClick={handleBack}
-                className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-bold hover:border-red-500 hover:text-red-600 transition-all duration-300 transform hover:scale-105"
-              >
-                ANTERIOR
-              </button>
-            )}
-            
-            <button 
-              onClick={resetForm}
-              className="px-4 py-3 text-gray-500 hover:text-red-600 transition-colors duration-300 text-sm font-medium"
-            >
-              Reiniciar
-            </button>
-          </div>
-          
-          {currentStep < 4 ? (
-            <button 
-              onClick={handleNext}
-              disabled={!getStepValue(formData, currentStep)}
-              className="px-8 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl font-bold hover:from-red-700 hover:to-red-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
-            >
-              SIGUIENTE
-            </button>
-          ) : (
-            <button 
-              onClick={handleSubmit}
-              disabled={!formData.name || !formData.phone}
-              className="px-8 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl font-bold hover:from-green-700 hover:to-green-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
-            >
-              ENVIAR COTIZACIÓN
-            </button>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Componente para selección de categorías
-function CategoryStep({ categories, onSelect }: {
-  categories: CategoryWithModels[];
-  onSelect: (categoryId: string) => void;
-}) {
-  return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h3 
-          className="text-3xl font-black text-gray-900 mb-3 tracking-wider font-sans"
-        >
-          ¿QUÉ TIPO DE VEHÍCULO TE INTERESA?
-        </h3>
-        <p className="text-gray-600">Selecciona la categoría que más te guste</p>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
-        {categories.map((category, index) => (
-          <button
-            key={category.id}
-            onClick={() => onSelect(category.id)}
-            className="group relative bg-white rounded-2xl p-6 lg:p-8 border-2 border-gray-200 hover:border-red-500 hover:shadow-xl transition-all duration-500 transform hover:scale-105"
-            style={{ animationDelay: `${index * 100}ms` }}
-          >
-            {/* Gradiente de fondo al hover */}
-            <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-blue-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            
-            <div className="relative text-center">
-              <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center text-4xl group-hover:from-red-50 group-hover:to-red-100 transition-all duration-300">
-                {getCategoryIcon(category.id)}
-              </div>
-              
-              <h4 
-                className="text-xl font-black text-gray-900 tracking-wider group-hover:text-red-600 transition-colors duration-300 font-sans"
-              >
-                {category.name}
-              </h4>
-              
-              <p className="text-sm text-gray-500 mt-2">
-                {category.models.length} modelo{category.models.length !== 1 ? 's' : ''} disponible{category.models.length !== 1 ? 's' : ''}
-              </p>
-            </div>
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// Componente para selección de modelos
-function ModelStep({ category, onSelect }: {
-  category: CategoryWithModels;
-  onSelect: (modelId: string) => void;
-}) {
-  return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h3 
-          className="text-3xl font-black text-gray-900 mb-3 tracking-wider font-sans"
-        >
-          MODELOS DE {category.name}
-        </h3>
-        <p className="text-gray-600">Elige el modelo perfecto para ti</p>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {category.models.map((model, index) => (
-          <button
-            key={model.id}
-            onClick={() => onSelect(model.id)}
-            className="group relative bg-white rounded-2xl overflow-hidden border-2 border-gray-200 hover:border-red-500 hover:shadow-xl transition-all duration-500 transform hover:scale-105"
-            style={{ animationDelay: `${index * 150}ms` }}
-          >
-            {/* Imagen del modelo */}
-            <div className="relative h-48 lg:h-56 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
-              {model.colors[0]?.images.main && (
-                <img 
-                  src={model.colors[0]?.images.main}
-                  alt={model.name}
-                  className="w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-500"
-                />
-              )}
-              
-              {/* Overlay gradiente */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </div>
-            
-            {/* Información del modelo */}
-            <div className="p-6">
-              <h4 
-                className="text-2xl font-black text-gray-900 mb-2 tracking-wider group-hover:text-red-600 transition-colors duration-300 font-sans"
-              >
-                {model.name}
-              </h4>
-              
-              <div className="flex items-center justify-between text-sm text-gray-500">
-                <span>{model.colors.length} colores disponibles</span>
-                <div className="flex space-x-1">
-                  {model.colors.slice(0, 4).map((color, idx) => (
-                    <div 
-                      key={idx}
-                      className="w-4 h-4 rounded-full border-2 border-white shadow-sm"
-                      style={{ backgroundColor: color.hex }}
-                    />
-                  ))}
-                  {model.colors.length > 4 && (
-                    <div className="w-4 h-4 rounded-full bg-gray-300 flex items-center justify-center text-xs text-gray-600">
-                      +
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// Componente para selección de colores
-function ColorStep({ model, onSelect }: {
-  model: BikeModel;
-  onSelect: (colorValue: string) => void;
-}) {
-  const [previewColor, setPreviewColor] = useState(model.colors[0]?.value || '');
-  
-  return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h3 
-          className="text-3xl font-black text-gray-900 mb-3 tracking-wider font-sans"
-        >
-          ELIGE EL COLOR DE TU {model.name}
-        </h3>
-        <p className="text-gray-600">Selecciona el color que más te guste</p>
-      </div>
-      
-      <div className="grid lg:grid-cols-2 gap-8">
-        {/* Preview de la imagen */}
-        <div className="order-2 lg:order-1">
-          <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-8 h-80 flex items-center justify-center">
-            <img 
-              src={getModelImage(model.name, previewColor || model.colors[0]?.value)}
-              alt={`${model.name} ${previewColor}`}
-              className="w-full h-full object-contain transition-all duration-500"
-              style={{
-                filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.1))'
-              }}
-            />
-          </div>
-        </div>
-        
-        {/* Selección de colores */}
-        <div className="order-1 lg:order-2 space-y-4">
-          {model.colors.map((color, index) => (
-            <button
-              key={color.value}
-              onClick={() => onSelect(color.value)}
-              onMouseEnter={() => setPreviewColor(color.value)}
-              className="group w-full flex items-center p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-red-500 hover:shadow-lg transition-all duration-300 transform hover:scale-105"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <div 
-                className="w-12 h-12 rounded-full border-4 border-white shadow-lg mr-4 group-hover:scale-110 transition-transform duration-300"
-                style={{ backgroundColor: color.hex }}
-              />
-              
-              <div className="flex-1 text-left">
-                <h5 
-                  className="text-lg font-black text-gray-900 group-hover:text-red-600 transition-colors duration-300 font-sans"
-                >
-                  {color.name}
-                </h5>
-              </div>
-              
-              <svg className="w-6 h-6 text-gray-400 group-hover:text-red-600 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Componente para información de contacto
-function ContactStep({ formData, onChange, selectedModel, selectedColor }: {
-  formData: QuoteFormData;
-  onChange: (data: QuoteFormData) => void;
-  selectedModel?: BikeModel;
-  selectedColor?: BikeColor;
-}) {
-  return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h3 
-          className="text-3xl font-black text-gray-900 mb-3 tracking-wider font-sans"
-        >
-          INFORMACIÓN DE CONTACTO
-        </h3>
-        <p className="text-gray-600">Últimos datos para enviarte tu cotización</p>
-      </div>
-      
-      <div className="grid lg:grid-cols-2 gap-8">
-        {/* Resumen de la selección */}
-        <div className="order-2 lg:order-1 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6">
-          <h4 
-            className="text-xl font-black text-gray-900 mb-4 tracking-wider font-sans"
-          >
-            TU SELECCIÓN
-          </h4>
-          
-          {selectedModel && selectedColor && (
-            <div className="space-y-4">
-              <div className="bg-white rounded-xl p-4 flex items-center space-x-4">
-                <img 
-                  src={getModelImage(selectedModel.name, selectedColor.value)}
-                  alt={`${selectedModel.name} ${selectedColor.name}`}
-                  className="w-20 h-20 object-contain"
-                />
-                <div>
-                  <h5 
-                    className="text-lg font-black text-gray-900 font-sans"
-                  >
-                    {selectedModel.name}
-                  </h5>
-                  <p className="text-gray-600">Color: {selectedColor.name}</p>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-        
-        {/* Formulario */}
-        <div className="order-1 lg:order-2 space-y-4">
-          <input
-            type="text"
-            placeholder="Nombre completo *"
-            value={formData.name}
-            onChange={(e) => onChange({...formData, name: e.target.value})}
-            className="w-full p-4 rounded-xl border-2 border-gray-200 focus:border-red-500 focus:outline-none transition-all duration-300 bg-white"
-          />
-          
-          <input
-            type="tel"
-            placeholder="Teléfono *"
-            value={formData.phone}
-            onChange={(e) => onChange({...formData, phone: e.target.value})}
-            className="w-full p-4 rounded-xl border-2 border-gray-200 focus:border-red-500 focus:outline-none transition-all duration-300 bg-white"
-          />
-          
-          <input
-            type="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={(e) => onChange({...formData, email: e.target.value})}
-            className="w-full p-4 rounded-xl border-2 border-gray-200 focus:border-red-500 focus:outline-none transition-all duration-300 bg-white"
-          />
-          
-          <input
-            type="text"
-            placeholder="Ciudad"
-            value={formData.city}
-            onChange={(e) => onChange({...formData, city: e.target.value})}
-            className="w-full p-4 rounded-xl border-2 border-gray-200 focus:border-red-500 focus:outline-none transition-all duration-300 bg-white"
-          />
-          
-          <p className="text-xs text-gray-500 mt-4">
-            * Campos obligatorios. Al enviar acepta nuestros términos y condiciones.
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Helpers
-function getCategoryIcon(categoryId: string): string {
-  const icons: { [key: string]: string } = {
-    'motocicletas': '🏍️',
-    'scooters': '🛵',
-    'sport': '🏁'
-  };
-  return icons[categoryId] || '🚗';
-}
-
-function getStepValue(formData: QuoteFormData, step: number): string {
-  const fields: Array<keyof QuoteFormData> = ['category', 'model', 'color', 'name'];
-  const key = fields[step - 1];
-  return formData[key] || '';
-}
-
-// Tipos auxiliares
 type QuoteFormData = {
   category: string;
   model: string;
@@ -567,3 +20,548 @@ type QuoteFormData = {
   email: string;
   city: string;
 };
+
+const emptyForm: QuoteFormData = {
+  category: '',
+  model: '',
+  color: '',
+  name: '',
+  phone: '',
+  email: '',
+  city: '',
+};
+
+export function ModernQuoteSheet({ isOpen, onClose, prefilledBike, prefilledColor }: ModernQuoteSheetProps) {
+  const { t } = useTranslation();
+  const hasPrefilledBike = !!prefilledBike;
+  const hasPrefilledColor = !!prefilledColor;
+  // Si viene con bike + color → salto directo a contacto (paso 4)
+  // Si viene solo con bike → salto a color (paso 3)
+  // Sin prefilled → flujo completo desde categoría
+  const initialStep = hasPrefilledBike ? (hasPrefilledColor ? 4 : 3) : 1;
+
+  const [currentStep, setCurrentStep] = useState(initialStep);
+  const [categories] = useState<CategoryWithModels[]>(getModelsByCategory());
+  const [formData, setFormData] = useState<QuoteFormData>({
+    ...emptyForm,
+    category: prefilledBike?.category || '',
+    model: prefilledBike?.id || '',
+    color: prefilledColor?.value || '',
+  });
+
+  const selectedCategory = categories.find((cat) => cat.id === formData.category);
+  const selectedModel =
+    prefilledBike && prefilledBike.id === formData.model
+      ? prefilledBike
+      : selectedCategory?.models.find((m) => m.id === formData.model);
+  const selectedColor =
+    prefilledColor && prefilledColor.value === formData.color
+      ? prefilledColor
+      : selectedModel?.colors.find((c) => c.value === formData.color);
+
+  // Sincroniza el estado cada vez que se abre o cambian los datos pre-llenados
+  useEffect(() => {
+    if (!isOpen) return;
+    setCurrentStep(initialStep);
+    setFormData((prev) => ({
+      ...prev,
+      category: prefilledBike?.category || '',
+      model: prefilledBike?.id || '',
+      color: prefilledColor?.value || '',
+    }));
+  }, [isOpen, prefilledBike?.id, prefilledColor?.value, initialStep]);
+
+  useEffect(() => {
+    if (isOpen) {
+      gsap.fromTo(
+        '.quote-sheet-content',
+        { y: 60, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.4, ease: 'power3.out' }
+      );
+    }
+  }, [isOpen]);
+
+  const handleNext = () => {
+    if (currentStep < 4) {
+      gsap.to('.step-content', {
+        x: -16,
+        opacity: 0,
+        duration: 0.2,
+        onComplete: () => {
+          setCurrentStep((s) => s + 1);
+          gsap.fromTo('.step-content', { x: 16, opacity: 0 }, { x: 0, opacity: 1, duration: 0.25 });
+        },
+      });
+    }
+  };
+
+  const handleBack = () => {
+    if (currentStep > initialStep) {
+      gsap.to('.step-content', {
+        x: 16,
+        opacity: 0,
+        duration: 0.2,
+        onComplete: () => {
+          setCurrentStep((s) => s - 1);
+          gsap.fromTo('.step-content', { x: -16, opacity: 0 }, { x: 0, opacity: 1, duration: 0.25 });
+        },
+      });
+    }
+  };
+
+  const handleSubmit = () => {
+    const whatsappNumber = '18092468383';
+    const message = encodeURIComponent(
+      `${t('quote.whatsapp.header')}\n\n` +
+        `${t('quote.whatsapp.model')} ${selectedModel?.name || formData.model}\n` +
+        `${t('quote.whatsapp.color')} ${selectedColor?.name || formData.color}\n` +
+        `${t('quote.whatsapp.name')} ${formData.name}\n` +
+        `${t('quote.whatsapp.phone')} ${formData.phone}\n` +
+        `${t('quote.whatsapp.email')} ${formData.email}\n` +
+        `${t('quote.whatsapp.city')} ${formData.city}`
+    );
+    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
+    onClose();
+    setCurrentStep(initialStep);
+    setFormData({
+      ...emptyForm,
+      category: prefilledBike?.category || '',
+      model: prefilledBike?.id || '',
+      color: prefilledColor?.value || '',
+    });
+  };
+
+  const resetForm = () => {
+    setFormData({
+      ...emptyForm,
+      category: prefilledBike?.category || '',
+      model: prefilledBike?.id || '',
+      color: prefilledColor?.value || '',
+    });
+    setCurrentStep(initialStep);
+  };
+
+  if (!isOpen) return null;
+
+  const stepLabels = [t('quote.steps.category'), t('quote.steps.model'), t('quote.steps.color'), t('quote.steps.contact')];
+  const totalSteps = 4;
+  const stepIndex = currentStep - 1;
+  const canGoBack = currentStep > initialStep;
+  const showStepper = !hasPrefilledBike;
+
+  return (
+    <div className="fixed inset-0 z-[200] flex items-end lg:items-center lg:justify-center">
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+
+      {/* Sheet */}
+      <div className="quote-sheet-content relative w-full lg:w-auto lg:min-w-[640px] lg:max-w-3xl max-h-[92vh] lg:max-h-[88vh] bg-white rounded-t-3xl lg:rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+        {/* Header */}
+        <div className="relative bg-neutral-900 px-5 lg:px-7 py-4 lg:py-5 shrink-0">
+          <div className="flex justify-between items-start gap-4">
+            <div className="min-w-0">
+              <h2 className="font-display text-xl lg:text-2xl font-bold text-white tracking-wide uppercase truncate">
+                {hasPrefilledBike ? t('quote.titlePrefilled', { name: prefilledBike.name }) : t('quote.titleDefault')}
+              </h2>
+              {showStepper && (
+                <p className="text-neutral-400 text-[11px] lg:text-xs mt-1 font-accent tracking-[0.18em]">
+                  {t('quote.stepLabel', { current: currentStep, total: totalSteps, label: stepLabels[stepIndex] })}
+                </p>
+              )}
+              {hasPrefilledBike && selectedColor && (
+                <p className="text-neutral-400 text-[11px] lg:text-xs mt-1 font-accent tracking-[0.18em]">
+                  {t('quote.colorLabel', { name: selectedColor.name.toUpperCase() })}
+                </p>
+              )}
+            </div>
+
+            <button
+              onClick={onClose}
+              className="shrink-0 w-9 h-9 lg:w-10 lg:h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center transition-colors"
+              aria-label={t('quote.buttons.close')}
+            >
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Progress bar (solo en flujo completo) */}
+          {showStepper && (
+            <div className="mt-4 relative">
+              <div className="w-full bg-white/10 rounded-full h-1">
+                <div
+                  className="bg-[var(--color-primary)] h-1 rounded-full transition-all duration-500"
+                  style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Scroll area */}
+        <div className="step-content flex-1 overflow-y-auto px-5 lg:px-7 py-5 lg:py-7">
+          {currentStep === 1 && (
+            <CategoryStep
+              categories={categories}
+              onSelect={(categoryId) => {
+                setFormData({ ...formData, category: categoryId, model: '', color: '' });
+                handleNext();
+              }}
+            />
+          )}
+
+          {currentStep === 2 && selectedCategory && (
+            <ModelStep
+              category={selectedCategory}
+              onSelect={(modelId) => {
+                setFormData({ ...formData, model: modelId, color: '' });
+                handleNext();
+              }}
+            />
+          )}
+
+          {currentStep === 3 && selectedModel && (
+            <ColorStep
+              model={selectedModel}
+              onSelect={(colorValue) => {
+                setFormData({ ...formData, color: colorValue });
+                handleNext();
+              }}
+            />
+          )}
+
+          {currentStep === 4 && (
+            <ContactStep
+              formData={formData}
+              onChange={setFormData}
+              selectedModel={selectedModel}
+              selectedColor={selectedColor}
+            />
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="bg-neutral-50 border-t border-neutral-200 px-5 lg:px-7 py-3 lg:py-4 flex justify-between items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2">
+            {canGoBack && (
+              <button
+                onClick={handleBack}
+                className="px-4 lg:px-5 py-2.5 text-[11px] lg:text-xs font-bold tracking-[0.15em] font-accent text-neutral-700 hover:text-neutral-900 border border-neutral-300 hover:border-neutral-900 transition-colors"
+              >
+                {t('quote.buttons.previous')}
+              </button>
+            )}
+            {!hasPrefilledBike && (
+              <button
+                onClick={resetForm}
+                className="text-[11px] text-neutral-500 hover:text-[var(--color-primary)] transition-colors"
+              >
+                {t('quote.buttons.reset')}
+              </button>
+            )}
+          </div>
+
+          {currentStep < 4 ? (
+            <button
+              onClick={handleNext}
+              disabled={!getStepValue(formData, currentStep)}
+              className="px-5 lg:px-7 py-2.5 bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white text-[11px] lg:text-xs font-bold tracking-[0.18em] font-accent disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              {t('quote.buttons.next')}
+            </button>
+          ) : (
+            <button
+              onClick={handleSubmit}
+              disabled={!formData.name || !formData.phone}
+              className="px-5 lg:px-7 py-2.5 bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white text-[11px] lg:text-xs font-bold tracking-[0.18em] font-accent disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              {t('quote.buttons.send')}
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────── */
+/* CATEGORY STEP                                           */
+/* ─────────────────────────────────────────────────────── */
+function CategoryStep({
+  categories,
+  onSelect,
+}: {
+  categories: CategoryWithModels[];
+  onSelect: (categoryId: string) => void;
+}) {
+  const { t } = useTranslation();
+  return (
+    <div>
+      <div className="text-center mb-5">
+        <h3 className="font-display text-2xl lg:text-3xl font-bold text-neutral-900 tracking-tight uppercase">
+          {t('quote.category.title')}
+        </h3>
+        <p className="text-neutral-500 text-sm mt-1">{t('quote.category.subtitle')}</p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 lg:gap-4">
+        {categories.map((category) => {
+          const count = category.models.length;
+          const disabled = count === 0;
+          return (
+            <button
+              key={category.id}
+              onClick={() => !disabled && onSelect(category.id)}
+              disabled={disabled}
+              className={`group relative bg-white border-2 rounded-xl p-4 lg:p-5 text-left transition-all ${
+                disabled
+                  ? 'border-neutral-100 opacity-50 cursor-not-allowed'
+                  : 'border-neutral-200 hover:border-[var(--color-primary)] hover:shadow-md'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 lg:w-14 lg:h-14 shrink-0 bg-neutral-100 group-hover:bg-[var(--color-primary)]/5 rounded-full flex items-center justify-center text-2xl lg:text-3xl transition-colors">
+                  {getCategoryIcon(category.id)}
+                </div>
+                <div className="min-w-0">
+                  <h4 className="font-display text-base lg:text-lg font-bold text-neutral-900 tracking-wide uppercase leading-tight">
+                    {t(category.name)}
+                  </h4>
+                  <p className="text-[11px] text-neutral-500 mt-0.5">
+                    {disabled
+                      ? t('quote.category.comingSoon')
+                      : `${count} ${count !== 1 ? t('quote.category.modelCountPlural') : t('quote.category.modelCountSingular')}`}
+                  </p>
+                </div>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────── */
+/* MODEL STEP                                              */
+/* ─────────────────────────────────────────────────────── */
+function ModelStep({
+  category,
+  onSelect,
+}: {
+  category: CategoryWithModels;
+  onSelect: (modelId: string) => void;
+}) {
+  const { t } = useTranslation();
+  return (
+    <div>
+      <div className="text-center mb-5">
+        <h3 className="font-display text-2xl lg:text-3xl font-bold text-neutral-900 tracking-tight uppercase">
+          {t('quote.model.title', { category: t(category.name) })}
+        </h3>
+        <p className="text-neutral-500 text-sm mt-1">{t('quote.model.subtitle')}</p>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4">
+        {category.models.map((model) => (
+          <button
+            key={model.id}
+            onClick={() => onSelect(model.id)}
+            className="group bg-white rounded-xl overflow-hidden border-2 border-neutral-200 hover:border-[var(--color-primary)] hover:shadow-md transition-all text-left"
+          >
+            <div className="relative h-36 sm:h-44 bg-gradient-to-br from-neutral-50 to-neutral-100 overflow-hidden">
+              {model.colors[0]?.images.main && (
+                <img
+                  src={model.colors[0]?.images.main}
+                  alt={model.name}
+                  className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
+                />
+              )}
+            </div>
+            <div className="p-4">
+              <h4 className="font-display text-xl font-bold text-neutral-900 tracking-tight uppercase leading-none">
+                {model.name}
+              </h4>
+              <div className="flex items-center justify-between mt-2">
+                <span className="text-[11px] text-neutral-500">
+                  {model.colors.length} {model.colors.length !== 1 ? t('quote.model.colorCountPlural') : t('quote.model.colorCountSingular')}
+                </span>
+                <div className="flex -space-x-1">
+                  {model.colors.slice(0, 4).map((color, idx) => (
+                    <div
+                      key={idx}
+                      className="w-4 h-4 rounded-full border-2 border-white shadow-sm"
+                      style={{ backgroundColor: color.hex }}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────── */
+/* COLOR STEP                                              */
+/* ─────────────────────────────────────────────────────── */
+function ColorStep({ model, onSelect }: { model: BikeModel; onSelect: (colorValue: string) => void }) {
+  const { t } = useTranslation();
+  const [previewColor, setPreviewColor] = useState(model.colors[0]?.value || '');
+
+  return (
+    <div>
+      <div className="text-center mb-5">
+        <h3 className="font-display text-2xl lg:text-3xl font-bold text-neutral-900 tracking-tight uppercase">
+          {t('quote.color.title', { model: model.name })}
+        </h3>
+        <p className="text-neutral-500 text-sm mt-1">{t('quote.color.subtitle')}</p>
+      </div>
+
+      <div className="grid lg:grid-cols-2 gap-5">
+        {/* Preview */}
+        <div className="order-2 lg:order-1">
+          <div className="bg-gradient-to-br from-neutral-50 to-neutral-100 rounded-xl p-6 h-48 lg:h-64 flex items-center justify-center">
+            <img
+              src={getModelImage(model.name, previewColor || model.colors[0]?.value)}
+              alt={`${model.name} ${previewColor}`}
+              className="max-w-full max-h-full object-contain transition-all duration-300"
+              style={{ filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.1))' }}
+            />
+          </div>
+        </div>
+
+        {/* Color list */}
+        <div className="order-1 lg:order-2 space-y-2">
+          {model.colors.map((color) => (
+            <button
+              key={color.value}
+              onClick={() => onSelect(color.value)}
+              onMouseEnter={() => setPreviewColor(color.value)}
+              className="group w-full flex items-center gap-3 p-3 bg-white rounded-lg border-2 border-neutral-200 hover:border-[var(--color-primary)] transition-colors text-left"
+            >
+              <div
+                className="w-9 h-9 rounded-full border-2 border-white shadow ring-1 ring-neutral-200"
+                style={{ backgroundColor: color.hex }}
+              />
+              <span className="flex-1 font-display text-base font-bold text-neutral-900 uppercase tracking-wide">
+                {color.name}
+              </span>
+              <svg
+                className="w-4 h-4 text-neutral-400 group-hover:text-[var(--color-primary)] transition-colors"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────── */
+/* CONTACT STEP                                            */
+/* ─────────────────────────────────────────────────────── */
+function ContactStep({
+  formData,
+  onChange,
+  selectedModel,
+  selectedColor,
+}: {
+  formData: QuoteFormData;
+  onChange: (data: QuoteFormData) => void;
+  selectedModel?: BikeModel;
+  selectedColor?: BikeColor;
+}) {
+  const { t } = useTranslation();
+  return (
+    <div>
+      <div className="text-center mb-5">
+        <h3 className="font-display text-2xl lg:text-3xl font-bold text-neutral-900 tracking-tight uppercase">
+          {t('quote.contact.title')}
+        </h3>
+        <p className="text-neutral-500 text-sm mt-1">{t('quote.contact.subtitle')}</p>
+      </div>
+
+      {/* Resumen */}
+      {selectedModel && (
+        <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-3 lg:p-4 flex items-center gap-3 mb-5">
+          <img
+            src={getModelImage(selectedModel.name, selectedColor?.value || selectedModel.colors[0]?.value || '')}
+            alt={selectedModel.name}
+            className="w-16 h-16 lg:w-20 lg:h-20 object-contain shrink-0"
+          />
+          <div className="min-w-0">
+            <h5 className="font-display text-lg font-bold text-neutral-900 uppercase tracking-tight leading-none">
+              {selectedModel.name}
+            </h5>
+            {selectedColor && (
+              <p className="text-xs text-neutral-500 mt-1">{t('quote.contact.summaryColor', { name: selectedColor.name })}</p>
+            )}
+          </div>
+        </div>
+      )}
+
+      <div className="grid sm:grid-cols-2 gap-3">
+        <input
+          type="text"
+          placeholder={t('quote.contact.fullName')}
+          value={formData.name}
+          onChange={(e) => onChange({ ...formData, name: e.target.value })}
+          className="w-full p-3 rounded-lg border-2 border-neutral-200 focus:border-[var(--color-primary)] focus:outline-none transition-colors bg-white text-sm"
+        />
+        <input
+          type="tel"
+          placeholder={t('quote.contact.phone')}
+          value={formData.phone}
+          onChange={(e) => onChange({ ...formData, phone: e.target.value })}
+          className="w-full p-3 rounded-lg border-2 border-neutral-200 focus:border-[var(--color-primary)] focus:outline-none transition-colors bg-white text-sm"
+        />
+        <input
+          type="email"
+          placeholder={t('quote.contact.email')}
+          value={formData.email}
+          onChange={(e) => onChange({ ...formData, email: e.target.value })}
+          className="w-full p-3 rounded-lg border-2 border-neutral-200 focus:border-[var(--color-primary)] focus:outline-none transition-colors bg-white text-sm"
+        />
+        <input
+          type="text"
+          placeholder={t('quote.contact.city')}
+          value={formData.city}
+          onChange={(e) => onChange({ ...formData, city: e.target.value })}
+          className="w-full p-3 rounded-lg border-2 border-neutral-200 focus:border-[var(--color-primary)] focus:outline-none transition-colors bg-white text-sm"
+        />
+      </div>
+
+      <p className="text-[11px] text-neutral-500 mt-4">
+        {t('quote.contact.disclaimer')}
+      </p>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────── */
+/* Helpers                                                 */
+/* ─────────────────────────────────────────────────────── */
+function getCategoryIcon(categoryId: string): string {
+  const icons: Record<string, string> = {
+    motocicleta: '🏍️',
+    passola: '🛵',
+    atv: '🏎️',
+    sport: '🏁',
+  };
+  return icons[categoryId] || '🚗';
+}
+
+function getStepValue(formData: QuoteFormData, step: number): string {
+  const fields: Array<keyof QuoteFormData> = ['category', 'model', 'color', 'name'];
+  const key = fields[step - 1];
+  return formData[key] || '';
+}

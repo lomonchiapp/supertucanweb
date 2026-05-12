@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { getBikesByCategory } from '@/data/bikes';
 import { CATEGORIES } from '@/types/bikes';
@@ -8,9 +9,18 @@ import { useNavigationStore } from '@/store/navigationStore';
 import { ModernQuoteSheet } from './ModernQuoteSheet';
 
 export function ModelosSection() {
+  const { t } = useTranslation();
   const { selectedCategory } = useNavigationStore();
   const [activeCategory, setActiveCategory] = useState(selectedCategory);
   const [quoteOpen, setQuoteOpen] = useState(false);
+  const [quoteBike, setQuoteBike] = useState<BikeModel | undefined>();
+  const [quoteColor, setQuoteColor] = useState<BikeColor | undefined>();
+
+  const openQuote = (bike: BikeModel, color: BikeColor) => {
+    setQuoteBike(bike);
+    setQuoteColor(color);
+    setQuoteOpen(true);
+  };
 
   useEffect(() => {
     setActiveCategory(selectedCategory);
@@ -34,14 +44,14 @@ export function ModelosSection() {
           <div className="flex items-center gap-3 mb-4">
             <div className="h-[2px] w-10 bg-[var(--color-primary)]" />
             <span className="text-[11px] font-bold tracking-[0.3em] text-[var(--color-primary)] font-accent">
-              CATÁLOGO
+              {t('models.eyebrow')}
             </span>
           </div>
           <h1 className="font-display text-5xl md:text-7xl font-bold text-neutral-900 tracking-tight uppercase leading-[0.95]">
-            MODELOS
+            {t('models.title')}
           </h1>
           <p className="text-neutral-600 text-base font-sans mt-3 max-w-2xl">
-            Descubre la línea completa de vehículos Super Tucán. Elige tu próxima aventura entre nuestros modelos diseñados para cada estilo.
+            {t('models.description')}
           </p>
 
           {/* Tabs de categoría */}
@@ -59,7 +69,7 @@ export function ModelosSection() {
                       : 'text-neutral-400 border-transparent hover:text-neutral-700'
                   }`}
                 >
-                  {cat.name}
+                  {t(cat.name)}
                   {count > 0 && (
                     <span
                       className={`ml-2 text-[9px] px-1.5 py-0.5 rounded-full ${
@@ -82,12 +92,12 @@ export function ModelosSection() {
         <div className="mb-8 flex items-center justify-between flex-wrap gap-4">
           <div>
             <h2 className="font-display text-3xl font-bold text-neutral-900 tracking-tight uppercase">
-              {activeCategoryInfo?.name}
+              {activeCategoryInfo ? t(activeCategoryInfo.name) : ''}
             </h2>
-            <p className="text-neutral-500 text-sm font-sans mt-1">{activeCategoryInfo?.description}</p>
+            <p className="text-neutral-500 text-sm font-sans mt-1">{activeCategoryInfo ? t(activeCategoryInfo.description) : ''}</p>
           </div>
           <span className="text-xs text-neutral-500 font-accent tracking-[0.15em] font-bold">
-            {currentModels.length} MODELO{currentModels.length !== 1 ? 'S' : ''}
+            {currentModels.length} {currentModels.length !== 1 ? t('models.modelCountPlural') : t('models.modelCountSingular')}
           </span>
         </div>
 
@@ -95,7 +105,7 @@ export function ModelosSection() {
         {currentModels.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {currentModels.map((bike) => (
-              <ModelCard key={bike.id} bike={bike} onQuote={() => setQuoteOpen(true)} />
+              <ModelCard key={bike.id} bike={bike} onQuote={openQuote} />
             ))}
           </div>
         ) : (
@@ -103,7 +113,12 @@ export function ModelosSection() {
         )}
       </div>
 
-      <ModernQuoteSheet isOpen={quoteOpen} onClose={() => setQuoteOpen(false)} />
+      <ModernQuoteSheet
+        isOpen={quoteOpen}
+        onClose={() => setQuoteOpen(false)}
+        prefilledBike={quoteBike}
+        prefilledColor={quoteColor}
+      />
     </div>
   );
 }
@@ -111,7 +126,8 @@ export function ModelosSection() {
 /* ═══════════════════════════════════════════════════ */
 /* MODEL CARD                                         */
 /* ═══════════════════════════════════════════════════ */
-function ModelCard({ bike, onQuote }: { bike: BikeModel; onQuote: () => void }) {
+function ModelCard({ bike, onQuote }: { bike: BikeModel; onQuote: (bike: BikeModel, color: BikeColor) => void }) {
+  const { t } = useTranslation();
   const [selectedColor, setSelectedColor] = useState(bike.colors[0]?.value || '');
   const [specsExpanded, setSpecsExpanded] = useState(false);
   const currentColor = bike.colors.find((c) => c.value === selectedColor) || bike.colors[0]!;
@@ -141,7 +157,7 @@ function ModelCard({ bike, onQuote }: { bike: BikeModel; onQuote: () => void }) 
                 className="bg-[var(--color-primary)] text-white px-2.5 py-1 text-[9px] font-bold tracking-[0.15em] font-accent"
                 style={{ clipPath: 'polygon(0 0, 100% 0, 96% 100%, 0% 100%)' }}
               >
-                DESTACADO
+                {t('models.featuredBadge')}
               </span>
             </div>
           )}
@@ -155,27 +171,27 @@ function ModelCard({ bike, onQuote }: { bike: BikeModel; onQuote: () => void }) 
               {bike.name}
             </h3>
             <p className="text-neutral-500 text-xs font-sans mt-2 leading-relaxed line-clamp-2">
-              {bike.description}
+              {t(bike.description)}
             </p>
           </div>
 
           {/* Specs */}
           <div className="grid grid-cols-3 gap-2 mt-4">
-            <SpecBox value={bike.specs.engine} label="MOTOR" />
-            <SpecBox value={bike.specs.maxSpeed} label="VEL. MAX" />
-            {bike.specs.power && <SpecBox value={bike.specs.power} label="POTENCIA" />}
-            {bike.specs.fuelTank && <SpecBox value={bike.specs.fuelTank} label="TANQUE" />}
-            {bike.specs.weight && <SpecBox value={bike.specs.weight} label="PESO" />}
-            {bike.specs.transmission && <SpecBox value={bike.specs.transmission} label="TRANSMISIÓN" />}
+            <SpecBox value={bike.specs.engine} label={t('models.specs.motor')} />
+            <SpecBox value={bike.specs.maxSpeed} label={t('models.specs.maxSpeed')} />
+            {bike.specs.power && <SpecBox value={bike.specs.power} label={t('models.specs.power')} />}
+            {bike.specs.fuelTank && <SpecBox value={bike.specs.fuelTank} label={t('models.specs.fuelTank')} />}
+            {bike.specs.weight && <SpecBox value={bike.specs.weight} label={t('models.specs.weight')} />}
+            {bike.specs.transmission && <SpecBox value={bike.specs.transmission} label={t('models.specs.transmission')} />}
           </div>
 
           {/* Expanded specs */}
           {specsExpanded && (
             <div className="grid grid-cols-3 gap-2 mt-2">
-              {bike.specs.brakeType && <SpecBox value={bike.specs.brakeType} label="FRENOS" />}
-              {bike.specs.startType && <SpecBox value={bike.specs.startType} label="ARRANQUE" />}
-              {bike.specs.wheelSize && <SpecBox value={bike.specs.wheelSize} label="RUEDAS" />}
-              {bike.specs.seatHeight && <SpecBox value={bike.specs.seatHeight} label="ALTURA ASIENTO" />}
+              {bike.specs.brakeType && <SpecBox value={bike.specs.brakeType} label={t('models.specs.brakeType')} />}
+              {bike.specs.startType && <SpecBox value={bike.specs.startType} label={t('models.specs.startType')} />}
+              {bike.specs.wheelSize && <SpecBox value={bike.specs.wheelSize} label={t('models.specs.wheelSize')} />}
+              {bike.specs.seatHeight && <SpecBox value={bike.specs.seatHeight} label={t('models.specs.seatHeight')} />}
             </div>
           )}
 
@@ -185,14 +201,14 @@ function ModelCard({ bike, onQuote }: { bike: BikeModel; onQuote: () => void }) 
               onClick={() => setSpecsExpanded(!specsExpanded)}
               className="mt-2 text-[9px] text-neutral-500 hover:text-[var(--color-primary)] font-accent tracking-[0.15em] transition-colors duration-200 self-start"
             >
-              {specsExpanded ? '− MENOS SPECS' : '+ MÁS SPECS'}
+              {specsExpanded ? t('models.lessSpecs') : t('models.moreSpecs')}
             </button>
           )}
 
           {/* Colores */}
           <div className="mt-4">
             <div className="flex items-center gap-3">
-              <span className="text-[9px] text-neutral-500 font-accent tracking-[0.15em] font-bold">COLOR</span>
+              <span className="text-[9px] text-neutral-500 font-accent tracking-[0.15em] font-bold">{t('models.colorLabel')}</span>
               <div className="flex gap-1.5">
                 {bike.colors.map((color: BikeColor) => (
                   <button
@@ -215,18 +231,18 @@ function ModelCard({ bike, onQuote }: { bike: BikeModel; onQuote: () => void }) 
           {/* Acciones */}
           <div className="flex gap-2 mt-5">
             <button
-              onClick={onQuote}
+              onClick={() => onQuote(bike, currentColor)}
               className="flex-1 bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white py-3 text-[10px] font-bold tracking-[0.2em] font-accent transition-colors duration-300"
               style={{ clipPath: 'polygon(0 0, 100% 0, 96% 100%, 0% 100%)' }}
             >
-              COTIZAR
+              {t('models.cta.quote')}
             </button>
             <Link
               to={`/modelos/${bike.slug}`}
               className="px-5 py-3 border border-neutral-200 text-neutral-700 hover:text-white hover:border-neutral-900 hover:bg-neutral-900 transition-all duration-300 text-[10px] font-bold tracking-[0.2em] font-accent inline-flex items-center justify-center"
               style={{ clipPath: 'polygon(4% 0, 100% 0, 100% 100%, 0% 100%)' }}
             >
-              DETALLES
+              {t('models.cta.details')}
             </Link>
           </div>
         </div>
@@ -248,6 +264,7 @@ function SpecBox({ value, label }: { value: string; label: string }) {
 /* EMPTY STATE                                        */
 /* ═══════════════════════════════════════════════════ */
 function EmptyState() {
+  const { t } = useTranslation();
   return (
     <div className="text-center py-24 border border-dashed border-neutral-200 rounded-xl bg-neutral-50/50">
       <div className="w-20 h-20 rounded-full border border-neutral-200 bg-white flex items-center justify-center mx-auto mb-5 shadow-sm">
@@ -256,9 +273,9 @@ function EmptyState() {
         </svg>
       </div>
       <h3 className="font-display text-2xl font-bold text-neutral-400 tracking-tight uppercase">
-        PRÓXIMAMENTE
+        {t('models.empty.title')}
       </h3>
-      <p className="text-neutral-400 text-xs font-sans mt-2 tracking-wide">Nuevos modelos en desarrollo</p>
+      <p className="text-neutral-400 text-xs font-sans mt-2 tracking-wide">{t('models.empty.description')}</p>
     </div>
   );
 }

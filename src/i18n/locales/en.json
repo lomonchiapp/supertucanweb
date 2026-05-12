@@ -1,0 +1,566 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "send": "Send",
+    "loading": "Loading...",
+    "error": "Error",
+    "viewAll": "View all",
+    "viewDetails": "View details",
+    "learnMore": "Learn more",
+    "explore": "Explore",
+    "readMore": "Read more",
+    "comingSoon": "Coming soon",
+    "outOfStock": "Out of stock"
+  },
+  "header": {
+    "topbar": {
+      "hours": "Hours: Mon–Sat 8:00 — 18:00",
+      "customerService": "Customer Service",
+      "findDealer": "Find your Dealer"
+    },
+    "nav": {
+      "home": "HOME",
+      "modelos": "MODELS",
+      "marca": "BRAND",
+      "dealers": "DEALERS",
+      "partes": "PARTS"
+    },
+    "aria": {
+      "goHome": "Go to home",
+      "search": "Search",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu",
+      "mainNav": "Main navigation",
+      "mobileNav": "Mobile navigation",
+      "language": "Language"
+    },
+    "cta": {
+      "quote": "GET A QUOTE",
+      "quoteNow": "QUOTE NOW"
+    },
+    "mobile": {
+      "attention": "SUPPORT",
+      "phoneHours": "Mon–Sat 8:00 — 18:00"
+    },
+    "mega": {
+      "categoriesTitle": "CATEGORIES",
+      "viewAll": "VIEW ALL →",
+      "featuredTitle": "FEATURED",
+      "ctaEyebrow": "INTERESTED?",
+      "ctaTitle": "REQUEST YOUR QUOTE",
+      "motocicleta": {
+        "name": "MOTORCYCLE",
+        "tagline": "Power and durability"
+      },
+      "passola": {
+        "name": "PASSOLA",
+        "tagline": "Urban and versatile"
+      },
+      "sport": {
+        "name": "SPORT",
+        "tagline": "Speed and style"
+      },
+      "atv": {
+        "name": "ATV",
+        "tagline": "Coming soon"
+      }
+    },
+    "search": {
+      "placeholder": "Search models, categories, parts...",
+      "esc": "ESC",
+      "noResults": "No results found for",
+      "suggestions": "SUGGESTIONS"
+    }
+  },
+  "footer": {
+    "newsletter": {
+      "eyebrow": "NEWSLETTER",
+      "title": "Be the first to know",
+      "description": "Get news about launches, exclusive promotions, and events delivered straight to your inbox.",
+      "placeholder": "youremail@example.com",
+      "subscribe": "SUBSCRIBE",
+      "subscribed": "SUBSCRIBED!"
+    },
+    "brand": {
+      "description": "Motorcycle leaders in the Caribbean and Latin America. Over 15 years of innovation, reliability and exceptional service for those who live on two wheels.",
+      "hours": "Mon–Sat 8:00 — 18:00",
+      "address": "Distributor in the Dominican Republic: Oriental Ramirez"
+    },
+    "columns": {
+      "products": "Products",
+      "services": "Services",
+      "company": "Company",
+      "support": "Support"
+    },
+    "products": {
+      "motocicleta": "Motorcycle",
+      "passola": "Passola",
+      "sport": "Sport",
+      "atv": "ATV",
+      "atvSoon": "SOON"
+    },
+    "services": {
+      "findDealer": "Find your Dealer",
+      "genuineParts": "Genuine Parts",
+      "maintenance": "Maintenance",
+      "financing": "Financing",
+      "warranty": "Warranty"
+    },
+    "company": {
+      "about": "About Super Tucán",
+      "history": "History",
+      "careers": "Careers",
+      "press": "Press",
+      "sustainability": "Sustainability"
+    },
+    "support": {
+      "helpCenter": "Help center",
+      "manuals": "Manuals",
+      "warranties": "Warranties",
+      "privacy": "Privacy policy",
+      "terms": "Terms and conditions"
+    },
+    "copyright": "Super Tucán Motors. All rights reserved.",
+    "poweredBy": "POWERED BY"
+  },
+  "home": {
+    "hero": {
+      "aria": "Main slider",
+      "prev": "Previous slide",
+      "next": "Next slide",
+      "goToSlide": "Go to slide {{n}}",
+      "quoteNow": "QUOTE NOW",
+      "adriSport": {
+        "eyebrow": "NEW RELEASE",
+        "subtitle": "PURE SPORT POWER",
+        "description": "Aggressive design, 125cc of pure adrenaline and the technology that defines a new era of motorcycling in the Caribbean.",
+        "cta": "DISCOVER ADRI SPORT"
+      },
+      "cg200": {
+        "eyebrow": "ADVENTURE",
+        "subtitle": "FOR ALL TERRAIN AND EVERY OCCASION",
+        "description": "The durability you need, the power you deserve. 200cc ready to conquer any road.",
+        "cta": "EXPLORE CG 200"
+      },
+      "bws": {
+        "eyebrow": "URBAN",
+        "subtitle": "THE CITY IS YOUR TRACK",
+        "description": "Compact design, automatic and ready to conquer the urban jungle with style and efficiency.",
+        "cta": "DISCOVER BWS"
+      }
+    },
+    "categoryGrid": {
+      "eyebrow": "OUR PRODUCTS",
+      "title": "Explore by category",
+      "description": "Discover the motorcycle that fits your lifestyle",
+      "comingLabel": "· ON THE WAY ·",
+      "modelsSuffix": "MODEL",
+      "modelsSuffixPlural": "MODELS",
+      "comingSoon": "COMING SOON",
+      "explore": "EXPLORE",
+      "items": {
+        "motocicleta": {
+          "name": "MOTORCYCLE",
+          "description": "Power and character for all terrain"
+        },
+        "passola": {
+          "name": "PASSOLA",
+          "description": "Urban mobility made simple"
+        },
+        "sport": {
+          "name": "SPORT",
+          "description": "Pure speed and sport styling"
+        },
+        "atv": {
+          "name": "ATV",
+          "description": "Coming soon — Limitless adventure"
+        }
+      }
+    },
+    "featured": {
+      "eyebrow": "FEATURED MODEL",
+      "specs": {
+        "engine": "DISPLACEMENT",
+        "power": "POWER",
+        "maxSpeed": "TOP SPEED",
+        "transmission": "TRANSMISSION"
+      },
+      "ctaSpecs": "VIEW SPECIFICATIONS",
+      "ctaQuote": "GET A QUOTE"
+    },
+    "services": {
+      "eyebrow": "SERVICES",
+      "title": "More than bikes, an experience",
+      "description": "Everything you need to get the most out of your Super Tucán",
+      "learnMore": "LEARN MORE",
+      "dealers": {
+        "title": "Find a Dealer",
+        "description": "Locate your nearest sales and service point"
+      },
+      "parts": {
+        "title": "Genuine Parts",
+        "description": "Full catalog of original Super Tucán parts"
+      },
+      "maintenance": {
+        "title": "Maintenance",
+        "description": "Certified technical service and preventive plans"
+      },
+      "financing": {
+        "title": "Financing",
+        "description": "Flexible plans so you can ride home today"
+      }
+    },
+    "news": {
+      "eyebrow": "NEWSROOM",
+      "title": "Latest from Super Tucán",
+      "description": "News, events, and brand updates",
+      "viewAll": "VIEW ALL NEWS",
+      "readMore": "READ MORE",
+      "tags": {
+        "news": "NEWS",
+        "events": "EVENTS",
+        "service": "SERVICE"
+      },
+      "items": {
+        "expansion": {
+          "title": "Super Tucán expands its dealer network in Central America",
+          "excerpt": "New strategic partnerships strengthen the brand's presence in key markets."
+        },
+        "testRide": {
+          "title": "Exclusive test ride: try the new ADRI SPORT",
+          "excerpt": "We invite you to experience riding our most anticipated model of the year."
+        },
+        "maintenance": {
+          "title": "Maintenance program: your bike, always ready",
+          "excerpt": "Discover the service plans designed to make your Super Tucán last longer."
+        }
+      }
+    },
+    "stats": {
+      "years": "YEARS IN THE CARIBBEAN",
+      "customers": "SATISFIED CUSTOMERS",
+      "service": "SERVICE POINTS",
+      "models": "MODELS AVAILABLE"
+    }
+  },
+  "models": {
+    "eyebrow": "CATALOG",
+    "title": "MODELS",
+    "description": "Discover the full lineup of Super Tucán vehicles. Choose your next adventure from our models designed for every style.",
+    "modelCountSingular": "MODEL",
+    "modelCountPlural": "MODELS",
+    "featuredBadge": "FEATURED",
+    "specs": {
+      "motor": "ENGINE",
+      "maxSpeed": "TOP SPEED",
+      "power": "POWER",
+      "fuelTank": "TANK",
+      "weight": "WEIGHT",
+      "transmission": "TRANSMISSION",
+      "brakeType": "BRAKES",
+      "startType": "START",
+      "wheelSize": "WHEELS",
+      "seatHeight": "SEAT HEIGHT"
+    },
+    "moreSpecs": "+ MORE SPECS",
+    "lessSpecs": "− LESS SPECS",
+    "colorLabel": "COLOR",
+    "cta": {
+      "quote": "GET A QUOTE",
+      "details": "DETAILS"
+    },
+    "empty": {
+      "title": "COMING SOON",
+      "description": "New models in development"
+    }
+  },
+  "marca": {
+    "hero": {
+      "eyebrow": "ABOUT US",
+      "title": "MORE THAN A BRAND",
+      "description": "We are passion for mobility, innovation in every detail, and commitment to those who choose freedom on two wheels.",
+      "cta": "DISCOVER OUR STORY"
+    },
+    "stats": {
+      "experience": "YEARS OF EXPERIENCE",
+      "customers": "SATISFIED CUSTOMERS",
+      "dealers": "AUTHORIZED DEALERS",
+      "support": "TECHNICAL SUPPORT"
+    },
+    "history": {
+      "eyebrow": "SINCE 2010",
+      "title": "OUR STORY",
+      "p1": "Since our beginnings, Super Tucán has been synonymous with quality, innovation and passion for two wheels. We started as a dream of offering accessible and reliable mobility for everyone.",
+      "p2": "Today, we are leaders in the motorcycle and scooter market in the Caribbean and Latin America, always committed to excellence and customer satisfaction.",
+      "missionTitle": "OUR MISSION",
+      "missionText": "To provide high-quality two-wheeled vehicles that connect people with their destinations, combining advanced technology, exceptional design, and unmatched customer service.",
+      "imageAlt": "Super Tucán Heritage"
+    },
+    "values": {
+      "eyebrow": "PHILOSOPHY",
+      "title": "OUR VALUES",
+      "description": "The principles that guide every decision and keep us connected to our customers.",
+      "quality": {
+        "title": "QUALITY",
+        "description": "Every Super Tucán vehicle undergoes rigorous quality controls to guarantee durability, safety, and exceptional performance."
+      },
+      "innovation": {
+        "title": "INNOVATION",
+        "description": "We constantly evolve our designs and technology to deliver the best possible riding experience."
+      },
+      "community": {
+        "title": "COMMUNITY",
+        "description": "More than customers, we are a family. We build lasting relationships based on trust and mutual respect."
+      }
+    },
+    "cta": {
+      "eyebrow": "JOIN THE FAMILY",
+      "title": "READY TO JOIN?",
+      "description": "Discover why thousands of people trust Super Tucán for their daily adventures.",
+      "viewModels": "VIEW MODELS",
+      "contact": "CONTACT US"
+    }
+  },
+  "dealers": {
+    "hero": {
+      "eyebrow": "OFFICIAL NETWORK",
+      "title": "FIND YOUR DEALER",
+      "description": "Locate the nearest Super Tucán dealer. Our authorized partners deliver the best service and specialized advice.",
+      "searchPlaceholder": "Search by city or name..."
+    },
+    "list": {
+      "eyebrow": "LOCATIONS",
+      "title": "OUR DEALERS",
+      "resultsSingular": "result",
+      "resultsPlural": "results",
+      "noResults": "No dealers found for that search.",
+      "featuredBadge": "FLAGSHIP"
+    },
+    "services": {
+      "sales": "Sales",
+      "service": "Technical Service",
+      "parts": "Parts"
+    },
+    "why": {
+      "eyebrow": "QUALITY GUARANTEED",
+      "title": "WHY CHOOSE AN AUTHORIZED DEALER?",
+      "description": "Our authorized dealers meet the highest standards of quality and service.",
+      "warranty": {
+        "title": "Official Warranty",
+        "description": "All vehicles include an official Super Tucán warranty."
+      },
+      "technicians": {
+        "title": "Certified Technicians",
+        "description": "Specialized staff certified by the factory."
+      },
+      "originalParts": {
+        "title": "Original Parts",
+        "description": "Guaranteed access to original parts and accessories."
+      }
+    },
+    "authorized": {
+      "eyebrow": "AUTHORIZED DISTRIBUTOR",
+      "title": "ORIENTAL RAMIREZ",
+      "description": "Authorized Super Tucán distributor in the Dominican Republic. Visit the official site to see all branches and up-to-date hours.",
+      "cta": "VIEW ALL BRANCHES"
+    }
+  },
+  "partes": {
+    "hero": {
+      "eyebrow": "OFFICIAL CATALOG",
+      "title": "PARTS",
+      "titleAccent": "ORIGINAL",
+      "description": "Original parts and accessories for your Super Tucán with guaranteed quality and shipping across Latin America."
+    },
+    "badges": {
+      "original": "Original",
+      "warranty": "6-month warranty",
+      "fastShipping": "Fast shipping"
+    },
+    "stats": {
+      "parts": "PARTS",
+      "countries": "COUNTRIES",
+      "dispatch": "DISPATCH"
+    },
+    "categories": {
+      "all": "ALL",
+      "motor": "ENGINE",
+      "carroceria": "BODYWORK",
+      "electrico": "ELECTRICAL",
+      "frenos": "BRAKES",
+      "suspension": "SUSPENSION",
+      "accesorios": "ACCESSORIES"
+    },
+    "list": {
+      "featuredTitle": "FEATURED PRODUCTS",
+      "countSingular": "PRODUCT",
+      "countPlural": "PRODUCTS",
+      "consult": "INQUIRE",
+      "outOfStock": "SOLD OUT"
+    },
+    "parts": {
+      "filtroAceite": "Original Oil Filter",
+      "pastillasFreno": "Front Brake Pads",
+      "carenado": "Left Side Fairing",
+      "bombilloLed": "LED Bulb H4",
+      "kitCadena": "Chain and Sprocket Kit",
+      "amortiguador": "Rear Shock Absorber",
+      "universal": "Universal"
+    },
+    "whatsapp": {
+      "interested": "Hi, I'm interested in this part: {{name}}. Is it available?",
+      "needHelp": "Hi, I need help finding a part."
+    },
+    "cta": {
+      "eyebrow": "PERSONALIZED SUPPORT",
+      "title": "CAN'T FIND WHAT YOU'RE LOOKING FOR?",
+      "description": "Contact your nearest dealer to request specific parts.",
+      "whatsapp": "CONTACT VIA WHATSAPP",
+      "viewDealers": "VIEW DEALERS"
+    },
+    "cart": {
+      "consultedSingular": "inquiry",
+      "consultedPlural": "inquiries"
+    }
+  },
+  "modelPage": {
+    "notFound": {
+      "title": "404",
+      "description": "Model not found",
+      "backHome": "BACK TO HOME"
+    },
+    "backToCatalog": "BACK TO CATALOG",
+    "quickSpecs": {
+      "motor": "ENGINE",
+      "maxSpeed": "TOP SPEED",
+      "power": "POWER"
+    },
+    "cta": {
+      "quote": "GET A QUOTE",
+      "whereToBuy": "WHERE TO BUY"
+    },
+    "colorSelector": "SELECT COLOR",
+    "specsTitle": "SPECIFICATIONS",
+    "specs": {
+      "engine": "Engine",
+      "maxSpeed": "Top Speed",
+      "power": "Power",
+      "fuelTank": "Tank",
+      "weight": "Weight",
+      "brakeType": "Brakes",
+      "transmission": "Transmission",
+      "startType": "Start Type",
+      "wheelSize": "Wheel",
+      "seatHeight": "Seat Height"
+    },
+    "galleryTitle": "GALLERY",
+    "related": {
+      "title": "OTHER MODELS",
+      "viewDetails": "VIEW DETAILS →"
+    },
+    "meta": {
+      "titleSuffix": "Super Tucán Motorcycles"
+    }
+  },
+  "quote": {
+    "titleDefault": "Quote a vehicle",
+    "titlePrefilled": "Quote {{name}}",
+    "stepLabel": "STEP {{current}} / {{total}} · {{label}}",
+    "colorLabel": "COLOR: {{name}}",
+    "steps": {
+      "category": "Category",
+      "model": "Model",
+      "color": "Color",
+      "contact": "Contact"
+    },
+    "buttons": {
+      "previous": "PREVIOUS",
+      "next": "NEXT",
+      "send": "SEND",
+      "reset": "Reset",
+      "close": "Close"
+    },
+    "category": {
+      "title": "What type of vehicle?",
+      "subtitle": "Select a category",
+      "comingSoon": "Coming soon",
+      "modelCountSingular": "model",
+      "modelCountPlural": "models"
+    },
+    "model": {
+      "title": "{{category}} models",
+      "subtitle": "Pick the perfect model for you",
+      "colorCountSingular": "color",
+      "colorCountPlural": "colors"
+    },
+    "color": {
+      "title": "Color for your {{model}}",
+      "subtitle": "Select your favorite color"
+    },
+    "contact": {
+      "title": "Contact information",
+      "subtitle": "We'll send you the quote via WhatsApp",
+      "summaryColor": "Color: {{name}}",
+      "fullName": "Full name *",
+      "phone": "Phone *",
+      "email": "Email",
+      "city": "City",
+      "disclaimer": "* Required fields. By submitting you agree to our terms and conditions."
+    },
+    "whatsapp": {
+      "header": "🏍️ *Super Tucán Quote*",
+      "model": "*Model:*",
+      "color": "*Color:*",
+      "name": "*Name:*",
+      "phone": "*Phone:*",
+      "email": "*Email:*",
+      "city": "*City:*"
+    }
+  },
+  "categories": {
+    "motocicleta": {
+      "name": "MOTORCYCLE",
+      "description": "Power and versatility for all terrain"
+    },
+    "passola": {
+      "name": "PASSOLA",
+      "description": "Ideal for the city and urban use"
+    },
+    "atv": {
+      "name": "ATV",
+      "description": "Off-road adventure and fun"
+    },
+    "sport": {
+      "name": "SPORT",
+      "description": "Speed and sport performance"
+    }
+  },
+  "bikes": {
+    "adri-sport": {
+      "description": "Experience the power and agility of our most advanced sport motorcycle"
+    },
+    "bws": {
+      "description": "Urban design and versatility for the modern city"
+    },
+    "cg200": {
+      "description": "Power and durability for all your adventures"
+    },
+    "st-125": {
+      "description": "Sport performance with modern styling"
+    }
+  },
+  "colors": {
+    "azul": "Blue",
+    "blanca": "White",
+    "blanco": "White",
+    "negra": "Black",
+    "negro": "Black",
+    "roja": "Red",
+    "rojo": "Red"
+  }
+}

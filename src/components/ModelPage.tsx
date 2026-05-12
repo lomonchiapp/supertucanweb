@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { getBikeBySlug, bikesData } from '@/data/bikes';
@@ -8,20 +9,21 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { ModernQuoteSheet } from './ModernQuoteSheet';
 
-const SPEC_LABELS: Record<string, string> = {
-  engine: 'Motor',
-  maxSpeed: 'Velocidad Máxima',
-  power: 'Potencia',
-  fuelTank: 'Tanque',
-  weight: 'Peso',
-  brakeType: 'Frenos',
-  transmission: 'Transmisión',
-  startType: 'Arranque',
-  wheelSize: 'Rueda',
-  seatHeight: 'Altura Asiento',
+const SPEC_LABEL_KEYS: Record<string, string> = {
+  engine: 'modelPage.specs.engine',
+  maxSpeed: 'modelPage.specs.maxSpeed',
+  power: 'modelPage.specs.power',
+  fuelTank: 'modelPage.specs.fuelTank',
+  weight: 'modelPage.specs.weight',
+  brakeType: 'modelPage.specs.brakeType',
+  transmission: 'modelPage.specs.transmission',
+  startType: 'modelPage.specs.startType',
+  wheelSize: 'modelPage.specs.wheelSize',
+  seatHeight: 'modelPage.specs.seatHeight',
 };
 
 export default function ModelPage() {
+  const { t } = useTranslation();
   const { slug } = useParams<{ slug: string }>();
   const bike = slug ? getBikeBySlug(slug) : undefined;
 
@@ -33,15 +35,15 @@ export default function ModelPage() {
       <div className="min-h-screen bg-gray-950 flex flex-col">
         <Header />
         <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
-          <h1 className="font-display text-6xl font-bold text-white tracking-tight">404</h1>
+          <h1 className="font-display text-6xl font-bold text-white tracking-tight">{t('modelPage.notFound.title')}</h1>
           <p className="text-gray-500 text-sm font-sans mt-4">
-            Modelo no encontrado
+            {t('modelPage.notFound.description')}
           </p>
           <Link
             to="/"
             className="mt-8 inline-block bg-red-600 hover:bg-red-500 text-white px-8 py-3 text-xs font-bold tracking-[0.2em] font-accent transition-colors"
           >
-            VOLVER AL INICIO
+            {t('modelPage.notFound.backHome')}
           </Link>
         </div>
         <Footer />
@@ -66,10 +68,10 @@ export default function ModelPage() {
   return (
     <div className="min-h-screen bg-gray-950 flex flex-col">
       <Helmet>
-        <title>{bike.name} - Super Tucán Motocicletas</title>
-        <meta name="description" content={bike.description} />
+        <title>{bike.name} - {t('modelPage.meta.titleSuffix')}</title>
+        <meta name="description" content={t(bike.description)} />
         <meta property="og:title" content={`${bike.name} - Super Tucán`} />
-        <meta property="og:description" content={bike.description} />
+        <meta property="og:description" content={t(bike.description)} />
         <meta property="og:image" content={bike.colors[0]?.images.main} />
         <link rel="canonical" href={`https://supertucan.com/modelos/${bike.slug}`} />
       </Helmet>
@@ -102,28 +104,28 @@ export default function ModelPage() {
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
-              VOLVER AL CATÁLOGO
+              {t('modelPage.backToCatalog')}
             </Link>
             <h1 className="font-display text-5xl md:text-7xl font-bold text-white tracking-tight uppercase leading-none">
               {bike.name}
             </h1>
             <p className="text-gray-400 text-sm font-sans mt-4 max-w-md leading-relaxed">
-              {bike.description}
+              {t(bike.description)}
             </p>
             {/* Quick specs */}
             <div className="flex gap-4 mt-8 justify-center md:justify-start">
               <div className="bg-white/[0.04] border border-white/10 rounded-lg px-5 py-3 text-center">
                 <div className="font-accent text-xl font-bold text-red-500">{bike.specs.engine}</div>
-                <div className="text-[9px] text-white/30 font-accent tracking-[0.15em] mt-1">MOTOR</div>
+                <div className="text-[9px] text-white/30 font-accent tracking-[0.15em] mt-1">{t('modelPage.quickSpecs.motor')}</div>
               </div>
               <div className="bg-white/[0.04] border border-white/10 rounded-lg px-5 py-3 text-center">
                 <div className="font-accent text-xl font-bold text-red-500">{bike.specs.maxSpeed}</div>
-                <div className="text-[9px] text-white/30 font-accent tracking-[0.15em] mt-1">VEL. MAX</div>
+                <div className="text-[9px] text-white/30 font-accent tracking-[0.15em] mt-1">{t('modelPage.quickSpecs.maxSpeed')}</div>
               </div>
               {bike.specs.power && (
                 <div className="bg-white/[0.04] border border-white/10 rounded-lg px-5 py-3 text-center">
                   <div className="font-accent text-xl font-bold text-red-500">{bike.specs.power}</div>
-                  <div className="text-[9px] text-white/30 font-accent tracking-[0.15em] mt-1">POTENCIA</div>
+                  <div className="text-[9px] text-white/30 font-accent tracking-[0.15em] mt-1">{t('modelPage.quickSpecs.power')}</div>
                 </div>
               )}
             </div>
@@ -134,14 +136,14 @@ export default function ModelPage() {
                 className="bg-red-600 hover:bg-red-500 text-white px-8 py-3 text-[10px] font-bold tracking-[0.2em] font-accent transition-colors"
                 style={{ clipPath: 'polygon(0 0, 100% 0, 96% 100%, 0% 100%)' }}
               >
-                COTIZAR
+                {t('modelPage.cta.quote')}
               </button>
               <Link
                 to="/"
                 className="px-6 py-3 border border-white/10 text-white/50 hover:text-white hover:border-white/25 transition-all text-[10px] font-bold tracking-[0.2em] font-accent"
                 style={{ clipPath: 'polygon(4% 0, 100% 0, 100% 100%, 0% 100%)' }}
               >
-                DONDE COMPRAR
+                {t('modelPage.cta.whereToBuy')}
               </Link>
             </div>
           </div>
@@ -152,7 +154,7 @@ export default function ModelPage() {
       <section className="border-y border-white/5 bg-white/[0.01]">
         <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col sm:flex-row items-center gap-4">
           <span className="text-[10px] text-white/30 font-accent tracking-[0.2em]">
-            SELECCIONAR COLOR
+            {t('modelPage.colorSelector')}
           </span>
           <div className="flex gap-3">
             {bike.colors.map((color: BikeColor) => (
@@ -183,7 +185,7 @@ export default function ModelPage() {
       {/* ══════════ Spec Sheet ══════════ */}
       <section className="max-w-7xl mx-auto px-6 py-16">
         <h2 className="font-display text-3xl font-bold text-white tracking-tight uppercase mb-8">
-          ESPECIFICACIONES
+          {t('modelPage.specsTitle')}
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {specEntries.map(([key, value]) => (
@@ -192,7 +194,7 @@ export default function ModelPage() {
               className="bg-white/[0.03] border border-white/5 rounded-lg p-4 hover:border-white/10 transition-colors"
             >
               <div className="text-[9px] text-white/30 font-accent tracking-[0.15em] mb-2">
-                {SPEC_LABELS[key] || key.toUpperCase()}
+                {SPEC_LABEL_KEYS[key] ? t(SPEC_LABEL_KEYS[key]) : key.toUpperCase()}
               </div>
               <div className="font-accent text-lg font-bold text-white">
                 {value}
@@ -206,7 +208,7 @@ export default function ModelPage() {
       {allImages.length > 1 && (
         <section className="max-w-7xl mx-auto px-6 pb-16">
           <h2 className="font-display text-3xl font-bold text-white tracking-tight uppercase mb-8">
-            GALERÍA
+            {t('modelPage.galleryTitle')}
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {allImages.map((img, idx) => (
@@ -230,7 +232,7 @@ export default function ModelPage() {
         <section className="border-t border-white/5 bg-white/[0.01]">
           <div className="max-w-7xl mx-auto px-6 py-16">
             <h2 className="font-display text-3xl font-bold text-white tracking-tight uppercase mb-8">
-              OTROS MODELOS
+              {t('modelPage.related.title')}
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               {relatedModels.map((related) => {
@@ -255,10 +257,10 @@ export default function ModelPage() {
                         {related.name}
                       </h3>
                       <p className="text-gray-500 text-xs font-sans mt-1 line-clamp-1">
-                        {related.description}
+                        {t(related.description)}
                       </p>
                       <span className="inline-block mt-3 text-red-500 text-[10px] font-bold tracking-[0.2em] font-accent group-hover:text-red-400 transition-colors">
-                        VER DETALLES →
+                        {t('modelPage.related.viewDetails')}
                       </span>
                     </div>
                   </Link>
@@ -270,7 +272,12 @@ export default function ModelPage() {
       )}
 
       <Footer />
-      <ModernQuoteSheet isOpen={quoteOpen} onClose={() => setQuoteOpen(false)} />
+      <ModernQuoteSheet
+        isOpen={quoteOpen}
+        onClose={() => setQuoteOpen(false)}
+        prefilledBike={bike}
+        prefilledColor={currentColor}
+      />
     </div>
   );
 }
