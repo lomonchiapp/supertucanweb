@@ -161,7 +161,7 @@ function HeroCarousel({ onQuote }: { onQuote: () => void }) {
         }}
       />
 
-      <div className="relative max-w-[1400px] mx-auto px-6 lg:px-8 min-h-[540px] lg:min-h-[640px] grid lg:grid-cols-2 items-center gap-8 py-12 lg:py-16">
+      <div className="relative max-w-[1400px] mx-auto px-6 lg:px-8 min-h-[580px] lg:min-h-[720px] grid lg:grid-cols-[1fr_1.2fr] items-center gap-8 py-12 lg:py-16">
         {/* Left: text */}
         <div key={`text-${slide.id}`} className="relative z-10 animate-slide-in-up text-center lg:text-left">
           <div className="flex items-center justify-center lg:justify-start gap-3 mb-5">
@@ -170,12 +170,29 @@ function HeroCarousel({ onQuote }: { onQuote: () => void }) {
               {t(slide.eyebrow)}
             </span>
           </div>
-          <h1
-            className="font-display text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-bold leading-[0.9] tracking-tight text-neutral-900 uppercase mb-3"
-          >
-            {slide.title}
-          </h1>
-          <h2 className="text-lg lg:text-xl font-bold tracking-[0.05em] text-neutral-700 uppercase mb-5">
+
+          {/* Título artístico: ghost outlined + título sólido bicolor encima */}
+          <div className="relative mb-3 inline-block w-full lg:w-auto">
+            <h1
+              aria-hidden="true"
+              className="absolute inset-0 font-display text-7xl sm:text-8xl lg:text-[10rem] xl:text-[11.5rem] font-bold leading-[0.85] tracking-tight uppercase select-none pointer-events-none"
+              style={{
+                WebkitTextStroke: '1.5px rgba(227,6,19,0.45)',
+                WebkitTextFillColor: 'transparent',
+                transform: 'translate(8px, 8px)',
+              }}
+            >
+              {slide.title}
+            </h1>
+            <h1 className="relative font-display text-7xl sm:text-8xl lg:text-[10rem] xl:text-[11.5rem] font-bold leading-[0.85] tracking-tight uppercase">
+              <span className="text-neutral-900">{slide.title.split(' ')[0]}</span>
+              {slide.title.split(' ').slice(1).length > 0 && (
+                <span className="text-[var(--color-primary)]"> {slide.title.split(' ').slice(1).join(' ')}</span>
+              )}
+            </h1>
+          </div>
+
+          <h2 className="text-lg lg:text-xl font-bold tracking-[0.05em] text-neutral-700 uppercase mb-5 mt-2">
             {t(slide.subtitle)}
           </h2>
           <p className="text-sm lg:text-base text-neutral-600 leading-relaxed max-w-md mx-auto lg:mx-0 mb-8">
@@ -204,24 +221,39 @@ function HeroCarousel({ onQuote }: { onQuote: () => void }) {
         </div>
 
         {/* Right: bike image */}
-        <div className="relative flex items-center justify-center min-h-[300px] lg:min-h-[480px] overflow-hidden">
+        <div className="relative flex items-center justify-center min-h-[360px] lg:min-h-[640px] overflow-hidden">
           {/* Soft radial glow */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
               background:
-                'radial-gradient(ellipse 70% 50% at 50% 55%, rgba(227,6,19,0.08), transparent 70%)',
+                'radial-gradient(ellipse 75% 55% at 50% 55%, rgba(227,6,19,0.10), transparent 70%)',
             }}
           />
 
-          {/* Speed lines — streak desde la derecha hacia la izquierda detrás de la moto */}
+          {/* Racing checkered pattern muy sutil en la esquina */}
+          <div
+            className="absolute top-0 right-0 w-40 h-40 lg:w-56 lg:h-56 pointer-events-none opacity-[0.07]"
+            style={{
+              backgroundImage:
+                'repeating-conic-gradient(#000 0deg 90deg, transparent 90deg 180deg)',
+              backgroundSize: '20px 20px',
+              maskImage: 'radial-gradient(circle at top right, black 30%, transparent 70%)',
+              WebkitMaskImage: 'radial-gradient(circle at top right, black 30%, transparent 70%)',
+            }}
+          />
+
+          {/* Speed lines más densas */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
             {[
-              { top: '24%', delay: '0s', duration: '2.4s', width: '60%', opacity: 0.22 },
-              { top: '36%', delay: '0.6s', duration: '2.8s', width: '50%', opacity: 0.18 },
-              { top: '48%', delay: '0.2s', duration: '2.2s', width: '70%', opacity: 0.28 },
-              { top: '60%', delay: '1.1s', duration: '3s', width: '55%', opacity: 0.2 },
-              { top: '72%', delay: '0.4s', duration: '2.6s', width: '45%', opacity: 0.15 },
+              { top: '14%', delay: '0s', duration: '2s', width: '55%', op: 0.18 },
+              { top: '22%', delay: '0.4s', duration: '2.6s', width: '70%', op: 0.24 },
+              { top: '32%', delay: '0.8s', duration: '2.2s', width: '50%', op: 0.18 },
+              { top: '42%', delay: '0.2s', duration: '1.8s', width: '78%', op: 0.30 },
+              { top: '54%', delay: '1.2s', duration: '2.8s', width: '60%', op: 0.22 },
+              { top: '64%', delay: '0.5s', duration: '2.4s', width: '52%', op: 0.20 },
+              { top: '74%', delay: '0.9s', duration: '3s', width: '68%', op: 0.18 },
+              { top: '84%', delay: '0.3s', duration: '2.2s', width: '45%', op: 0.15 },
             ].map((line, i) => (
               <span
                 key={i}
@@ -230,38 +262,65 @@ function HeroCarousel({ onQuote }: { onQuote: () => void }) {
                   top: line.top,
                   width: line.width,
                   background:
-                    'linear-gradient(90deg, transparent 0%, rgba(227,6,19,0.6) 50%, transparent 100%)',
-                  opacity: line.opacity,
+                    'linear-gradient(90deg, transparent 0%, rgba(227,6,19,0.7) 50%, transparent 100%)',
+                  opacity: line.op,
                   animation: `speedStreak ${line.duration} linear ${line.delay} infinite`,
                 }}
               />
             ))}
           </div>
 
-          {/* Huge background number */}
+          {/* Dust particles (puntos pequeños que cruzan rápido) */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+            {[
+              { top: '28%', size: 3, delay: '0.3s', duration: '1.6s' },
+              { top: '46%', size: 4, delay: '0.7s', duration: '1.4s' },
+              { top: '62%', size: 2, delay: '0s', duration: '1.8s' },
+              { top: '70%', size: 3, delay: '1s', duration: '1.3s' },
+              { top: '36%', size: 2, delay: '0.5s', duration: '1.7s' },
+            ].map((p, i) => (
+              <span
+                key={i}
+                className="absolute rounded-full bg-[var(--color-primary)]"
+                style={{
+                  top: p.top,
+                  width: `${p.size}px`,
+                  height: `${p.size}px`,
+                  animation: `dustParticle ${p.duration} linear ${p.delay} infinite`,
+                  opacity: 0.5,
+                }}
+              />
+            ))}
+          </div>
+
+          {/* Huge background number con sutil pulse */}
           <span
-            className="absolute -top-4 right-0 lg:right-8 font-display font-bold text-[12rem] lg:text-[20rem] leading-none text-neutral-100 select-none pointer-events-none"
+            className="absolute -top-4 right-0 lg:right-4 font-display font-bold text-[14rem] lg:text-[22rem] leading-none text-neutral-100 select-none pointer-events-none"
             aria-hidden="true"
+            style={{ animation: 'numberPulse 6s ease-in-out infinite' }}
           >
             0{idx + 1}
           </span>
 
-          {/* Bike — con micro-oscilación (idle breathing) */}
+          {/* Bike — más grande con animación de entrada y float */}
           <img
             key={`bike-${slide.id}`}
             src={slide.image}
             alt={slide.title}
-            className="relative z-10 max-w-[90%] max-h-[420px] lg:max-h-[520px] object-contain drop-shadow-2xl animate-slide-in-right"
-            style={{ animation: 'slide-in-right 0.7s ease-out, bikeFloat 4s ease-in-out 0.7s infinite' }}
+            className="relative z-10 max-w-[95%] max-h-[340px] sm:max-h-[460px] lg:max-h-[620px] object-contain"
+            style={{
+              filter: 'drop-shadow(0 30px 50px rgba(0,0,0,0.22))',
+              animation: 'slide-in-right 0.7s ease-out, bikeFloat 4s ease-in-out 0.7s infinite',
+            }}
           />
 
-          {/* Ground reflection con leve pulso */}
+          {/* Ground reflection con pulso */}
           <div
-            className="absolute bottom-4 left-1/2 -translate-x-1/2 w-3/4 h-12 pointer-events-none"
+            className="absolute bottom-4 left-1/2 -translate-x-1/2 w-3/4 h-14 pointer-events-none"
             style={{
               background:
-                'radial-gradient(ellipse 100% 100% at 50% 0%, rgba(0,0,0,0.12), transparent 70%)',
-              filter: 'blur(6px)',
+                'radial-gradient(ellipse 100% 100% at 50% 0%, rgba(0,0,0,0.18), transparent 70%)',
+              filter: 'blur(8px)',
               animation: 'reflectPulse 4s ease-in-out infinite',
             }}
           />
@@ -324,17 +383,31 @@ function HeroCarousel({ onQuote }: { onQuote: () => void }) {
           85% { opacity: var(--speed-op, 0.25); }
           100% { transform: translateX(-130%); opacity: 0; }
         }
+        @keyframes dustParticle {
+          0% { transform: translateX(120%); opacity: 0; }
+          20% { opacity: 0.6; }
+          80% { opacity: 0.6; }
+          100% { transform: translateX(-140%); opacity: 0; }
+        }
         @keyframes bikeFloat {
           0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-6px); }
+          50% { transform: translateY(-8px); }
         }
         @keyframes reflectPulse {
           0%, 100% { transform: translateX(-50%) scaleX(1); opacity: 1; }
           50% { transform: translateX(-50%) scaleX(0.92); opacity: 0.85; }
         }
+        @keyframes numberPulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.6; }
+        }
         @media (prefers-reduced-motion: reduce) {
           .relative img[alt][src*="/bikes/"],
-          .relative div[style*="reflectPulse"] { animation: none !important; }
+          [style*="reflectPulse"],
+          [style*="speedStreak"],
+          [style*="dustParticle"],
+          [style*="numberPulse"],
+          [style*="bikeFloat"] { animation: none !important; }
         }
       `}</style>
     </section>

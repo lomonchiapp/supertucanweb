@@ -467,7 +467,8 @@
     },
     "meta": {
       "titleSuffix": "Super Tucán Motocicletas"
-    }
+    },
+    "whatsappMessage": "Hola, estoy interesado en la {{name}} en color {{color}}. Me gustaría más información."
   },
   "quote": {
     "titleDefault": "Cotizar vehículo",

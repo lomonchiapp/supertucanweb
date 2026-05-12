@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useNavigationStore, type NavigationSection } from '@/store/navigationStore';
 import { useCountryStore, type Language } from '@/store/countryStore';
 import i18n from '@/i18n';
@@ -22,12 +23,24 @@ const NAV_ITEMS: NavItem[] = [
 
 export function Header() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openMegaKey, setOpenMegaKey] = useState<NavigationSection | null>(null);
   const [isQuoteSheetOpen, setIsQuoteSheetOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { activeSection, setActiveSection, setSelectedCategory } = useNavigationStore();
+
+  // Wrapper que asegura que estemos en la ruta `/` antes de cambiar de sección.
+  // Si el usuario está en /modelos/:slug o /noticias/:slug, navega a `/` primero.
+  const goToSection = (section: NavigationSection) => {
+    setActiveSection(section);
+    if (location.pathname !== '/') {
+      navigate('/');
+    }
+    window.scrollTo({ top: 0 });
+  };
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 8);
@@ -51,7 +64,9 @@ export function Header() {
   const handleCategoryClick = (categoryId: string) => {
     setSelectedCategory(categoryId);
     setActiveSection('modelos');
+    if (location.pathname !== '/') navigate('/');
     setOpenMegaKey(null);
+    window.scrollTo({ top: 0 });
   };
 
   return (
@@ -103,7 +118,7 @@ export function Header() {
         <div className="max-w-[1400px] mx-auto px-8 h-[72px] flex items-center gap-10">
           {/* Logo */}
           <button
-            onClick={() => setActiveSection('hero')}
+            onClick={() => goToSection('hero')}
             className="flex-shrink-0 focus:outline-none group"
             aria-label={t('header.aria.goHome')}
           >
@@ -136,7 +151,7 @@ export function Header() {
                   onMouseEnter={item.hasMega ? () => setOpenMegaKey(item.key) : () => setOpenMegaKey(null)}
                 >
                   <button
-                    onClick={() => setActiveSection(item.key)}
+                    onClick={() => goToSection(item.key)}
                     className={`relative flex items-center px-6 text-[16px] font-bold tracking-[0.16em] font-accent transition-colors duration-200 hover:bg-[var(--color-primary)] hover:text-white ${
                       highlighted ? 'bg-[var(--color-primary)] text-white' : 'text-neutral-800'
                     }`}
@@ -196,7 +211,7 @@ export function Header() {
       <header className="lg:hidden fixed top-0 left-0 right-0 z-50 h-16 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
         <div className="h-full flex items-center justify-between px-4">
           <button
-            onClick={() => setActiveSection('hero')}
+            onClick={() => goToSection('hero')}
             className="focus:outline-none"
             aria-label={t('header.aria.goHome')}
           >
@@ -274,7 +289,7 @@ export function Header() {
                   <button
                     key={item.key}
                     onClick={() => {
-                      setActiveSection(item.key);
+                      goToSection(item.key);
                       setIsMenuOpen(false);
                     }}
                     className={`flex items-center justify-between w-full px-4 py-4 rounded-lg text-[15px] font-bold tracking-[0.12em] font-accent transition-colors ${

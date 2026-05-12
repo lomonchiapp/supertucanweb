@@ -467,7 +467,8 @@
     },
     "meta": {
       "titleSuffix": "Super Tucán Motorcycles"
-    }
+    },
+    "whatsappMessage": "Hi, I'm interested in the {{name}} in {{color}}. I'd like more information."
   },
   "quote": {
     "titleDefault": "Quote a vehicle",

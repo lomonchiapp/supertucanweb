@@ -9,8 +9,18 @@ import type { BikeColor, BikeModel, BikeCategory } from '@/types/bikes';
 import { LazyImage } from './ui/lazy-image';
 import { Header } from './Header';
 import { Footer } from './Footer';
-import { ModernQuoteSheet } from './ModernQuoteSheet';
 import { FinancingDialog } from './FinancingDialog';
+
+const WHATSAPP_NUMBER = '18092468383';
+
+function openWhatsAppForBike(bikeName: string, colorName: string, t: (k: string, opts?: Record<string, string>) => string) {
+  const message = t('modelPage.whatsappMessage', { name: bikeName, color: colorName });
+  window.open(
+    `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`,
+    '_blank',
+    'noopener,noreferrer'
+  );
+}
 
 const SPEC_LABEL_KEYS: Record<string, string> = {
   engine: 'modelPage.specs.engine',
@@ -110,7 +120,6 @@ export default function ModelPage() {
   const bike = staticBike ?? dynamicBike ?? undefined;
 
   const [selectedColor, setSelectedColor] = useState(bike?.colors[0]?.value || '');
-  const [quoteOpen, setQuoteOpen] = useState(false);
   const [financingOpen, setFinancingOpen] = useState(false);
 
   useEffect(() => {
@@ -160,8 +169,6 @@ export default function ModelPage() {
       bike={bike}
       selectedColor={selectedColor}
       setSelectedColor={setSelectedColor}
-      quoteOpen={quoteOpen}
-      setQuoteOpen={setQuoteOpen}
       financingOpen={financingOpen}
       setFinancingOpen={setFinancingOpen}
       t={t}
@@ -175,8 +182,6 @@ function ModelPageContent({
   bike,
   selectedColor,
   setSelectedColor,
-  quoteOpen,
-  setQuoteOpen,
   financingOpen,
   setFinancingOpen,
   t,
@@ -184,11 +189,9 @@ function ModelPageContent({
   bike: BikeModel;
   selectedColor: string;
   setSelectedColor: (v: string) => void;
-  quoteOpen: boolean;
-  setQuoteOpen: (v: boolean) => void;
   financingOpen: boolean;
   setFinancingOpen: (v: boolean) => void;
-  t: (k: string) => string;
+  t: (k: string, opts?: Record<string, string>) => string;
 }) {
   const currentColor = useMemo(
     () => bike.colors.find((c) => c.value === selectedColor) || bike.colors[0]!,
@@ -224,7 +227,7 @@ function ModelPageContent({
       <Header />
 
       {/* ════════════════ HERO ════════════════ */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-neutral-100 via-white to-neutral-50 pt-24 lg:pt-32 pb-12 lg:pb-20">
+      <section className="relative overflow-hidden bg-gradient-to-br from-neutral-100 via-white to-neutral-50 pt-20 lg:pt-24 pb-10 lg:pb-14">
         {/* Diagonal pattern muy sutil */}
         <div
           className="absolute inset-0 pointer-events-none opacity-[0.06]"
@@ -256,7 +259,7 @@ function ModelPageContent({
             </Link>
           </div>
 
-          <div className="grid lg:grid-cols-[1fr_1.2fr] gap-8 lg:gap-12 items-center">
+          <div className="grid lg:grid-cols-[1fr_1.2fr] gap-8 lg:gap-12 items-start">
             {/* Left: text content */}
             <div className="relative z-10 text-center lg:text-left order-2 lg:order-1">
               <div className="flex items-center justify-center lg:justify-start gap-3 mb-5">
@@ -274,9 +277,26 @@ function ModelPageContent({
                 )}
               </div>
 
-              <h1 className="font-display text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-bold leading-[0.85] tracking-tight text-neutral-900 uppercase mb-4">
-                {bike.name}
-              </h1>
+              {/* Título con toque artístico: ghost outlined detrás + título sólido encima */}
+              <div className="relative mb-4 inline-block w-full lg:w-auto">
+                <h1
+                  aria-hidden="true"
+                  className="absolute inset-0 font-display text-7xl sm:text-8xl lg:text-[10rem] xl:text-[11.5rem] font-bold leading-[0.85] tracking-tight uppercase select-none pointer-events-none"
+                  style={{
+                    WebkitTextStroke: '1.5px rgba(227,6,19,0.45)',
+                    WebkitTextFillColor: 'transparent',
+                    transform: 'translate(8px, 8px)',
+                  }}
+                >
+                  {bike.name}
+                </h1>
+                <h1 className="relative font-display text-7xl sm:text-8xl lg:text-[10rem] xl:text-[11.5rem] font-bold leading-[0.85] tracking-tight uppercase">
+                  <span className="text-neutral-900">{bike.name.split(' ')[0]}</span>
+                  {bike.name.split(' ').slice(1).length > 0 && (
+                    <span className="text-[var(--color-primary)]"> {bike.name.split(' ').slice(1).join(' ')}</span>
+                  )}
+                </h1>
+              </div>
 
               <p className="text-base lg:text-lg text-neutral-600 leading-relaxed max-w-lg mx-auto lg:mx-0 mb-8">
                 {t(bike.description)}
@@ -324,13 +344,13 @@ function ModelPageContent({
               {/* CTAs */}
               <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
                 <button
-                  onClick={() => setQuoteOpen(true)}
+                  onClick={() => openWhatsAppForBike(bike.name, currentColor.name, t)}
                   className="group inline-flex items-center gap-3 bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white px-8 py-4 text-[12px] font-bold tracking-[0.18em] font-accent transition-all duration-300 shadow-lg shadow-red-500/10 hover:shadow-red-500/30"
                   style={{ clipPath: 'polygon(4% 0, 100% 0, 96% 100%, 0% 100%)' }}
                 >
                   {t('modelPage.cta.quote')}
-                  <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                  <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.69 5.553l-.999 3.648 3.798-.9zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.017-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
                   </svg>
                 </button>
                 <button
@@ -344,7 +364,7 @@ function ModelPageContent({
             </div>
 
             {/* Right: bike showcase */}
-            <div className="relative order-1 lg:order-2 min-h-[320px] sm:min-h-[440px] lg:min-h-[560px] flex items-center justify-center overflow-hidden">
+            <div className="relative order-1 lg:order-2 flex items-center justify-center min-h-[340px] sm:min-h-[460px] lg:min-h-[600px] overflow-hidden">
               {/* Speed lines detrás de la moto */}
               <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
                 {[
@@ -371,8 +391,8 @@ function ModelPageContent({
 
               {/* Huge background letters with bike name initials */}
               <span
-                className="absolute -top-6 right-4 lg:right-12 font-display font-bold leading-none text-neutral-100 select-none pointer-events-none uppercase whitespace-nowrap"
-                style={{ fontSize: 'clamp(8rem, 22vw, 22rem)' }}
+                className="absolute top-1/2 -translate-y-1/2 right-2 lg:right-8 font-display font-bold leading-none text-neutral-100 select-none pointer-events-none uppercase whitespace-nowrap"
+                style={{ fontSize: 'clamp(7rem, 18vw, 18rem)' }}
                 aria-hidden="true"
               >
                 {bike.name.split(' ')[0]}
@@ -387,25 +407,23 @@ function ModelPageContent({
                 }}
               />
 
-              {/* Bike image — contenedor con aspect ratio + object-contain garantiza imagen completa */}
-              <div className="relative z-10 w-full aspect-[4/3] flex items-center justify-center px-4 lg:px-8">
-                {mainImage && (
-                  <LazyImage
-                    key={`${bike.id}-${currentColor.value}`}
-                    src={mainImage}
-                    alt={`${bike.name} ${currentColor.name}`}
-                    className="max-w-full max-h-full w-auto h-auto object-contain"
-                    style={{
-                      filter: 'drop-shadow(0 24px 40px rgba(0,0,0,0.18))',
-                      animation: 'mpBikeIn 0.6s ease-out, mpBikeFloat 4s ease-in-out 0.6s infinite',
-                    }}
-                  />
-                )}
-              </div>
+              {/* Bike image — max-height fija evita que la columna crezca de más */}
+              {mainImage && (
+                <LazyImage
+                  key={`${bike.id}-${currentColor.value}`}
+                  src={mainImage}
+                  alt={`${bike.name} ${currentColor.name}`}
+                  className="relative z-10 max-w-[95%] max-h-[320px] sm:max-h-[440px] lg:max-h-[580px] w-auto h-auto object-contain"
+                  style={{
+                    filter: 'drop-shadow(0 24px 40px rgba(0,0,0,0.18))',
+                    animation: 'mpBikeIn 0.6s ease-out, mpBikeFloat 4s ease-in-out 0.6s infinite',
+                  }}
+                />
+              )}
 
               {/* Ground shadow */}
               <div
-                className="absolute bottom-6 left-1/2 -translate-x-1/2 w-3/4 h-12 pointer-events-none"
+                className="absolute bottom-2 left-1/2 -translate-x-1/2 w-3/4 h-10 pointer-events-none"
                 style={{
                   background:
                     'radial-gradient(ellipse 100% 100% at 50% 0%, rgba(0,0,0,0.18), transparent 70%)',
@@ -632,13 +650,13 @@ function ModelPageContent({
             </div>
           </div>
           <button
-            onClick={() => setQuoteOpen(true)}
+            onClick={() => openWhatsAppForBike(bike.name, currentColor.name, t)}
             className="shrink-0 inline-flex items-center gap-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white px-6 py-3 text-[11px] font-bold tracking-[0.18em] font-accent transition-colors"
             style={{ clipPath: 'polygon(4% 0, 100% 0, 96% 100%, 0% 100%)' }}
           >
             {t('modelPage.cta.quote')}
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+            <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.69 5.553l-.999 3.648 3.798-.9zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.017-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
             </svg>
           </button>
         </div>
@@ -648,12 +666,6 @@ function ModelPageContent({
 
       <Footer />
 
-      <ModernQuoteSheet
-        isOpen={quoteOpen}
-        onClose={() => setQuoteOpen(false)}
-        prefilledBike={bike}
-        prefilledColor={currentColor}
-      />
       <FinancingDialog isOpen={financingOpen} onClose={() => setFinancingOpen(false)} />
     </div>
   );
