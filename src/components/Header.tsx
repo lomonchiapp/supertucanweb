@@ -107,7 +107,12 @@ export function Header() {
                 {t('header.topbar.customerService')}
               </a>
               <span className="text-neutral-700">|</span>
-              <button className="hover:text-[var(--color-primary)] transition-colors tracking-wide">{t('header.topbar.findDealer')}</button>
+              <button
+                onClick={() => goToSection('dealers')}
+                className="hover:text-[var(--color-primary)] transition-colors tracking-wide"
+              >
+                {t('header.topbar.findDealer')}
+              </button>
               <span className="text-neutral-700">|</span>
               <LanguageSelector />
             </div>
