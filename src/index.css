@@ -1,8 +1,15 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #dc2626;
-  --color-secondary: #171717;
+  /* Paleta principal Yamaha-style con identidad SuperTucan */
+  --color-primary: #e30613;          /* Rojo SuperTucan principal */
+  --color-primary-dark: #b8050f;     /* Rojo hover/active */
+  --color-primary-light: #ff1c2e;    /* Rojo highlight */
+  --color-secondary: #1a1a1a;        /* Texto oscuro / acento */
+  --color-accent: #f5f5f5;           /* Fondo gris claro */
+  --color-surface: #ffffff;          /* Cards, panels */
+  --color-muted: #6b7280;            /* Texto secundario */
+  --color-border: #e5e7eb;           /* Bordes */
 
   --font-family-sans: "Rajdhani", system-ui, sans-serif;
   --font-family-accent: "Orbitron", monospace;
@@ -32,13 +39,13 @@
   --z-landing: 300;
 }
 
-/* Base body style */
+/* Base body style — tema claro */
 body {
   font-family: "Rajdhani", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #0a0a0a;
-  color: #e5e5e5;
+  background: #ffffff;
+  color: #1a1a1a;
 }
 
 /* Gradient radial utility */
@@ -89,6 +96,31 @@ body {
   0% { transform: translateY(-100%); }
   100% { transform: translateY(100vh); }
 }
+
+@keyframes slide-in-right {
+  from { transform: translateX(40px); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slide-in-up {
+  from { transform: translateY(30px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.animate-slide-in-right { animation: slide-in-right 0.7s ease-out both; }
+.animate-slide-in-up    { animation: slide-in-up    0.6s ease-out both; }
+.animate-fade-in        { animation: fade-in        0.5s ease-out both; }
+
+/* Scrollbar styling (tema claro) */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #f5f5f5; }
+::-webkit-scrollbar-thumb { background: #d4d4d4; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #b8b8b8; }
 
 /* Laptop-specific hero adjustments (1024px - 1279px) */
 @media (min-width: 1024px) and (max-width: 1279px) {
